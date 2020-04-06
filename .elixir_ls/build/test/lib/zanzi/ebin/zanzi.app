@@ -16,5 +16,5 @@
                         'Elixir.ZanziWeb.Router.Helpers',
                         'Elixir.ZanziWeb.UserSocket']},
               {registered,[]},
-              {vsn,"0.1.0"},
+              {vsn,"0.0.1"},
               {mod,{'Elixir.Zanzi.Application',[]}}]}.
