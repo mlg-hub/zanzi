@@ -14,9 +14,14 @@ defmodule ZanziWeb.Router do
     plug ZanziWeb.Context
   end
 
+  scope "/admin", ZanziWeb do
+    pipe_through :browser
+
+    get "/", PageController, :index
+  end
+
   scope "/" do
     pipe_through :api
-
     forward "/api", Absinthe.Plug, schema: ZanziWeb.Schema
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,

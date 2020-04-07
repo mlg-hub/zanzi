@@ -1,5 +1,5 @@
 defmodule ZanziWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :zanzi_web
+  use Phoenix.Endpoint, otp_app: :zanzi
   use Absinthe.Phoenix.Endpoint
 
   socket "/api/socket", ZanziWeb.UserSocket,
@@ -13,7 +13,7 @@ defmodule ZanziWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     # host: "192.168.43.83",
-    from: :zanzi_web,
+    from: :zanzi,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 

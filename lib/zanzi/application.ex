@@ -11,9 +11,10 @@ defmodule Zanzi.Application do
       # Start the Ecto repository
       Zanzi.Repo,
       # Start the endpoint when the application starts
-      ZanziWeb.Endpoint
+      ZanziWeb.Endpoint,
       # Starts a worker by calling: Zanzi.Worker.start_link(arg)
       # {Zanzi.Worker, arg},
+      {Absinthe.Subscription, [ZanziWeb.Endpoint]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

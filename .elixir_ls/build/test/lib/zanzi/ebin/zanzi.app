@@ -9,7 +9,7 @@
               {description,"zanzi"},
               {modules,['Elixir.Zanzi','Elixir.Zanzi.Application',
                         'Elixir.Zanzi.DataCase','Elixir.Zanzi.Repo',
-                        'Elixir.ZanziWeb','Elixir.ZanziWeb.Application',
+                        'Elixir.ZanziWeb',
                         'Elixir.ZanziWeb.Auth.TokenAuthentication',
                         'Elixir.ZanziWeb.ChannelCase',
                         'Elixir.ZanziWeb.ConnCase','Elixir.ZanziWeb.Context',
@@ -58,5 +58,5 @@
                         'Elixir.Zanzibloc.Ordering.Table',
                         'Elixir.Zanzibloc.Ordering.TableOrders']},
               {registered,[]},
-              {vsn,"0.0.4"},
+              {vsn,"0.0.5"},
               {mod,{'Elixir.Zanzi.Application',[]}}]}.
