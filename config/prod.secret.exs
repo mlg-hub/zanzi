@@ -4,13 +4,12 @@
 # remember to add this file to your .gitignore.
 use Mix.Config
 
-database_url =
-  System.get_env("DATABASE_URL") ||
-    raise """
-    environment variable DATABASE_URL is missing.
-    For example: ecto://USER:PASS@HOST/DATABASE
-    """
-
+# System.get_env("DATABASE_URL") ||
+#   raise """
+#   environment variable DATABASE_URL is missing.
+#   For example: ecto://USER:PASS@HOST/DATABASE
+#   """
+# database_url =
 secret_key_base = "xky7XHeGtlslwQCAjXl9NG30QCz5OXXHdnUQyx1z/EhltMnnQhDckvY8O7Cb/+jn"
 
 config :zanzi, Zanzi.Repo,
