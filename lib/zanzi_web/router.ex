@@ -25,12 +25,6 @@ defmodule ZanziWeb.Router do
       socket: ZanziWeb.UserSocket
   end
 
-  scope "/", ZanziWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", ZanziWeb do
   #   pipe_through :api
