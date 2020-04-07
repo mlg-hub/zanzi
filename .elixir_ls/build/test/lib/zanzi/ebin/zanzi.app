@@ -58,5 +58,5 @@
                         'Elixir.Zanzibloc.Ordering.Table',
                         'Elixir.Zanzibloc.Ordering.TableOrders']},
               {registered,[]},
-              {vsn,"0.0.3"},
+              {vsn,"0.0.4"},
               {mod,{'Elixir.Zanzi.Application',[]}}]}.
