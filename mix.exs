@@ -4,7 +4,7 @@ defmodule Zanzi.MixProject do
   def project do
     [
       app: :zanzi,
-      version: "0.0.1",
+      version: "0.0.2",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -44,7 +44,15 @@ defmodule Zanzi.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:distillery, "~> 2.0"},
-      {:edeliver, ">= 1.6.0"}
+      {:edeliver, ">= 1.6.0"},
+      {:nimble_csv, "~> 0.6.0"},
+      {:absinthe, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4"},
+      {:absinthe_phoenix, "~> 1.4"},
+      {:dataloader, "~> 1.0"},
+      {:ksuid, "~> 0.1.2"},
+      {:comeonin_ecto_password, "~> 3.0.0"},
+      {:pbkdf2_elixir, "~> 1.2", override: true}
     ]
   end
 

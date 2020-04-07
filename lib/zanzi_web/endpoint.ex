@@ -1,7 +1,8 @@
 defmodule ZanziWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :zanzi
+  use Phoenix.Endpoint, otp_app: :zanzi_web
+  use Absinthe.Phoenix.Endpoint
 
-  socket "/socket", ZanziWeb.UserSocket,
+  socket "/api/socket", ZanziWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -11,7 +12,8 @@ defmodule ZanziWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :zanzi,
+    # host: "192.168.43.83",
+    from: :zanzi_web,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
@@ -39,8 +41,8 @@ defmodule ZanziWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
-    key: "_zanzi_key",
-    signing_salt: "8IS5w9sp"
+    key: "_zanzi_web_key",
+    signing_salt: "Lh/xmWDU"
 
   plug ZanziWeb.Router
 end

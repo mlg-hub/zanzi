@@ -12,14 +12,6 @@ use Mix.Config
 # database_url =
 secret_key_base = "xky7XHeGtlslwQCAjXl9NG30QCz5OXXHdnUQyx1z/EhltMnnQhDckvY8O7Cb/+jn"
 
-config :zanzi, Zanzi.Repo,
-  username: "zanzidev",
-  password: "zanzidev",
-  database: "zanzi_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 15
-
 # System.get_env("SECRET_KEY_BASE") ||
 #   raise """
 #   environment variable SECRET_KEY_BASE is missing.
@@ -39,3 +31,10 @@ config :zanzi, ZanziWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+config :zanzi, Zanzi.Repo,
+  username: "zanzidev",
+  password: "zanzidev",
+  database: "zanzi_prod",
+  hostname: "localhost",
+  # show_sensitive_data_on_connection_error: true,
+  pool_size: 15

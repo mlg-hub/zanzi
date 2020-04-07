@@ -11,6 +11,18 @@ defmodule ZanziWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ZanziWeb.Context
+  end
+
+  scope "/" do
+    pipe_through :api
+
+    forward "/api", Absinthe.Plug, schema: ZanziWeb.Schema
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: ZanziWeb.Schema,
+      # interface: :playground,
+      socket: ZanziWeb.UserSocket
   end
 
   scope "/", ZanziWeb do

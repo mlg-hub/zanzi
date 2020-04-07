@@ -1,5 +1,6 @@
 defmodule ZanziWeb.UserSocket do
   use Phoenix.Socket
+  use Absinthe.Phoenix.Socket, schema: ZanziWeb.Schema
 
   ## Channels
   # channel "room:*", ZanziWeb.RoomChannel
@@ -15,8 +16,33 @@ defmodule ZanziWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(params, socket, _connect_info) do
+    IO.inspect("")
+    IO.inspect(params)
+    IO.inspect(socket)
+    IO.inspect(params)
+    %{"authorization" => token} = params
+
+    with "Bearer " <> tok <- token,
+         {:ok, data} <- ZanziWeb.Auth.TokenAuthentication.verify(tok),
+         %{user_id: user_id} <- data do
+      current_user = Zanzibloc.Account.AccountApi.lookup(user_id)
+      IO.puts("koto goooooot")
+      IO.inspect(current_user)
+
+      # current_user = current_user(params)
+
+      socket =
+        Absinthe.Phoenix.Socket.put_options(socket,
+          context: %{
+            current_user: current_user
+          }
+        )
+
+      {:ok, socket}
+    else
+      _ -> {:ok, socket}
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
