@@ -1,6 +1,6 @@
 <section class="phx-hero">
   <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-  <p>System in the makin for zanzi!!!</p>
+  <p>Dimanche !!!!!.....System in the makin for zanzi!!!</p>
 </section>
 
 <section class="row">
