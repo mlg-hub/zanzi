@@ -17,7 +17,7 @@ defmodule ZanziWeb.Router do
   scope "/admin", ZanziWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", AdminController, :index
   end
 
   scope "/" do
