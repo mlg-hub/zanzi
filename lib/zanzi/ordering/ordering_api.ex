@@ -4,7 +4,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   """
 
   import Ecto.Query, warn: false
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
   require Logger
 
   alias Zanzibloc.Ordering.{

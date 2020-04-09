@@ -1,6 +1,5 @@
 defmodule ZanziWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
-  alias ZanziWeb.Resolvers.AccountsResolvers
 
   object :session do
     field(:token, :string)

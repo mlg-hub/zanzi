@@ -69,7 +69,7 @@ defmodule Zanzibloc.Ordering.Order do
     today = Date.to_iso8601(Date.utc_today(), :basic)
     day = Date.day_of_week(Date.utc_today()) |> Integer.to_string()
 
-    case Zanzibloc.Repo.one(from(x in Order, order_by: [desc: x.id], limit: 1)) do
+    case Zanzi.Repo.one(from(x in Order, order_by: [desc: x.id], limit: 1)) do
       %Order{} = order ->
         indice =
           String.split(order.code, "/")

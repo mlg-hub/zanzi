@@ -1,6 +1,6 @@
 defmodule ZanziWeb.Resolvers.MenuResolver do
   alias Zanzibloc.Menu.{MenuApi}
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   def menu_items(_, args, _) do

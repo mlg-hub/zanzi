@@ -72,7 +72,7 @@ defmodule ZanziWeb.Schema.OrderingTypes do
 
     field :order_details, list_of(:order_detail) do
       resolve(fn parent, _, _ ->
-        alias Zanzibloc.Repo
+        alias Zanzi.Repo
         fechedData = Repo.all(Ecto.assoc(parent, :order_details))
         {:ok, fechedData}
       end)

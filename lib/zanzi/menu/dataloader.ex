@@ -1,6 +1,6 @@
 defmodule ZanziWeb.LoadData do
   import Ecto.Query, warn: false
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
 
   def dataloader_source() do
     Dataloader.Ecto.new(Repo, query: &query/2)

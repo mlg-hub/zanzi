@@ -1,0 +1,288 @@
+ITEM,SELING PRICE,CATEGORY,DEPARTEMENT
+full breakfast,19500,breakfast,kichen
+farm eggs,15000,breakfast,kichen
+darnish pastries,12500,breakfast,kichen
+farm eggs omelet,14000,breakfast,kichen
+continental,14000,breakfast,kichen
+egg benedict,16000,breakfast,kichen
+chicken brouchette,16000,main course,kichen
+chicken cordon bleu,23000,main course,kichen
+1/4 grile poulet,15000,main course,kichen
+gril mukeke,25000,maincourse,kichen
+sangala ala meuniere,20000,maincourse,kichen
+fish & chips,20000,maincourse,kichen
+fillet sangala pouche,20000,maincourse,kichen
+grile tuna staeak,32500, maincourse ,kichen
+grile king prawns,80000,maincourse,kichen
+riz,5000,accompaniments,kichen
+fries / fritti,6000,accompaniments,kichen
+pommes sautee,6000,accompaniments,kichen
+legume du jour ,5000,accompaniments,kichen
+sombe,5000,accompaniments,kichen
+frite de banane,6000,accompaniments,kichen
+bugali,5000,accompaniments,kichen
+puree de pommes,7000,accompaniments,kichen
+seafood linguini,31000,pasta,kichen
+spaghetti ala bolognaise,16000,pasta,kichen
+penne pomodoro,14000,pasta,kichen
+spaghetti cabonara,16000,pasta,kichen
+lemon spaghetti,14000,pasta,kichen
+tagliatelle ala pesto,16000,pasta,kichen
+spaghetti/ tagliatelle putanesaca,16000,pasta,kichen
+spaghetti ala vegetable,14000,pasta,kichen
+tandoor chicken ,16000,indian cuisine,kichen
+butter chicken,23000,indian cuisine,kichen
+chicken jalfrez,23000,indian cuisine,kichen
+prawns masala,33000,indian cuisine,kichen
+mutton korma,20000,indian cuisine,kichen
+beef & vegetable curry,21000,indian cuisine,kichen
+peas & potato curry,10000,indian cuisine,kichen
+dal makhini,10000,indian cuisine,kichen
+pizza familie,58000,pizza,kichen
+plateau de familie,45000,maison spciale,kichen
+casseole chaude,45000,maison spciale,kichen
+special zanzi,45000,maison spciale,kichen
+demi magrgheritta ,10000,maison spciale,kichen
+spaghetti boulettes,10000,maison spciale,kichen
+nuggets de poulet,10000,maison spciale,kichen
+goujons,10000,maison spciale,kichen
+beef sandwich,14000,sandwich,kichen
+chicken sandwich,15000,sandwich,kichen
+tuna sandwich,150000,sandwich,kichen
+vegetable sandwich,12000,sandwich,kichen
+beef burger,14000,sandwich,kichen
+chicken burger,15000,sandwich,kichen
+spring roll de poulet,5000,snacks,kichen
+sopring roll legume,4000,snacks,kichen
+samosa du boeuf,50000,snacks,kichen
+samosa legume,4000,snacks,kichen
+pizza margheritta,14000,pizza,kichen
+veggie pizza,17000,pizza,kichen
+mexicane pizza,19000,pizza,kichen
+suprem pizza,19000,pizza,kichen
+pizza funghi,18000,pizza,kichen
+chicken bali pizza,19000,pizza,kichen
+pizza heavy duty,19000,pizza,kichen
+steak pizza,19000,pizza,kichen
+house pizza ,19000,pizza,kichen
+calzone pizza,19000,pizza,kichen
+la zanzi pizza,22000,pizza,kichen
+full kuku kirundi,55000,maison spciale,kichen
+1/2 kuku kirundi,28000,maison spciale,kichen
+ragout de beouf plantain,20000,maison spciale,kichen
+pilau du poulet,10000,maison spciale,kichen
+pilau du beouf,10000,maison spciale,kichen
+fish in coconut,20000,maison spciale,kichen
+cheese & jambo sandwich,16000,sandwich,kichen
+ice cream,8000,dessert,kichen
+orange panna cotta,8000,dessert,kichen
+sticky toffee pudding,12000,dessert,kichen
+cheese cake,10000,dessert,kichen
+egg less chocolate cake,12000,dessert,kichen
+tropical fruit mix,8000,dessert,kichen
+crepe zuzzette,8000,dessert,kichen
+cheese platter,12000,dessert,kichen
+mini beef brochette,10000,snacks,kichen
+mini poisson brochette,12000,snacks,kichen
+chevre mini brochette,10000,snacks,kichen
+mini poult brochette,10000,snacks,kichen
+captaine brochette,20000,maincourse,kichen
+sosisso brochette,7000,snacks,kichen
+kaguru mbuzi,25000,choma choma,kichen
+fried dangala,10000,snacks,kichen
+house coffee,7000,coffee,coffee shop
+single expresso,2800,coffee,coffee shop
+doudle expresso ,5500,coffee,coffee shop
+cafe latte,5000,coffee,coffee shop
+americano coffee,5000,coffee,coffee shop
+mocha coffee,5500,coffee,coffee shop
+cappucinno,4800,coffee,coffee shop
+machiato coffee,3800,coffee,coffee shop
+regular tea,4000,coffee,coffee shop
+masala / ginger tea,5000,coffee,coffee shop
+green herbal tea,4500,tea,coffee shop
+black tea,2500,tea,coffee shop
+dawa infusion,4500,tea,coffee shop
+hot chcocolate,5000,tea,coffee shop
+irish coffee,7500,bozzy coffee,coffee shop
+russian coffee,7500,bozzy coffee,coffee shop
+calypso coffee,7500,bozzy coffee,coffee shop
+strawberry smoothy,7500,smoothie,coffee shop
+mango smoothy,7500,smoothie,coffee shop
+banana smoothy,7500,smoothie,coffee shop
+tripical mix smoothy,7000,smoothie,coffee shop
+green herbal juice,8000,health juice,coffee shop
+zanzi special juice,8000,health juice,coffee shop
+eye sight juice,8000,health juice,coffee shop
+relaxation juice,8000,health juice,coffee shop
+virgin mary juice,8000,health juice,coffee shop
+farmers special juice,8000,health juice,coffee shop
+vitamin C,8000,health juice,coffee shop
+special omelet,12000,breakfast,kichen
+jambo fronage omelet,10000,breakfast,kichen
+ala zanzi omelet,12000,breakfast,kichen
+spanish omelet,10000,breakfast,kichen
+fromage croissant,5000,pasiterie,kichen
+croissant beurre,3500,pasiterie,kichen
+croissant chocolate,4500,pasiterie,kichen
+croissant nature,3000,pasiterie,kichen
+baguette special,3000,pasiterie,kichen
+baguette locale,2500,pasiterie,kichen
+pac pac 400gr,3000,pasiterie,kichen
+pacpac 800gr,6000,pasiterie,kichen
+pacpac brown 400gr,4000,pasiterie,kichen
+petite hamburger,1500,pasiterie,kichen
+iced cappuccino,5000,coffee,coffee shop
+iced late coffee,5500,coffee,coffee shop
+iced mocha coffee,5500,coffee,coffee shop
+iced tea,4500,coffee,coffee shop
+mint tea,4500,tea ,coffee shop
+prawns de crevette,18000000,starters & salads,kichen
+salad de carpress,10000,starters & salads,kichen
+soup du jour,11000,starters & salads,kichen
+french onion soup,11000,starters & salads,kichen
+cream of tomato soup,11000,starters & salads,kichen
+soupe de goulache,11000,starters & salads,kichen
+chicken wings,15000,starters & salads,kichen
+vegetable antipasti,15000,starters & salads,kichen
+tomato & avocat salad,14000,starters & salads,kichen
+salade de boeuf,15000,starters & salads,kichen
+greek salad ,15000,starters & salads,kichen
+full breakfast,19500,breakfast,kichen
+farm eggs,15000,breakfast,kichen
+darnish pastries,12500,breakfast,kichen
+farm eggs omelet,14000,breakfast,kichen
+continental,14000,breakfast,kichen
+egg benedict,16000,breakfast,kichen
+chicken brouchette,16000,main course,kichen
+chicken cordon bleu,23000,main course,kichen
+1/4 grile poulet,15000,main course,kichen
+gril mukeke,25000,maincourse,kichen
+sangala ala meuniere,20000,maincourse,kichen
+fish & chips,20000,maincourse,kichen
+fillet sangala pouche,20000,maincourse,kichen
+grile tuna staeak,32500, maincourse ,kichen
+grile king prawns,80000,maincourse,kichen
+riz,5000,accompaniments,kichen
+fries / fritti,6000,accompaniments,kichen
+pommes sautee,6000,accompaniments,kichen
+legume du jour ,5000,accompaniments,kichen
+sombe,5000,accompaniments,kichen
+frite de banane,6000,accompaniments,kichen
+bugali,5000,accompaniments,kichen
+puree de pommes,7000,accompaniments,kichen
+seafood linguini,31000,pasta,kichen
+spaghetti ala bolognaise,16000,pasta,kichen
+penne pomodoro,14000,pasta,kichen
+spaghetti cabonara,16000,pasta,kichen
+lemon spaghetti,14000,pasta,kichen
+tagliatelle ala pesto,16000,pasta,kichen
+spaghetti/ tagliatelle putanesaca,16000,pasta,kichen
+spaghetti ala vegetable,14000,pasta,kichen
+tandoor chicken ,16000,indian cuisine,kichen
+butter chicken,23000,indian cuisine,kichen
+chicken jalfrez,23000,indian cuisine,kichen
+prawns masala,33000,indian cuisine,kichen
+mutton korma,20000,indian cuisine,kichen
+beef & vegetable curry,21000,indian cuisine,kichen
+peas & potato curry,10000,indian cuisine,kichen
+dal makhini,10000,indian cuisine,kichen
+pizza familie,58000,pizza,kichen
+plateau de familie,45000,maison spciale,kichen
+casseole chaude,45000,maison spciale,kichen
+special zanzi,45000,maison spciale,kichen
+demi magrgheritta ,10000,maison spciale,kichen
+spaghetti boulettes,10000,maison spciale,kichen
+nuggets de poulet,10000,maison spciale,kichen
+goujons,10000,maison spciale,kichen
+beef sandwich,14000,sandwich,kichen
+chicken sandwich,15000,sandwich,kichen
+tuna sandwich,150000,sandwich,kichen
+vegetable sandwich,12000,sandwich,kichen
+beef burger,14000,sandwich,kichen
+chicken burger,15000,sandwich,kichen
+spring roll de poulet,5000,snacks,kichen
+sopring roll legume,4000,snacks,kichen
+samosa du boeuf,50000,snacks,kichen
+samosa legume,4000,snacks,kichen
+pizza margheritta,14000,pizza,kichen
+veggie pizza,17000,pizza,kichen
+mexicane pizza,19000,pizza,kichen
+suprem pizza,19000,pizza,kichen
+pizza funghi,18000,pizza,kichen
+chicken bali pizza,19000,pizza,kichen
+pizza heavy duty,19000,pizza,kichen
+steak pizza,19000,pizza,kichen
+house pizza ,19000,pizza,kichen
+calzone pizza,19000,pizza,kichen
+la zanzi pizza,22000,pizza,kichen
+full kuku kirundi,55000,maison spciale,kichen
+1/2 kuku kirundi,28000,maison spciale,kichen
+ragout de beouf plantain,20000,maison spciale,kichen
+pilau du poulet,10000,maison spciale,kichen
+pilau du beouf,10000,maison spciale,kichen
+fish in coconut,20000,maison spciale,kichen
+cheese & jambo sandwich,16000,sandwich,kichen
+ice cream,8000,dessert,kichen
+orange panna cotta,8000,dessert,kichen
+sticky toffee pudding,12000,dessert,kichen
+cheese cake,10000,dessert,kichen
+egg less chocolate cake,12000,dessert,kichen
+tropical fruit mix,8000,dessert,kichen
+crepe zuzzette,8000,dessert,kichen
+cheese platter,12000,dessert,kichen
+mini beef brochette,10000,snacks,kichen
+mini poisson brochette,12000,snacks,kichen
+chevre mini brochette,10000,snacks,kichen
+mini poult brochette,10000,snacks,kichen
+captaine brochette,20000,maincourse,kichen
+sosisso brochette,7000,snacks,kichen
+kaguru mbuzi,25000,choma choma,kichen
+fried dangala,10000,snacks,kichen
+house coffee,7000,coffee,coffee shop
+single expresso,2800,coffee,coffee shop
+doudle expresso ,5500,coffee,coffee shop
+cafe latte,5000,coffee,coffee shop
+americano coffee,5000,coffee,coffee shop
+mocha coffee,5500,coffee,coffee shop
+cappucinno,4800,coffee,coffee shop
+machiato coffee,3800,coffee,coffee shop
+regular tea,4000,coffee,coffee shop
+masala / ginger tea,5000,coffee,coffee shop
+green herbal tea,4500,tea,coffee shop
+black tea,2500,tea,coffee shop
+dawa infusion,4500,tea,coffee shop
+hot chcocolate,5000,tea,coffee shop
+irish coffee,7500,bozzy coffee,coffee shop
+russian coffee,7500,bozzy coffee,coffee shop
+calypso coffee,7500,bozzy coffee,coffee shop
+strawberry smoothy,7500,smoothie,coffee shop
+mango smoothy,7500,smoothie,coffee shop
+banana smoothy,7500,smoothie,coffee shop
+tripical mix smoothy,7000,smoothie,coffee shop
+green herbal juice,8000,health juice,coffee shop
+zanzi special juice,8000,health juice,coffee shop
+eye sight juice,8000,health juice,coffee shop
+relaxation juice,8000,health juice,coffee shop
+virgin mary juice,8000,health juice,coffee shop
+farmers special juice,8000,health juice,coffee shop
+vitamin C,8000,health juice,coffee shop
+special omelet,12000,breakfast,kichen
+jambo fronage omelet,10000,breakfast,kichen
+ala zanzi omelet,12000,breakfast,kichen
+spanish omelet,10000,breakfast,kichen
+fromage croissant,5000,pasiterie,kichen
+croissant beurre,3500,pasiterie,kichen
+croissant chocolate,4500,pasiterie,kichen
+croissant nature,3000,pasiterie,kichen
+baguette special,3000,pasiterie,kichen
+baguette locale,2500,pasiterie,kichen
+pac pac 400gr,3000,pasiterie,kichen
+pacpac 800gr,6000,pasiterie,kichen
+pacpac brown 400gr,4000,pasiterie,kichen
+petite hamburger,1500,pasiterie,kichen
+iced cappuccino,5000,coffee,coffee shop
+iced late coffee,5500,coffee,coffee shop
+iced mocha coffee,5500,coffee,coffee shop
+iced tea,4500,coffee,coffee shop
+mint tea,4500,tea ,coffee shop

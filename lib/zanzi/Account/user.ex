@@ -3,7 +3,7 @@ defmodule Zanzibloc.Account.User do
   import Ecto.Changeset
   alias Zanzibloc.Account.{Position, AccountApi, Role, UsersPositions, PositionRole}
   alias Zanzibloc.Ordering.{OrderOwner}
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
 
   @primary_key {:id, Zanzibloc.Ecto.Ksuid, autogenerate: true}
   schema "users" do

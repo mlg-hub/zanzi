@@ -1,5 +1,5 @@
 defmodule Zanzibloc.Account.AccountApi do
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
   alias Zanzibloc.Account.{Position, User, Role}
   alias Comeonin.Ecto.Password
   import Ecto.Query

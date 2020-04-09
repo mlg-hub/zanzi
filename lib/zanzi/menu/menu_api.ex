@@ -1,6 +1,6 @@
 defmodule Zanzibloc.Menu.MenuApi do
   alias Zanzibloc.Menu.{Item, Departement, Category}
-  alias Zanzibloc.Repo
+  alias Zanzi.Repo
   import Ecto.Query, warn: false
 
   def list_categories do
