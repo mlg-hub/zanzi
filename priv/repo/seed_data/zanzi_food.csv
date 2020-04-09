@@ -8,12 +8,12 @@ egg benedict,16000,breakfast,kitchen
 chicken brouchette,16000,main course,kitchen
 chicken cordon bleu,23000,main course,kitchen
 1/4 grile poulet,15000,main course,kitchen
-gril mukeke,25000,maincourse,kitchen
-sangala ala meuniere,20000,maincourse,kitchen
-fish & chips,20000,maincourse,kitchen
-fillet sangala pouche,20000,maincourse,kitchen
-grile tuna staeak,32500, maincourse ,kitchen
-grile king prawns,80000,maincourse,kitchen
+gril mukeke,25000,main course,kitchen
+sangala ala meuniere,20000,main course,kitchen
+fish & chips,20000,main course,kitchen
+fillet sangala pouche,20000,main course,kitchen
+grile tuna staeak,32500, main course ,kitchen
+grile king prawns,80000,main course,kitchen
 riz,5000,accompaniments,kitchen
 fries / fritti,6000,accompaniments,kitchen
 pommes sautee,6000,accompaniments,kitchen
@@ -39,22 +39,22 @@ beef & vegetable curry,21000,indian cuisine,kitchen
 peas & potato curry,10000,indian cuisine,kitchen
 dal makhini,10000,indian cuisine,kitchen
 pizza familie,58000,pizza,kitchen
-plateau de familie,45000,maison spciale,kitchen
-casseole chaude,45000,maison spciale,kitchen
-special zanzi,45000,maison spciale,kitchen
-demi magrgheritta ,10000,maison spciale,kitchen
-spaghetti boulettes,10000,maison spciale,kitchen
-nuggets de poulet,10000,maison spciale,kitchen
-goujons,10000,maison spciale,kitchen
+plateau de familie,45000,maison speciale,kitchen
+casseole chaude,45000,maison speciale,kitchen
+special zanzi,45000,maison speciale,kitchen
+demi magrgheritta ,10000,maison speciale,kitchen
+spaghetti boulettes,10000,maison speciale,kitchen
+nuggets de poulet,10000,maison speciale,kitchen
+goujons,10000,maison speciale,kitchen
 beef sandwich,14000,sandwich,kitchen
 chicken sandwich,15000,sandwich,kitchen
-tuna sandwich,150000,sandwich,kitchen
+tuna sandwich,15000,sandwich,kitchen
 vegetable sandwich,12000,sandwich,kitchen
 beef burger,14000,sandwich,kitchen
 chicken burger,15000,sandwich,kitchen
 spring roll de poulet,5000,snacks,kitchen
 sopring roll legume,4000,snacks,kitchen
-samosa du boeuf,50000,snacks,kitchen
+samosa du boeuf,5000,snacks,kitchen
 samosa legume,4000,snacks,kitchen
 pizza margheritta,14000,pizza,kitchen
 veggie pizza,17000,pizza,kitchen
@@ -67,12 +67,12 @@ steak pizza,19000,pizza,kitchen
 house pizza ,19000,pizza,kitchen
 calzone pizza,19000,pizza,kitchen
 la zanzi pizza,22000,pizza,kitchen
-full kuku kirundi,55000,maison spciale,kitchen
-1/2 kuku kirundi,28000,maison spciale,kitchen
-ragout de beouf plantain,20000,maison spciale,kitchen
-pilau du poulet,10000,maison spciale,kitchen
-pilau du beouf,10000,maison spciale,kitchen
-fish in coconut,20000,maison spciale,kitchen
+full kuku kirundi,55000,maison speciale,kitchen
+1/2 kuku kirundi,28000,maison speciale,kitchen
+ragout de beouf plantain,20000,maison speciale,kitchen
+pilau du poulet,10000,maison speciale,kitchen
+pilau du beouf,10000,maison speciale,kitchen
+fish in coconut,20000,maison speciale,kitchen
 cheese & jambo sandwich,16000,sandwich,kitchen
 ice cream,8000,dessert,kitchen
 orange panna cotta,8000,dessert,kitchen
@@ -86,7 +86,7 @@ mini beef brochette,10000,snacks,kitchen
 mini poisson brochette,12000,snacks,kitchen
 chevre mini brochette,10000,snacks,kitchen
 mini poult brochette,10000,snacks,kitchen
-captaine brochette,20000,maincourse,kitchen
+captaine brochette,20000,main course,kitchen
 sosisso brochette,7000,snacks,kitchen
 kaguru mbuzi,25000,choma choma,kitchen
 fried dangala,10000,snacks,kitchen
@@ -137,7 +137,7 @@ iced late coffee,5500,coffee,coffee shop
 iced mocha coffee,5500,coffee,coffee shop
 iced tea,4500,coffee,coffee shop
 mint tea,4500,tea ,coffee shop
-prawns de crevette,18000000,starters & salads,kitchen
+prawns de crevette,18000,starters & salads,kitchen
 salad de carpress,10000,starters & salads,kitchen
 soup du jour,11000,starters & salads,kitchen
 french onion soup,11000,starters & salads,kitchen
@@ -157,12 +157,12 @@ egg benedict,16000,breakfast,kitchen
 chicken brouchette,16000,main course,kitchen
 chicken cordon bleu,23000,main course,kitchen
 1/4 grile poulet,15000,main course,kitchen
-gril mukeke,25000,maincourse,kitchen
-sangala ala meuniere,20000,maincourse,kitchen
-fish & chips,20000,maincourse,kitchen
-fillet sangala pouche,20000,maincourse,kitchen
-grile tuna staeak,32500, maincourse ,kitchen
-grile king prawns,80000,maincourse,kitchen
+gril mukeke,25000,main course,kitchen
+sangala ala meuniere,20000,main course,kitchen
+fish & chips,20000,main course,kitchen
+fillet sangala pouche,20000,main course,kitchen
+grile tuna staeak,32500, main course ,kitchen
+grile king prawns,80000,main course,kitchen
 riz,5000,accompaniments,kitchen
 fries / fritti,6000,accompaniments,kitchen
 pommes sautee,6000,accompaniments,kitchen
@@ -188,16 +188,16 @@ beef & vegetable curry,21000,indian cuisine,kitchen
 peas & potato curry,10000,indian cuisine,kitchen
 dal makhini,10000,indian cuisine,kitchen
 pizza familie,58000,pizza,kitchen
-plateau de familie,45000,maison spciale,kitchen
-casseole chaude,45000,maison spciale,kitchen
-special zanzi,45000,maison spciale,kitchen
-demi magrgheritta ,10000,maison spciale,kitchen
-spaghetti boulettes,10000,maison spciale,kitchen
-nuggets de poulet,10000,maison spciale,kitchen
-goujons,10000,maison spciale,kitchen
+plateau de familie,45000,maison speciale,kitchen
+casseole chaude,45000,maison speciale,kitchen
+special zanzi,45000,maison speciale,kitchen
+demi magrgheritta ,10000,maison speciale,kitchen
+spaghetti boulettes,10000,maison speciale,kitchen
+nuggets de poulet,10000,maison speciale,kitchen
+goujons,10000,maison speciale,kitchen
 beef sandwich,14000,sandwich,kitchen
 chicken sandwich,15000,sandwich,kitchen
-tuna sandwich,150000,sandwich,kitchen
+tuna sandwich,15000,sandwich,kitchen
 vegetable sandwich,12000,sandwich,kitchen
 beef burger,14000,sandwich,kitchen
 chicken burger,15000,sandwich,kitchen
@@ -216,12 +216,12 @@ steak pizza,19000,pizza,kitchen
 house pizza ,19000,pizza,kitchen
 calzone pizza,19000,pizza,kitchen
 la zanzi pizza,22000,pizza,kitchen
-full kuku kirundi,55000,maison spciale,kitchen
-1/2 kuku kirundi,28000,maison spciale,kitchen
-ragout de beouf plantain,20000,maison spciale,kitchen
-pilau du poulet,10000,maison spciale,kitchen
-pilau du beouf,10000,maison spciale,kitchen
-fish in coconut,20000,maison spciale,kitchen
+full kuku kirundi,55000,maison speciale,kitchen
+1/2 kuku kirundi,28000,maison speciale,kitchen
+ragout de beouf plantain,20000,maison speciale,kitchen
+pilau du poulet,10000,maison speciale,kitchen
+pilau du beouf,10000,maison speciale,kitchen
+fish in coconut,20000,maison speciale,kitchen
 cheese & jambo sandwich,16000,sandwich,kitchen
 ice cream,8000,dessert,kitchen
 orange panna cotta,8000,dessert,kitchen
@@ -235,7 +235,7 @@ mini beef brochette,10000,snacks,kitchen
 mini poisson brochette,12000,snacks,kitchen
 chevre mini brochette,10000,snacks,kitchen
 mini poult brochette,10000,snacks,kitchen
-captaine brochette,20000,maincourse,kitchen
+captaine brochette,20000,main course,kitchen
 sosisso brochette,7000,snacks,kitchen
 kaguru mbuzi,25000,choma choma,kitchen
 fried dangala,10000,snacks,kitchen
@@ -268,7 +268,7 @@ virgin mary juice,8000,health juice,coffee shop
 farmers special juice,8000,health juice,coffee shop
 vitamin C,8000,health juice,coffee shop
 special omelet,12000,breakfast,kitchen
-jambo fronage omelet,10000,breakfast,kitchen
+jambo fromage omelet,10000,breakfast,kitchen
 ala zanzi omelet,12000,breakfast,kitchen
 spanish omelet,10000,breakfast,kitchen
 fromage croissant,5000,pasiterie,kitchen
