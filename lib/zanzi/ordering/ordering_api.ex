@@ -141,7 +141,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       Enum.reduce(
         Map.get(attrs, :items),
         0,
-        fn %{sold_quantity: qty, sold_price: p}, acc -> qty * p + acc end
+        fn %{sold_quantity: qty, sold_price: p}, acc ->
+          IO.inspect(qty)
+          IO.inspect(p)
+          qty * p + acc
+        end
       )
 
     attrs = Map.put(attrs, :total, total)

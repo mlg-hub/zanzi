@@ -3,9 +3,9 @@ defmodule Zanzibloc.Menu.Item do
   import Ecto.Changeset
 
   schema "items" do
-    field(:added_on, :utc_datetime)
+    field(:added_on, :date)
     field(:name, :string)
-    field(:price, :decimal)
+    field(:price, :integer)
     belongs_to(:departement, Zanzibloc.Menu.Departement)
     belongs_to(:category, Zanzibloc.Menu.Category)
     has_many(:inventory, Zanzibloc.Inventory.Stock)
