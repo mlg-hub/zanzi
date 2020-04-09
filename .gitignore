@@ -34,3 +34,4 @@ npm-debug.log
 /priv/static/
 .deliver/releases/
 .elixir_ls/
+/.elixir_ls/*
