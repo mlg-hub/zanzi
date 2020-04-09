@@ -1,0 +1,288 @@
+ITEM,SELING PRICE,CATEGORY,DEPARTEMENT
+full breakfast,19500,breakfast,kitchen
+farm eggs,15000,breakfast,kitchen
+darnish pastries,12500,breakfast,kitchen
+farm eggs omelet,14000,breakfast,kitchen
+continental,14000,breakfast,kitchen
+egg benedict,16000,breakfast,kitchen
+chicken brouchette,16000,main course,kitchen
+chicken cordon bleu,23000,main course,kitchen
+1/4 grile poulet,15000,main course,kitchen
+gril mukeke,25000,maincourse,kitchen
+sangala ala meuniere,20000,maincourse,kitchen
+fish & chips,20000,maincourse,kitchen
+fillet sangala pouche,20000,maincourse,kitchen
+grile tuna staeak,32500, maincourse ,kitchen
+grile king prawns,80000,maincourse,kitchen
+riz,5000,accompaniments,kitchen
+fries / fritti,6000,accompaniments,kitchen
+pommes sautee,6000,accompaniments,kitchen
+legume du jour ,5000,accompaniments,kitchen
+sombe,5000,accompaniments,kitchen
+frite de banane,6000,accompaniments,kitchen
+bugali,5000,accompaniments,kitchen
+puree de pommes,7000,accompaniments,kitchen
+seafood linguini,31000,pasta,kitchen
+spaghetti ala bolognaise,16000,pasta,kitchen
+penne pomodoro,14000,pasta,kitchen
+spaghetti cabonara,16000,pasta,kitchen
+lemon spaghetti,14000,pasta,kitchen
+tagliatelle ala pesto,16000,pasta,kitchen
+spaghetti/ tagliatelle putanesaca,16000,pasta,kitchen
+spaghetti ala vegetable,14000,pasta,kitchen
+tandoor chicken ,16000,indian cuisine,kitchen
+butter chicken,23000,indian cuisine,kitchen
+chicken jalfrez,23000,indian cuisine,kitchen
+prawns masala,33000,indian cuisine,kitchen
+mutton korma,20000,indian cuisine,kitchen
+beef & vegetable curry,21000,indian cuisine,kitchen
+peas & potato curry,10000,indian cuisine,kitchen
+dal makhini,10000,indian cuisine,kitchen
+pizza familie,58000,pizza,kitchen
+plateau de familie,45000,maison spciale,kitchen
+casseole chaude,45000,maison spciale,kitchen
+special zanzi,45000,maison spciale,kitchen
+demi magrgheritta ,10000,maison spciale,kitchen
+spaghetti boulettes,10000,maison spciale,kitchen
+nuggets de poulet,10000,maison spciale,kitchen
+goujons,10000,maison spciale,kitchen
+beef sandwich,14000,sandwich,kitchen
+chicken sandwich,15000,sandwich,kitchen
+tuna sandwich,150000,sandwich,kitchen
+vegetable sandwich,12000,sandwich,kitchen
+beef burger,14000,sandwich,kitchen
+chicken burger,15000,sandwich,kitchen
+spring roll de poulet,5000,snacks,kitchen
+sopring roll legume,4000,snacks,kitchen
+samosa du boeuf,50000,snacks,kitchen
+samosa legume,4000,snacks,kitchen
+pizza margheritta,14000,pizza,kitchen
+veggie pizza,17000,pizza,kitchen
+mexicane pizza,19000,pizza,kitchen
+suprem pizza,19000,pizza,kitchen
+pizza funghi,18000,pizza,kitchen
+chicken bali pizza,19000,pizza,kitchen
+pizza heavy duty,19000,pizza,kitchen
+steak pizza,19000,pizza,kitchen
+house pizza ,19000,pizza,kitchen
+calzone pizza,19000,pizza,kitchen
+la zanzi pizza,22000,pizza,kitchen
+full kuku kirundi,55000,maison spciale,kitchen
+1/2 kuku kirundi,28000,maison spciale,kitchen
+ragout de beouf plantain,20000,maison spciale,kitchen
+pilau du poulet,10000,maison spciale,kitchen
+pilau du beouf,10000,maison spciale,kitchen
+fish in coconut,20000,maison spciale,kitchen
+cheese & jambo sandwich,16000,sandwich,kitchen
+ice cream,8000,dessert,kitchen
+orange panna cotta,8000,dessert,kitchen
+sticky toffee pudding,12000,dessert,kitchen
+cheese cake,10000,dessert,kitchen
+egg less chocolate cake,12000,dessert,kitchen
+tropical fruit mix,8000,dessert,kitchen
+crepe zuzzette,8000,dessert,kitchen
+cheese platter,12000,dessert,kitchen
+mini beef brochette,10000,snacks,kitchen
+mini poisson brochette,12000,snacks,kitchen
+chevre mini brochette,10000,snacks,kitchen
+mini poult brochette,10000,snacks,kitchen
+captaine brochette,20000,maincourse,kitchen
+sosisso brochette,7000,snacks,kitchen
+kaguru mbuzi,25000,choma choma,kitchen
+fried dangala,10000,snacks,kitchen
+house coffee,7000,coffee,coffee shop
+single expresso,2800,coffee,coffee shop
+doudle expresso ,5500,coffee,coffee shop
+cafe latte,5000,coffee,coffee shop
+americano coffee,5000,coffee,coffee shop
+mocha coffee,5500,coffee,coffee shop
+cappucinno,4800,coffee,coffee shop
+machiato coffee,3800,coffee,coffee shop
+regular tea,4000,coffee,coffee shop
+masala / ginger tea,5000,coffee,coffee shop
+green herbal tea,4500,tea,coffee shop
+black tea,2500,tea,coffee shop
+dawa infusion,4500,tea,coffee shop
+hot chcocolate,5000,tea,coffee shop
+irish coffee,7500,bozzy coffee,coffee shop
+russian coffee,7500,bozzy coffee,coffee shop
+calypso coffee,7500,bozzy coffee,coffee shop
+strawberry smoothy,7500,smoothie,coffee shop
+mango smoothy,7500,smoothie,coffee shop
+banana smoothy,7500,smoothie,coffee shop
+tripical mix smoothy,7000,smoothie,coffee shop
+green herbal juice,8000,health juice,coffee shop
+zanzi special juice,8000,health juice,coffee shop
+eye sight juice,8000,health juice,coffee shop
+relaxation juice,8000,health juice,coffee shop
+virgin mary juice,8000,health juice,coffee shop
+farmers special juice,8000,health juice,coffee shop
+vitamin C,8000,health juice,coffee shop
+special omelet,12000,breakfast,kitchen
+jambo fronage omelet,10000,breakfast,kitchen
+ala zanzi omelet,12000,breakfast,kitchen
+spanish omelet,10000,breakfast,kitchen
+fromage croissant,5000,pasiterie,kitchen
+croissant beurre,3500,pasiterie,kitchen
+croissant chocolate,4500,pasiterie,kitchen
+croissant nature,3000,pasiterie,kitchen
+baguette special,3000,pasiterie,kitchen
+baguette locale,2500,pasiterie,kitchen
+pac pac 400gr,3000,pasiterie,kitchen
+pacpac 800gr,6000,pasiterie,kitchen
+pacpac brown 400gr,4000,pasiterie,kitchen
+petite hamburger,1500,pasiterie,kitchen
+iced cappuccino,5000,coffee,coffee shop
+iced late coffee,5500,coffee,coffee shop
+iced mocha coffee,5500,coffee,coffee shop
+iced tea,4500,coffee,coffee shop
+mint tea,4500,tea ,coffee shop
+prawns de crevette,18000000,starters & salads,kitchen
+salad de carpress,10000,starters & salads,kitchen
+soup du jour,11000,starters & salads,kitchen
+french onion soup,11000,starters & salads,kitchen
+cream of tomato soup,11000,starters & salads,kitchen
+soupe de goulache,11000,starters & salads,kitchen
+chicken wings,15000,starters & salads,kitchen
+vegetable antipasti,15000,starters & salads,kitchen
+tomato & avocat salad,14000,starters & salads,kitchen
+salade de boeuf,15000,starters & salads,kitchen
+greek salad ,15000,starters & salads,kitchen
+full breakfast,19500,breakfast,kitchen
+farm eggs,15000,breakfast,kitchen
+darnish pastries,12500,breakfast,kitchen
+farm eggs omelet,14000,breakfast,kitchen
+continental,14000,breakfast,kitchen
+egg benedict,16000,breakfast,kitchen
+chicken brouchette,16000,main course,kitchen
+chicken cordon bleu,23000,main course,kitchen
+1/4 grile poulet,15000,main course,kitchen
+gril mukeke,25000,maincourse,kitchen
+sangala ala meuniere,20000,maincourse,kitchen
+fish & chips,20000,maincourse,kitchen
+fillet sangala pouche,20000,maincourse,kitchen
+grile tuna staeak,32500, maincourse ,kitchen
+grile king prawns,80000,maincourse,kitchen
+riz,5000,accompaniments,kitchen
+fries / fritti,6000,accompaniments,kitchen
+pommes sautee,6000,accompaniments,kitchen
+legume du jour ,5000,accompaniments,kitchen
+sombe,5000,accompaniments,kitchen
+frite de banane,6000,accompaniments,kitchen
+bugali,5000,accompaniments,kitchen
+puree de pommes,7000,accompaniments,kitchen
+seafood linguini,31000,pasta,kitchen
+spaghetti ala bolognaise,16000,pasta,kitchen
+penne pomodoro,14000,pasta,kitchen
+spaghetti cabonara,16000,pasta,kitchen
+lemon spaghetti,14000,pasta,kitchen
+tagliatelle ala pesto,16000,pasta,kitchen
+spaghetti/ tagliatelle putanesaca,16000,pasta,kitchen
+spaghetti ala vegetable,14000,pasta,kitchen
+tandoor chicken ,16000,indian cuisine,kitchen
+butter chicken,23000,indian cuisine,kitchen
+chicken jalfrez,23000,indian cuisine,kitchen
+prawns masala,33000,indian cuisine,kitchen
+mutton korma,20000,indian cuisine,kitchen
+beef & vegetable curry,21000,indian cuisine,kitchen
+peas & potato curry,10000,indian cuisine,kitchen
+dal makhini,10000,indian cuisine,kitchen
+pizza familie,58000,pizza,kitchen
+plateau de familie,45000,maison spciale,kitchen
+casseole chaude,45000,maison spciale,kitchen
+special zanzi,45000,maison spciale,kitchen
+demi magrgheritta ,10000,maison spciale,kitchen
+spaghetti boulettes,10000,maison spciale,kitchen
+nuggets de poulet,10000,maison spciale,kitchen
+goujons,10000,maison spciale,kitchen
+beef sandwich,14000,sandwich,kitchen
+chicken sandwich,15000,sandwich,kitchen
+tuna sandwich,150000,sandwich,kitchen
+vegetable sandwich,12000,sandwich,kitchen
+beef burger,14000,sandwich,kitchen
+chicken burger,15000,sandwich,kitchen
+spring roll de poulet,5000,snacks,kitchen
+sopring roll legume,4000,snacks,kitchen
+samosa du boeuf,50000,snacks,kitchen
+samosa legume,4000,snacks,kitchen
+pizza margheritta,14000,pizza,kitchen
+veggie pizza,17000,pizza,kitchen
+mexicane pizza,19000,pizza,kitchen
+suprem pizza,19000,pizza,kitchen
+pizza funghi,18000,pizza,kitchen
+chicken bali pizza,19000,pizza,kitchen
+pizza heavy duty,19000,pizza,kitchen
+steak pizza,19000,pizza,kitchen
+house pizza ,19000,pizza,kitchen
+calzone pizza,19000,pizza,kitchen
+la zanzi pizza,22000,pizza,kitchen
+full kuku kirundi,55000,maison spciale,kitchen
+1/2 kuku kirundi,28000,maison spciale,kitchen
+ragout de beouf plantain,20000,maison spciale,kitchen
+pilau du poulet,10000,maison spciale,kitchen
+pilau du beouf,10000,maison spciale,kitchen
+fish in coconut,20000,maison spciale,kitchen
+cheese & jambo sandwich,16000,sandwich,kitchen
+ice cream,8000,dessert,kitchen
+orange panna cotta,8000,dessert,kitchen
+sticky toffee pudding,12000,dessert,kitchen
+cheese cake,10000,dessert,kitchen
+egg less chocolate cake,12000,dessert,kitchen
+tropical fruit mix,8000,dessert,kitchen
+crepe zuzzette,8000,dessert,kitchen
+cheese platter,12000,dessert,kitchen
+mini beef brochette,10000,snacks,kitchen
+mini poisson brochette,12000,snacks,kitchen
+chevre mini brochette,10000,snacks,kitchen
+mini poult brochette,10000,snacks,kitchen
+captaine brochette,20000,maincourse,kitchen
+sosisso brochette,7000,snacks,kitchen
+kaguru mbuzi,25000,choma choma,kitchen
+fried dangala,10000,snacks,kitchen
+house coffee,7000,coffee,coffee shop
+single expresso,2800,coffee,coffee shop
+doudle expresso ,5500,coffee,coffee shop
+cafe latte,5000,coffee,coffee shop
+americano coffee,5000,coffee,coffee shop
+mocha coffee,5500,coffee,coffee shop
+cappucinno,4800,coffee,coffee shop
+machiato coffee,3800,coffee,coffee shop
+regular tea,4000,coffee,coffee shop
+masala / ginger tea,5000,coffee,coffee shop
+green herbal tea,4500,tea,coffee shop
+black tea,2500,tea,coffee shop
+dawa infusion,4500,tea,coffee shop
+hot chcocolate,5000,tea,coffee shop
+irish coffee,7500,bozzy coffee,coffee shop
+russian coffee,7500,bozzy coffee,coffee shop
+calypso coffee,7500,bozzy coffee,coffee shop
+strawberry smoothy,7500,smoothie,coffee shop
+mango smoothy,7500,smoothie,coffee shop
+banana smoothy,7500,smoothie,coffee shop
+tripical mix smoothy,7000,smoothie,coffee shop
+green herbal juice,8000,health juice,coffee shop
+zanzi special juice,8000,health juice,coffee shop
+eye sight juice,8000,health juice,coffee shop
+relaxation juice,8000,health juice,coffee shop
+virgin mary juice,8000,health juice,coffee shop
+farmers special juice,8000,health juice,coffee shop
+vitamin C,8000,health juice,coffee shop
+special omelet,12000,breakfast,kitchen
+jambo fronage omelet,10000,breakfast,kitchen
+ala zanzi omelet,12000,breakfast,kitchen
+spanish omelet,10000,breakfast,kitchen
+fromage croissant,5000,pasiterie,kitchen
+croissant beurre,3500,pasiterie,kitchen
+croissant chocolate,4500,pasiterie,kitchen
+croissant nature,3000,pasiterie,kitchen
+baguette special,3000,pasiterie,kitchen
+baguette locale,2500,pasiterie,kitchen
+pac pac 400gr,3000,pasiterie,kitchen
+pacpac 800gr,6000,pasiterie,kitchen
+pacpac brown 400gr,4000,pasiterie,kitchen
+petite hamburger,1500,pasiterie,kitchen
+iced cappuccino,5000,coffee,coffee shop
+iced late coffee,5500,coffee,coffee shop
+iced mocha coffee,5500,coffee,coffee shop
+iced tea,4500,coffee,coffee shop
+mint tea,4500,tea ,coffee shop

@@ -5,6 +5,7 @@ defmodule Zanzibloc.Ordering.Table do
   schema "tables" do
     field(:number, :integer, null: false)
     has_many(:orders, Zanzibloc.Ordering.Order)
+    timestamps()
   end
 
   def changeset(%__MODULE__{} = table, attrs) do

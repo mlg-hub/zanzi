@@ -3,9 +3,9 @@ defmodule Zanzibloc.Menu.Item do
   import Ecto.Changeset
 
   schema "items" do
-    field(:added_on, :date)
+    field(:added_on, :utc_datetime)
     field(:name, :string)
-    field(:price, :integer)
+    field(:price, :decimal)
     belongs_to(:departement, Zanzibloc.Menu.Departement)
     belongs_to(:category, Zanzibloc.Menu.Category)
     has_many(:inventory, Zanzibloc.Inventory.Stock)
@@ -17,6 +17,6 @@ defmodule Zanzibloc.Menu.Item do
     item
     |> cast(attrs, [:added_on, :name, :price, :category_id, :departement_id])
     # |> foreign_key_constraint([:departement, :category])
-    |> validate_required([:added_on, :name, :price, :category_id])
+    |> validate_required([:name, :price, :category_id])
   end
 end
