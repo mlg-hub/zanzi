@@ -193,7 +193,7 @@ defmodule ZanziWeb.Schema do
   end
 
   subscription do
-    field(:commande, list_of(:order_sub_resp)) do
+    field(:commande, :order_sub_resp) do
       arg(:dest, :string)
 
       config(fn args, _ ->
@@ -204,7 +204,7 @@ defmodule ZanziWeb.Schema do
         require Logger
         Logger.info("on config....")
         IO.inspect(args)
-        {:ok, topic: "bar"}
+        {:ok, topic: args.dest}
 
         # _ ->
         #   {:error, "go and login"}
@@ -214,7 +214,7 @@ defmodule ZanziWeb.Schema do
       resolve(fn root, _, _ ->
         IO.puts("from resolver hereeeeeee!!!")
         IO.inspect(root)
-        {:ok, root}
+        {:ok, %{route: Enum.at(root, 0), details: Enum.at(root, 1)}}
       end)
     end
   end
