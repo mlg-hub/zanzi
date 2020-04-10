@@ -75,19 +75,19 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
         saved_bon_commande,
         fn %OrderDetail{departement_id: dpt} = details ->
           case dpt do
-            19 ->
+            2 ->
               kitchen_map = transform_order_details(details)
               Agent.update(kitchen, fn list -> [kitchen_map | list] end)
 
             # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "173")
 
-            20 ->
+            1 ->
               bar_map = transform_order_details(details)
               Agent.update(bar, fn list -> [bar_map | list] end)
 
             # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "174")
 
-            21 ->
+            3 ->
               coffee_map = transform_order_details(details)
               Agent.update(coffee, fn list -> [coffee_map | list] end)
 
@@ -102,10 +102,16 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       toKitchen = Agent.get(kitchen, fn list -> list end)
       toBar = Agent.get(bar, fn list -> list end)
       toCoffee = Agent.get(coffee, fn list -> list end)
+      emptyList = []
+      Logger.info("modified kitchen...")
+      toKitchen = [%{route: "kitchen"} | [toKitchen | emptyList]]
+
+      toBar = [%{route: "bar"} | [toBar | emptyList]]
+      toCoffee = [%{route: "coffee"} | [toCoffee | emptyList]]
 
       # IO.inspect([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]])
 
-      Enum.each([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]], fn [data, route] ->
+      Enum.each([[toKitchen, "kitchen"], [toBar, "bar"], [toCoffee, "coffee"]], fn [data, route] ->
         cond do
           length(data) > 0 ->
             Absinthe.Subscription.publish(ZanziWeb.Endpoint, data, commande: route)

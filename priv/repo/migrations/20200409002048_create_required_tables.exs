@@ -17,7 +17,7 @@ defmodule Zanzi.Repo.Migrations.CreateRequiredTables do
 
     create table(:items) do
       add(:name, :string, null: false)
-      add(:price, :decimal, null: false)
+      add(:price, :integer, null: false)
       add(:added_on, :utc_datetime, null: false, default: fragment("CURRENT_TIMESTAMP"))
       add(:departement_id, references(:departements, on_delete: :nothing))
       add(:category_id, references(:categories, on_delete: :nothing))
@@ -66,7 +66,7 @@ defmodule Zanzi.Repo.Migrations.CreateRequiredTables do
       add(:ordered_at, :utc_datetime, null: false, default: fragment("NOW()"))
       add :table_id, references(:tables)
       add :total, :integer, default: 0
-      add :merge_status, :integer, default: 0
+      add :merged_status, :integer, default: 0
       add :split_status, :integer, default: 0
       add(:filled, :integer, default: 1)
       add(:splitted_from, :id)

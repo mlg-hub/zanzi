@@ -3,7 +3,7 @@ defmodule Zanzibloc.Menu.Item do
   import Ecto.Changeset
 
   schema "items" do
-    field(:added_on, :date)
+    field(:added_on, :utc_datetime)
     field(:name, :string)
     field(:price, :integer)
     belongs_to(:departement, Zanzibloc.Menu.Departement)

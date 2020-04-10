@@ -81,6 +81,15 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field(:user, :user)
   end
 
+  object :order_sub_resp do
+    field :route, :route_map
+    field :details, list_of(:order_detail)
+  end
+
+  object :route_map do
+    field :route, :string
+  end
+
   object :order_detail do
     field(:item_name, :string)
     field(:code, :string)

@@ -193,19 +193,28 @@ defmodule ZanziWeb.Schema do
   end
 
   subscription do
-    field(:commande, list_of(:order_detail)) do
-      config(fn _args, %{context: context} ->
-        # IO.puts("ivi context")
-        # IO.inspect(ctx)
-        # {:ok, topic: "174"}
-        case context[:current_user] do
-          %User{position: position} = user ->
-            position = Enum.at(position, 0).id
-            {:ok, topic: Integer.to_string(position)}
+    field(:commande, list_of(:order_sub_resp)) do
+      arg(:dest, :string)
 
-          _ ->
-            {:error, "go and login"}
-        end
+      config(fn args, _ ->
+        # {:ok, topic: "174"}
+        # case context[:current_user] do
+        #   %User{position: position} = user ->
+        #     position = Enum.at(position, 0).id
+        require Logger
+        Logger.info("on config....")
+        IO.inspect(args)
+        {:ok, topic: "bar"}
+
+        # _ ->
+        #   {:error, "go and login"}
+        # end
+      end)
+
+      resolve(fn root, _, _ ->
+        IO.puts("from resolver hereeeeeee!!!")
+        IO.inspect(root)
+        {:ok, root}
       end)
     end
   end
