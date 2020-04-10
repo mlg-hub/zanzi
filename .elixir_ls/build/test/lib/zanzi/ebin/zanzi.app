@@ -10,6 +10,7 @@
               {modules,['Elixir.Zanzi','Elixir.Zanzi.Application',
                         'Elixir.Zanzi.DataCase','Elixir.Zanzi.Repo',
                         'Elixir.ZanziWeb','Elixir.ZanziWeb.AdminController',
+                        'Elixir.ZanziWeb.AdminView',
                         'Elixir.ZanziWeb.Auth.TokenAuthentication',
                         'Elixir.ZanziWeb.ChannelCase',
                         'Elixir.ZanziWeb.ConnCase','Elixir.ZanziWeb.Context',

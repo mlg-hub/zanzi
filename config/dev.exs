@@ -4,7 +4,7 @@ use Mix.Config
 config :zanzi, Zanzi.Repo,
   username: "postgres",
   password: "postgres",
-  database: "zanzibloc_dev",
+  database: "prod_zanzi",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
