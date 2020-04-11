@@ -141,6 +141,16 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
      })}
   end
 
+  def cleared_bills(_, _, %{context: context}) do
+    user = context[:current_user]
+    cleared_bills = OrderingApi.get_cleared_bill(user.id)
+    {:ok, cleared_bills}
+  end
+
+  def get_pending_orders(_, _, _) do
+    {:ok, OrderingApi.get_pending_orders()}
+  end
+
   def create_split(_, %{table_id: ti}, %{context: context}) do
     {:ok, OrderingApi.create_empty_split(%{table_id: ti, user_id: context[:current_user].id})}
   end

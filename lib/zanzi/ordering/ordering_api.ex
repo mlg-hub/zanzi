@@ -360,6 +360,55 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.one(query)
   end
 
+  def get_cleared_bill(user_id) do
+    query =
+      OrderPayment
+      |> where([p], p.user_id == ^user_id)
+      |> join(:left, [p], o in assoc(p, :order), on: o.status == "paid")
+      # |> join(:left, [p, o], d in assoc(o, :order_details))
+      |> preload([p, o], order: o)
+
+    Repo.all(query)
+  end
+
+  def get_pending_bill() do
+    query = from o in Order, where: o.status == "created"
+    Repo.all(query)
+  end
+
+  def get_order_details(order_id) do
+    case Repo.get(Order, order_id) do
+      %Order{} = order ->
+        case order.merged_status do
+          0 -> Repo.preload(order, :order_details)
+          1 -> display_merged_bill(order.id)
+        end
+
+      _ ->
+        {:error, "order does not exist"}
+    end
+  end
+
+  def get_pending_orders do
+    query = from u in Order, where: u.status == "created"
+    Repo.all(query)
+  end
+
+  def get_incomplete_orders do
+    query = from u in Order, where: u.status == "incomplete"
+    Repo.all(query)
+  end
+
+  def order_payment_history(id) do
+    query =
+      Order
+      |> where([o], o.id == ^id)
+      |> join(:left, [o], payments in OrderPayment, on: payments.order_id == o.id)
+      |> preload([o, payments], payments: payments)
+
+    Repo.all(query)
+  end
+
   # def split_bill(
   #       %{
   #         order_id: order_id,

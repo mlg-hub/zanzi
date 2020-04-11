@@ -65,10 +65,20 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field(:quantity, :integer)
   end
 
+  object :order_payment do
+    field :order, :order
+    field :order_total, :integer
+    field :order_paid, :integer
+    field :inserted_at, :custom_naive_date
+  end
+
   object :order do
     field(:id, :id)
     field(:code, :string)
     field(:inserted_at, :custom_naive_date)
+    field :merged_status, :integer
+    field :split_status, :integer
+    field :status, :string
 
     field :order_details, list_of(:order_detail) do
       resolve(fn parent, _, _ ->

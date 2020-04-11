@@ -73,6 +73,10 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.display_order_with_merged/3)
     end
 
+    field :get_pending_orders, list_of(:order) do
+      resolve(&OrderingResolvers.get_pending_orders/3)
+    end
+
     field :get_all_split_bill_for_user, list_of(:open_split_bill_list) do
       arg(:username, :string)
       resolve(&OrderingResolvers.get_all_split_bill_for_user/3)
@@ -85,6 +89,10 @@ defmodule ZanziWeb.Schema do
     field :orders_for_waiter, list_of(:waiter_order) do
       arg(:username, :string)
       resolve(&OrderingResolvers.get_all_orders_from_waiter/3)
+    end
+
+    field :get_cleared_bills, list_of(:order_payment) do
+      resolve(&OrderingResolvers.cleared_bills/3)
     end
 
     field :get_all_from_department, list_of(:department_detail) do
@@ -201,9 +209,7 @@ defmodule ZanziWeb.Schema do
         # case context[:current_user] do
         #   %User{position: position} = user ->
         #     position = Enum.at(position, 0).id
-        require Logger
-        Logger.info("on config....")
-        IO.inspect(args)
+
         {:ok, topic: args.dest}
 
         # _ ->
@@ -212,8 +218,6 @@ defmodule ZanziWeb.Schema do
       end)
 
       resolve(fn root, _, _ ->
-        IO.puts("from resolver hereeeeeee!!!")
-        IO.inspect(root)
         {:ok, %{route: Enum.at(root, 0), details: Enum.at(root, 1)}}
       end)
     end
@@ -233,7 +237,8 @@ defmodule ZanziWeb.Schema do
       fn input ->
         # Parsing logic here
         with %Absinthe.Blueprint.Input.String{value: value} <- input,
-             {:ok, date} <- NaiveDateTime.to_string(value) do
+             {:ok, date} <- Date.to_iso8601(NaiveDateTime.to_date(value)) do
+          IO.inspect(date)
           {:ok, date}
         else
           _ -> :error
