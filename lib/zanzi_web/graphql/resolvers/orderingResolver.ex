@@ -147,8 +147,20 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, cleared_bills}
   end
 
-  def get_pending_orders(_, _, _) do
-    {:ok, OrderingApi.get_pending_orders()}
+  def get_pending_orders(_, %{info: info}, _) do
+    cond do
+      info == "pending" ->
+        {:ok, OrderingApi.get_pending_orders()}
+
+      info == "incomplete" ->
+        {:ok, OrderingApi.get_incomplete_orders()}
+
+      info == "voided" ->
+        {:ok, OrderingApi.get_voided_orders()}
+
+      true ->
+        {:error, "try again"}
+    end
   end
 
   def create_split(_, %{table_id: ti}, %{context: context}) do

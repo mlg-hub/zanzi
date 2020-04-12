@@ -201,6 +201,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     case Repo.get(Order, Map.get(attrs, :order_id)) do
       %Order{} = order ->
         attrs = Map.put(attrs, :order_total, order.total)
+        total_amount = order.total
+        total_paid = Map.get(attrs, :order_paid)
 
         payments =
           %OrderPayment{}
@@ -212,9 +214,21 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             with %{order_id: order_id} <- attrs do
               case Repo.get(Order, order_id) do
                 %Order{} = order ->
-                  case update_order(order, %{status: "paid"}) do
-                    nil -> {:error, "error occured"}
-                    _ -> {:ok, %{payment: "success"}}
+                  cond do
+                    total_paid < total_amount ->
+                      case update_order(order, %{status: "incomplete"}) do
+                        nil -> {:error, "error occured"}
+                        _ -> {:ok, %{payment: "success"}}
+                      end
+
+                    total_paid == total_amount ->
+                      case update_order(order, %{status: "paid"}) do
+                        nil -> {:error, "error occured"}
+                        _ -> {:ok, %{payment: "success"}}
+                      end
+
+                    true ->
+                      {:error, "Error in amount"}
                   end
 
                 _ ->
@@ -335,6 +349,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
+  def get_order_details(id) do
+    order = Repo.get(Order, id)
+    Repo.preload(order, :order_details)
+  end
+
   def get_all_orders_from_waiter(username) do
     user = Repo.get_by(User, %{username: username})
 
@@ -343,8 +362,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
         on:
-          (orders.merged_status == 0 or
-             orders.merged_status == 1) and
+          (orders.status == "created" or orders.status == "incomplete") and
+            (orders.merged_status == 0 or
+               orders.merged_status == 1) and
             (orders.filled == 1 and not is_nil(orders.total))
       )
       |> order_by([u, orders], asc: orders.ordered_at)
@@ -364,7 +384,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     query =
       OrderPayment
       |> where([p], p.user_id == ^user_id)
-      |> join(:left, [p], o in assoc(p, :order), on: o.status == "paid")
+      |> join(:inner, [p], o in assoc(p, :order),
+        on: o.status == "paid" or o.status == "incomplete"
+      )
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([p, o], order: o)
 
@@ -390,12 +412,18 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_pending_orders do
-    query = from u in Order, where: u.status == "created"
+    query = from u in Order, where: u.status == "created", preload: [:owner, :table]
     Repo.all(query)
   end
 
+  # @spec get_incomplete_orders :: any
   def get_incomplete_orders do
-    query = from u in Order, where: u.status == "incomplete"
+    query = from u in Order, where: u.status == "incomplete", preload: [:owner, :table]
+    Repo.all(query)
+  end
+
+  def get_voided_orders do
+    query = from u in Order, where: u.status == "voided", preload: [:owner, :table]
     Repo.all(query)
   end
 

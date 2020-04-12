@@ -88,7 +88,14 @@ defmodule ZanziWeb.Schema.OrderingTypes do
       end)
     end
 
-    field(:user, :user)
+    field(:owner, list_of(:user))
+    field :total, :integer
+    field :table, :table
+  end
+
+  object :table do
+    field :id, :string
+    field :number, :integer
   end
 
   object :order_sub_resp do

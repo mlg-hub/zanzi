@@ -122,16 +122,6 @@ special omelet,12000,breakfast,kitchen
 jambo fronage omelet,10000,breakfast,kitchen
 ala zanzi omelet,12000,breakfast,kitchen
 spanish omelet,10000,breakfast,kitchen
-fromage croissant,5000,pasiterie,kitchen
-croissant beurre,3500,pasiterie,kitchen
-croissant chocolate,4500,pasiterie,kitchen
-croissant nature,3000,pasiterie,kitchen
-baguette special,3000,pasiterie,kitchen
-baguette locale,2500,pasiterie,kitchen
-pac pac 400gr,3000,pasiterie,kitchen
-pacpac 800gr,6000,pasiterie,kitchen
-pacpac brown 400gr,4000,pasiterie,kitchen
-petite hamburger,1500,pasiterie,kitchen
 iced cappuccino,5000,coffee,coffee shop
 iced late coffee,5500,coffee,coffee shop
 iced mocha coffee,5500,coffee,coffee shop
@@ -271,18 +261,30 @@ special omelet,12000,breakfast,kitchen
 jambo fromage omelet,10000,breakfast,kitchen
 ala zanzi omelet,12000,breakfast,kitchen
 spanish omelet,10000,breakfast,kitchen
-fromage croissant,5000,pasiterie,kitchen
-croissant beurre,3500,pasiterie,kitchen
-croissant chocolate,4500,pasiterie,kitchen
-croissant nature,3000,pasiterie,kitchen
-baguette special,3000,pasiterie,kitchen
-baguette locale,2500,pasiterie,kitchen
-pac pac 400gr,3000,pasiterie,kitchen
-pacpac 800gr,6000,pasiterie,kitchen
-pacpac brown 400gr,4000,pasiterie,kitchen
-petite hamburger,1500,pasiterie,kitchen
+fromage croissant,5000,patisserie,kitchen
+croissant beurre,3500,patisserie,kitchen
+croissant chocolate,4500,patisserie,kitchen
+croissant nature,3000,patisserie,kitchen
+baguette special,3000,patisserie,kitchen
+baguette locale,2500,patisserie,kitchen
+pac pac 400gr,3000,patisserie,kitchen
+pacpac 800gr,6000,patisserie,kitchen
+pacpac brown 400gr,4000,patisserie,kitchen
+petite hamburger,1500,patisserie,kitchen
 iced cappuccino,5000,coffee,coffee shop
 iced late coffee,5500,coffee,coffee shop
 iced mocha coffee,5500,coffee,coffee shop
 iced tea,4500,coffee,coffee shop
 mint tea,4500,tea ,coffee shop
+SPECIAL OMELET WITH TEA,12000,patisserie,KITCHEN
+JAMBO FROMAGE WITH TEA,10000,patisserie,KITCHEN
+ALA ZANZI OMELET WITH TEA,12000,patisserie,KITCHEN
+SPANISH OMELET WITH TEA ,10000,patisserie,KITCHEN
+NATURE OMELET WITH TEA,8000,patisserie,KITCHEN
+FISH FINGERS,10000,patisserie,KITCHEN
+NDAGALA,5000,patisserie,KITCHEN
+CHICKEN WINGS,12000,patisserie,KITCHEN
+BROCHETTE DE BEAUF,10000,patisserie,KITCHEN
+BROCHETTE DE CHEVRE,10000,patisserie,KITCHEN
+CRAFT,10000,patisserie,KITCHEN
+SAMOSA DE BEAUF/ VEG,5000,patisserie,KITCHEN

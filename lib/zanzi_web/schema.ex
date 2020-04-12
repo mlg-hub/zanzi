@@ -74,6 +74,7 @@ defmodule ZanziWeb.Schema do
     end
 
     field :get_pending_orders, list_of(:order) do
+      arg(:info, :string)
       resolve(&OrderingResolvers.get_pending_orders/3)
     end
 
