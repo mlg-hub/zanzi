@@ -69,7 +69,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
-  def create_empty_split(attrs \\ %{}) do
+  def create_empty_split(attrs) do
+    attrs = Map.put(attrs, :filled, 0)
+
     split_changeset =
       %Order{}
       |> Order.create_split_changeset(attrs)
@@ -108,7 +110,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     # attrs = Map.put(attrs, :total, total)
     split_changeset =
       splitted_order
-      |> Order.update_split_changeset(%{total: total, filled: 2, splitted_from: order_id})
+      |> Order.update_split_changeset(%{total: total, filled: 1, splitted_from: order_id})
       |> Repo.update()
 
     with {:ok, order} <- split_changeset do
@@ -340,7 +342,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       User
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
-        on: is_nil(orders.total) and not is_nil(orders.table_id)
+        on: orders.filled == 0 and not is_nil(orders.table_id)
       )
       |> join(:left, [u, orders], table in Table, on: orders.table_id == table.id)
       |> order_by([u, orders, table], asc: orders.ordered_at)
@@ -365,7 +367,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           (orders.status == "created" or orders.status == "incomplete") and
             (orders.merged_status == 0 or
                orders.merged_status == 1) and
-            (orders.filled == 1 and not is_nil(orders.total))
+            (orders.filled == 1 and (not is_nil(orders.total) or orders.total == 0))
       )
       |> order_by([u, orders], asc: orders.ordered_at)
       # |> limit([u, orders], 1)
