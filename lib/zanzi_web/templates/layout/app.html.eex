@@ -25,6 +25,30 @@
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= render @view_module, @view_template, assigns %>
     </main>
+    <!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="<%= Routes.static_path(@conn,"/plugins/jquery/jquery.min.js") %>"></script>
+<!-- Bootstrap -->
+<script src="<%= Routes.static_path(@conn,"/plugins/bootstrap/js/bootstrap.bundle.min.js") %>"></script>
+<!-- overlayScrollbars -->
+<script src="<%= Routes.static_path(@conn,"/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js") %>"></script>
+<!-- AdminLTE App -->
+<script src="<%= Routes.static_path(@conn,"dist/js/adminlte.js") %>"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="<%= Routes.static_path(@conn,"dist/js/demo.js") %>"></script>
+
+<!-- PAGE -->
+<!-- jQuery Mapael -->
+<script src="<%= Routes.static_path(@conn,"/plugins/jquery-mousewheel/jquery.mousewheel.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/plugins/raphael/raphael.min.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/plugins/jquery-mapaeil/jquery.mapael.min.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/plugins/jquery-mapael/maps/usa_states.min.js") %>"></script>
+<!-- ChartJS -->
+<script src="<%= Routes.static_path(@conn,"/plugins/chart.js/Chart.min.js") %>"></script>
+
+<!-- PAGE SCRIPTS -->
+<script src="<%= Routes.static_path(@conn,"dist/js/pages/dashboard2.js") %>"></script>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
