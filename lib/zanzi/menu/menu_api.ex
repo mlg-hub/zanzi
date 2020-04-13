@@ -46,7 +46,7 @@ defmodule Zanzibloc.Menu.MenuApi do
   defp search_ecto(ecto_schema, id) do
     IO.inspect("patrick")
     # id = Integer.to_string(id)
-    Repo.all(from(q in ecto_schema, where: q.departement_id == ^id))
+    Repo.all(from(q in ecto_schema, where: q.departement_id == ^id, order_by: [asc: :name]))
   end
 
   # defp search_ecto(ecto_schema, pattern) when is_bitstring(pattern) do

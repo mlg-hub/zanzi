@@ -75,19 +75,19 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
         saved_bon_commande,
         fn %OrderDetail{departement_id: dpt} = details ->
           case dpt do
-            19 ->
+            2 ->
               kitchen_map = transform_order_details(details)
               Agent.update(kitchen, fn list -> [kitchen_map | list] end)
 
             # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "173")
 
-            20 ->
+            1 ->
               bar_map = transform_order_details(details)
               Agent.update(bar, fn list -> [bar_map | list] end)
 
             # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "174")
 
-            21 ->
+            3 ->
               coffee_map = transform_order_details(details)
               Agent.update(coffee, fn list -> [coffee_map | list] end)
 
@@ -102,10 +102,16 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       toKitchen = Agent.get(kitchen, fn list -> list end)
       toBar = Agent.get(bar, fn list -> list end)
       toCoffee = Agent.get(coffee, fn list -> list end)
+      emptyList = []
+      Logger.info("modified kitchen...")
+      toKitchen = [%{route: "kitchen"} | [toKitchen | emptyList]]
+
+      toBar = [%{route: "bar"} | [toBar | emptyList]]
+      toCoffee = [%{route: "coffee"} | [toCoffee | emptyList]]
 
       # IO.inspect([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]])
 
-      Enum.each([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]], fn [data, route] ->
+      Enum.each([[toKitchen, "kitchen"], [toBar, "bar"], [toCoffee, "coffee"]], fn [data, route] ->
         cond do
           length(data) > 0 ->
             Absinthe.Subscription.publish(ZanziWeb.Endpoint, data, commande: route)
@@ -133,6 +139,28 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
        sub_order_ids: soi,
        user_id: context[:current_user].id
      })}
+  end
+
+  def cleared_bills(_, _, %{context: context}) do
+    user = context[:current_user]
+    cleared_bills = OrderingApi.get_cleared_bill(user.id)
+    {:ok, cleared_bills}
+  end
+
+  def get_pending_orders(_, %{info: info}, _) do
+    cond do
+      info == "pending" ->
+        {:ok, OrderingApi.get_pending_orders()}
+
+      info == "incomplete" ->
+        {:ok, OrderingApi.get_incomplete_orders()}
+
+      info == "voided" ->
+        {:ok, OrderingApi.get_voided_orders()}
+
+      true ->
+        {:error, "try again"}
+    end
   end
 
   def create_split(_, %{table_id: ti}, %{context: context}) do

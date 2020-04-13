@@ -5,7 +5,7 @@ defmodule Zanzibloc.Menu.Item do
   schema "items" do
     field(:added_on, :utc_datetime)
     field(:name, :string)
-    field(:price, :decimal)
+    field(:price, :integer)
     belongs_to(:departement, Zanzibloc.Menu.Departement)
     belongs_to(:category, Zanzibloc.Menu.Category)
     has_many(:inventory, Zanzibloc.Inventory.Stock)

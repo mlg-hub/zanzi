@@ -2,9 +2,9 @@ use Mix.Config
 
 # Configure your database
 config :zanzi, Zanzi.Repo,
-  username: "zanzidev",
-  password: "zanzidev",
-  database: "zanzi_dev",
+  username: "postgres",
+  password: "postgres",
+  database: "prod_zanzi",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

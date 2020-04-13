@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :zanzi, ZanziWeb.Endpoint,
   http: [port: 4000],
-  url: [host: "sotfbiashara.com", port: 80],
+  url: [host: "localhost", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   code_reloader: false,

@@ -3,7 +3,7 @@ defmodule ZanziWeb.Endpoint do
   use Absinthe.Phoenix.Endpoint
 
   socket "/api/socket", ZanziWeb.UserSocket,
-    websocket: true,
+    websocket: [timeout: :infinity],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.

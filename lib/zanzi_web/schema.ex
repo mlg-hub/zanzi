@@ -73,6 +73,11 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.display_order_with_merged/3)
     end
 
+    field :get_pending_orders, list_of(:order) do
+      arg(:info, :string)
+      resolve(&OrderingResolvers.get_pending_orders/3)
+    end
+
     field :get_all_split_bill_for_user, list_of(:open_split_bill_list) do
       arg(:username, :string)
       resolve(&OrderingResolvers.get_all_split_bill_for_user/3)
@@ -85,6 +90,10 @@ defmodule ZanziWeb.Schema do
     field :orders_for_waiter, list_of(:waiter_order) do
       arg(:username, :string)
       resolve(&OrderingResolvers.get_all_orders_from_waiter/3)
+    end
+
+    field :get_cleared_bills, list_of(:order_payment) do
+      resolve(&OrderingResolvers.cleared_bills/3)
     end
 
     field :get_all_from_department, list_of(:department_detail) do
@@ -193,19 +202,24 @@ defmodule ZanziWeb.Schema do
   end
 
   subscription do
-    field(:commande, list_of(:order_detail)) do
-      config(fn _args, %{context: context} ->
-        # IO.puts("ivi context")
-        # IO.inspect(ctx)
-        # {:ok, topic: "174"}
-        case context[:current_user] do
-          %User{position: position} = user ->
-            position = Enum.at(position, 0).id
-            {:ok, topic: Integer.to_string(position)}
+    field(:commande, :order_sub_resp) do
+      arg(:dest, :string)
 
-          _ ->
-            {:error, "go and login"}
-        end
+      config(fn args, _ ->
+        # {:ok, topic: "174"}
+        # case context[:current_user] do
+        #   %User{position: position} = user ->
+        #     position = Enum.at(position, 0).id
+
+        {:ok, topic: args.dest}
+
+        # _ ->
+        #   {:error, "go and login"}
+        # end
+      end)
+
+      resolve(fn root, _, _ ->
+        {:ok, %{route: Enum.at(root, 0), details: Enum.at(root, 1)}}
       end)
     end
   end
@@ -224,7 +238,8 @@ defmodule ZanziWeb.Schema do
       fn input ->
         # Parsing logic here
         with %Absinthe.Blueprint.Input.String{value: value} <- input,
-             {:ok, date} <- NaiveDateTime.to_string(value) do
+             {:ok, date} <- Date.to_iso8601(NaiveDateTime.to_date(value)) do
+          IO.inspect(date)
           {:ok, date}
         else
           _ -> :error

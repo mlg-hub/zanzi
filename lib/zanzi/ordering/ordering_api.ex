@@ -69,7 +69,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
-  def create_empty_split(attrs \\ %{}) do
+  def create_empty_split(attrs) do
+    attrs = Map.put(attrs, :filled, 0)
+
     split_changeset =
       %Order{}
       |> Order.create_split_changeset(attrs)
@@ -108,7 +110,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     # attrs = Map.put(attrs, :total, total)
     split_changeset =
       splitted_order
-      |> Order.update_split_changeset(%{total: total, filled: 2, splitted_from: order_id})
+      |> Order.update_split_changeset(%{total: total, filled: 1, splitted_from: order_id})
       |> Repo.update()
 
     with {:ok, order} <- split_changeset do
@@ -141,7 +143,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       Enum.reduce(
         Map.get(attrs, :items),
         0,
-        fn %{sold_quantity: qty, sold_price: p}, acc -> qty * p + acc end
+        fn %{sold_quantity: qty, sold_price: p}, acc ->
+          IO.inspect(qty)
+          IO.inspect(p)
+          qty * p + acc
+        end
       )
 
     attrs = Map.put(attrs, :total, total)
@@ -197,6 +203,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     case Repo.get(Order, Map.get(attrs, :order_id)) do
       %Order{} = order ->
         attrs = Map.put(attrs, :order_total, order.total)
+        total_amount = order.total
+        total_paid = Map.get(attrs, :order_paid)
 
         payments =
           %OrderPayment{}
@@ -208,9 +216,21 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             with %{order_id: order_id} <- attrs do
               case Repo.get(Order, order_id) do
                 %Order{} = order ->
-                  case update_order(order, %{status: "paid"}) do
-                    nil -> {:error, "error occured"}
-                    _ -> {:ok, %{payment: "success"}}
+                  cond do
+                    total_paid < total_amount ->
+                      case update_order(order, %{status: "incomplete"}) do
+                        nil -> {:error, "error occured"}
+                        _ -> {:ok, %{payment: "success"}}
+                      end
+
+                    total_paid == total_amount ->
+                      case update_order(order, %{status: "paid"}) do
+                        nil -> {:error, "error occured"}
+                        _ -> {:ok, %{payment: "success"}}
+                      end
+
+                    true ->
+                      {:error, "Error in amount"}
                   end
 
                 _ ->
@@ -322,13 +342,18 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       User
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
-        on: is_nil(orders.total) and not is_nil(orders.table_id)
+        on: orders.filled == 0 and not is_nil(orders.table_id)
       )
       |> join(:left, [u, orders], table in Table, on: orders.table_id == table.id)
       |> order_by([u, orders, table], asc: orders.ordered_at)
       |> preload([u, orders, table], orders: {orders, table: table})
 
     Repo.all(query)
+  end
+
+  def get_order_details(id) do
+    order = Repo.get(Order, id)
+    Repo.preload(order, :order_details)
   end
 
   def get_all_orders_from_waiter(username) do
@@ -339,9 +364,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
         on:
-          (orders.merged_status == 0 or
-             orders.merged_status == 1) and
-            (orders.filled == 1 and not is_nil(orders.total))
+          (orders.status == "created" or orders.status == "incomplete") and
+            (orders.merged_status == 0 or
+               orders.merged_status == 1) and
+            (orders.filled == 1 and (not is_nil(orders.total) or orders.total == 0))
       )
       |> order_by([u, orders], asc: orders.ordered_at)
       # |> limit([u, orders], 1)
@@ -354,6 +380,63 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       )
 
     Repo.one(query)
+  end
+
+  def get_cleared_bill(user_id) do
+    query =
+      OrderPayment
+      |> where([p], p.user_id == ^user_id)
+      |> join(:inner, [p], o in assoc(p, :order),
+        on: o.status == "paid" or o.status == "incomplete"
+      )
+      # |> join(:left, [p, o], d in assoc(o, :order_details))
+      |> preload([p, o], order: o)
+
+    Repo.all(query)
+  end
+
+  def get_pending_bill() do
+    query = from o in Order, where: o.status == "created"
+    Repo.all(query)
+  end
+
+  def get_order_details(order_id) do
+    case Repo.get(Order, order_id) do
+      %Order{} = order ->
+        case order.merged_status do
+          0 -> Repo.preload(order, :order_details)
+          1 -> display_merged_bill(order.id)
+        end
+
+      _ ->
+        {:error, "order does not exist"}
+    end
+  end
+
+  def get_pending_orders do
+    query = from u in Order, where: u.status == "created", preload: [:owner, :table]
+    Repo.all(query)
+  end
+
+  # @spec get_incomplete_orders :: any
+  def get_incomplete_orders do
+    query = from u in Order, where: u.status == "incomplete", preload: [:owner, :table]
+    Repo.all(query)
+  end
+
+  def get_voided_orders do
+    query = from u in Order, where: u.status == "voided", preload: [:owner, :table]
+    Repo.all(query)
+  end
+
+  def order_payment_history(id) do
+    query =
+      Order
+      |> where([o], o.id == ^id)
+      |> join(:left, [o], payments in OrderPayment, on: payments.order_id == o.id)
+      |> preload([o, payments], payments: payments)
+
+    Repo.all(query)
   end
 
   # def split_bill(

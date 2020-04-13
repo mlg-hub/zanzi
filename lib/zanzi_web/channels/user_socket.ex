@@ -21,25 +21,30 @@ defmodule ZanziWeb.UserSocket do
     IO.inspect(params)
     IO.inspect(socket)
     IO.inspect(params)
-    %{"authorization" => token} = params
 
-    with "Bearer " <> tok <- token,
-         {:ok, data} <- ZanziWeb.Auth.TokenAuthentication.verify(tok),
-         %{user_id: user_id} <- data do
-      current_user = Zanzibloc.Account.AccountApi.lookup(user_id)
-      IO.puts("koto goooooot")
-      IO.inspect(current_user)
+    with %{"authorization" => token} <- params do
+      token = params.authorization && params.authorization
 
-      # current_user = current_user(params)
+      with "Bearer " <> tok <- token,
+           {:ok, data} <- ZanziWeb.Auth.TokenAuthentication.verify(tok),
+           %{user_id: user_id} <- data do
+        current_user = Zanzibloc.Account.AccountApi.lookup(user_id)
+        IO.puts("koto goooooot")
+        IO.inspect(current_user)
 
-      socket =
-        Absinthe.Phoenix.Socket.put_options(socket,
-          context: %{
-            current_user: current_user
-          }
-        )
+        # current_user = current_user(params)
 
-      {:ok, socket}
+        socket =
+          Absinthe.Phoenix.Socket.put_options(socket,
+            context: %{
+              current_user: current_user
+            }
+          )
+
+        {:ok, socket}
+      else
+        _ -> {:ok, socket}
+      end
     else
       _ -> {:ok, socket}
     end

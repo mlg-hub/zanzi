@@ -114,7 +114,7 @@ defmodule ZanziWeb.Schema.MenuTypes do
   end
 
   object :table_order do
-    field(:number, :string)
+    field(:number, :integer)
     field(:id, :id)
   end
 
