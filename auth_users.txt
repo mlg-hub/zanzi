@@ -1,0 +1,84 @@
+           full_name           | plain_pwd 
+-------------------------------+-----------
+ Admin IBI                     | 843340
+ Graciella                     | 503766
+ THALES                        | 620857
+ NIZERE Leone Chloe            | 382969
+ NKURUNZIZA Alain              | 906475
+ NTAMAGENDERO Francois         | 330677
+ GATORE Siglid                 | 722819
+ MUCOWERA Amandine             | 325997
+ NDAYIKENGURUKIYE Ines         | 246445
+ SANDRINE                      | 630983
+ MUNYAKURI Shadrack            | 941728
+ BIGIRIMANA Gulain             | 13024
+ ITERITEKA Willy               | 682899
+ NIYONZIMA Kelvin              | 853228
+ MUTONI Melissa                | 946579
+ Anne Marie                    | 813697
+ GUY Tresor MUGHISHA           | 31277
+ HAVYARIMANA Nelly             | 453866
+ HATUNGIMANA Lydia             | 995774
+ NSABIMANA Ange Michaelle      | 955524
+ NININAHAZWE Jean Claude       | 234069
+ Carine HUNGURIMANA            | 55550
+ BIZINDAVYI Dorian Dave        | 346884
+ IRAKOEZE Gale                 | 867712
+ NISHIMWE Benitha              | 220792
+ NDAYIKEZA Jeanette            | 969849
+ NAHIMANA Sada Nassor          | 4591
+ NDUWIMANA Sandrine            | 686217
+ CIMPAYE Marianne              | 911132
+ UWIMANA Diane                 | 117744
+ NKURUNZIZA Eric               | 465034
+ NDAYISHIMIYE Eric             | 25797
+ IRERE Aldine                  | 857557
+ NIYONKURU Marc                | 793791
+ DIMITRI                       | 879643
+ NGAIRA Robert                 | 632611
+  NIYUBAHWE Bigirimana Doriane | 308991
+ MAKURA Gilbert                | 149557
+
+
+ // prod;
+
+            full_name           | plain_pwd 
+-------------------------------+-----------
+ Admin IBI                     | 153261
+ Graciella                     | 636275
+ THALES                        | 677898
+ NIZERE Leone Chloe            | 660577
+ NKURUNZIZA Alain              | 306427
+ NTAMAGENDERO Francois         | 322690
+ GATORE Siglid                 | 782607
+ MUCOWERA Amandine             | 443973
+ NDAYIKENGURUKIYE Ines         | 421145
+ SANDRINE                      | 935152
+ MUNYAKURI Shadrack            | 7544
+ BIGIRIMANA Gulain             | 529633
+ ITERITEKA Willy               | 698684
+ NIYONZIMA Kelvin              | 347409
+ MUTONI Melissa                | 919834
+ Anne Marie                    | 249599
+ HAVYARIMANA Nelly             | 374764
+ HATUNGIMANA Lydia             | 496140
+ NSABIMANA Ange Michaelle      | 440078
+ NININAHAZWE Jean Claude       | 132193
+  NIYUBAHWE Bigirimana Doriane | 34264
+ Carine HUNGURIMANA            | 28618
+ BIZINDAVYI Dorian Dave        | 316197
+ IRAKOEZE Gale                 | 180236
+ NISHIMWE Benitha              | 292545
+ NDAYIKEZA Jeanette            | 965536
+ NAHIMANA Sada Nassor          | 819209
+ NDUWIMANA Sandrine            | 509103
+ CIMPAYE Marianne              | 307159
+ UWIMANA Diane                 | 532984
+ NKURUNZIZA Eric               | 388761
+ NDAYISHIMIYE Eric             | 420681
+ IRERE Aldine                  | 367773
+ NIYONKURU Marc                | 785945
+ DIMITRI                       | 95652
+ NGAIRA Robert                 | 482620
+ GUY Tresor MUGHISHA           | 425169
+ MAKURA Gilbert                | 266764
