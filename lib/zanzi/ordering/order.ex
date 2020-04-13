@@ -84,8 +84,7 @@ defmodule Zanzibloc.Ordering.Order do
         code
 
       nil ->
-        IO.puts("gogogo nil")
-        "#{today}/#{day}/y"
+        "#{today}/#{day}/0"
     end
   end
 end
