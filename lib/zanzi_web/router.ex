@@ -22,7 +22,6 @@ defmodule ZanziWeb.Router do
 
   scope "/" do
     pipe_through :api
-
     forward "/api", Absinthe.Plug, schema: ZanziWeb.Schema
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
