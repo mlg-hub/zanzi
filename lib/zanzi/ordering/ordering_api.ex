@@ -364,7 +364,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
         on:
-          (orders.status == "created" or orders.status == "incomplete") and
+          orders.status == "created" and
             (orders.merged_status == 0 or
                orders.merged_status == 1) and
             (orders.filled == 1 and (not is_nil(orders.total) or orders.total == 0))
@@ -389,10 +389,31 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> join(:inner, [p], o in assoc(p, :order),
         on: o.status == "paid" or o.status == "incomplete"
       )
+      |> order_by([p, o], desc: p.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([p, o], order: o)
 
     Repo.all(query)
+  end
+
+  def get_bill(filter) do
+    case filter do
+      :pending ->
+        query = Order |> where([o], o.status == "created")
+
+        Repo.all(query, preload: :owner)
+
+      :cleared ->
+        query = Order |> where([o], o.status == "paid")
+        Repo.all(query, preload: :owner)
+
+      :incomplete ->
+        query = Order |> where([o], o.status == "incomplete")
+        Repo.all(query, preload: :owner)
+
+      _ ->
+        []
+    end
   end
 
   def get_pending_bill() do

@@ -18,6 +18,12 @@ defmodule ZanziWeb.Router do
     pipe_through :browser
 
     get "/", AdminController, :index
+
+    scope "/orders" do
+      get "/cleared", OrderController, :cleared
+      get "/pending", OrderController, :pending
+      get "/incomplete", OrderController, :incomplete
+    end
   end
 
   scope "/" do

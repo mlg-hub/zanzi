@@ -1,0 +1,68 @@
+  <div class="wrapper">
+    <!-- Navbar -->
+
+    <!-- /.navbar -->
+
+    <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
+    <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Cleared Orders</h1>
+          </div>
+
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header" style="display:flex;justify-content: space-between;">
+              <h3 class="card-title">Orders that have been cleared by the cashier</h3>
+              <h4>Total: 444</h4>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Order ref. number</th>
+                  <th>Ordered at</th>
+                  <th>Total Amount</th>
+                  <th>Action</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <%= for orders <- @orders  do%>
+                <tr>
+                  <td>Trident</td>
+                  <td>Internet
+                    Explorer 4.0
+                  </td>
+                  <td>Win 95+</td>
+                  <td>4</td>
+                </tr>
+                <%end %>
+
+                </tbody>
+
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+</div>
