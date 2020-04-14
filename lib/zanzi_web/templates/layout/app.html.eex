@@ -6,23 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ZanziWeb · Phoenix Framework</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+      <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/plugins/fontawesome-free/css/all.min.css") %>">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/plugins/overlayScrollbars/css/OverlayScrollbars.min.css") %>">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/dist/css/adminlte.min.css")%>">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   </head>
-  <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
-          </ul>
-        </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
-    </header>
-    <main role="main" class="container">
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+  <body class="hold-transition sidebar-mini layout-fixed">
+    <main role="main">
+
       <%= render @view_module, @view_template, assigns %>
     </main>
     <!-- REQUIRED SCRIPTS -->
@@ -33,22 +27,20 @@
 <!-- overlayScrollbars -->
 <script src="<%= Routes.static_path(@conn,"/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js") %>"></script>
 <!-- AdminLTE App -->
-<script src="<%= Routes.static_path(@conn,"dist/js/adminlte.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/dist/js/adminlte.js") %>"></script>
 
 <!-- OPTIONAL SCRIPTS -->
-<script src="<%= Routes.static_path(@conn,"dist/js/demo.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/dist/js/demo.js") %>"></script>
 
 <!-- PAGE -->
 <!-- jQuery Mapael -->
 <script src="<%= Routes.static_path(@conn,"/plugins/jquery-mousewheel/jquery.mousewheel.js") %>"></script>
 <script src="<%= Routes.static_path(@conn,"/plugins/raphael/raphael.min.js") %>"></script>
-<script src="<%= Routes.static_path(@conn,"/plugins/jquery-mapaeil/jquery.mapael.min.js") %>"></script>
-<script src="<%= Routes.static_path(@conn,"/plugins/jquery-mapael/maps/usa_states.min.js") %>"></script>
 <!-- ChartJS -->
 <script src="<%= Routes.static_path(@conn,"/plugins/chart.js/Chart.min.js") %>"></script>
 
 <!-- PAGE SCRIPTS -->
-<script src="<%= Routes.static_path(@conn,"dist/js/pages/dashboard2.js") %>"></script>
+<script src="<%= Routes.static_path(@conn,"/dist/js/pages/dashboard2.js") %>"></script>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
