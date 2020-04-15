@@ -24,6 +24,12 @@ defmodule ZanziWeb.Router do
       get "/pending", OrderController, :pending
       get "/incomplete", OrderController, :incomplete
     end
+
+    scope "/departement" do
+      get "/stats_bar", DepartementController, :stats_bar
+      get "/stats_coffee", DepartementController, :stats_coffee
+      get "/stats_kitchen", DepartementController, :stats_kitchen
+    end
   end
 
   scope "/" do

@@ -12,6 +12,8 @@ defmodule ZanziWeb.OrderController do
   end
 
   def incomplete(conn, _params) do
+    #  first get the real total then find the order payment amount
+    # in payment table
     orders = OrderingApi.get_bill(:incomplete)
     render(conn, "incomplete.html", orders: orders)
   end

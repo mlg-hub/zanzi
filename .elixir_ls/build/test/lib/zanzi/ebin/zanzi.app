@@ -14,6 +14,8 @@
                         'Elixir.ZanziWeb.Auth.TokenAuthentication',
                         'Elixir.ZanziWeb.ChannelCase',
                         'Elixir.ZanziWeb.ConnCase','Elixir.ZanziWeb.Context',
+                        'Elixir.ZanziWeb.DepartementController',
+                        'Elixir.ZanziWeb.DepartementView',
                         'Elixir.ZanziWeb.Endpoint',
                         'Elixir.ZanziWeb.ErrorHelpers',
                         'Elixir.ZanziWeb.ErrorView','Elixir.ZanziWeb.Gettext',
