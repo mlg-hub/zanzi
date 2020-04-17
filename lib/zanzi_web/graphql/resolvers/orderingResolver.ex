@@ -231,7 +231,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
 
   def transform_order_details(details) do
     %{
-      item: %Item{name: name},
+      item: %Item{name: name, price: price},
       order: %Order{ordered_at: time_of_order, code: order_code, owner: owner_array},
       sold_quantity: qty,
       order_id: order_id
@@ -239,6 +239,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
 
     %{
       item_name: name,
+      item_price: price,
       order_time: time_of_order,
       code: order_code,
       owner_name: Enum.at(owner_array, 0).full_name,

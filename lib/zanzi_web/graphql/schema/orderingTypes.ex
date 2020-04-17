@@ -109,6 +109,7 @@ defmodule ZanziWeb.Schema.OrderingTypes do
 
   object :order_detail do
     field(:item_name, :string)
+    field(:item_price, :integer)
     field(:code, :string)
     field(:order_id, :integer)
     field(:order_time, :custom_naive_date)
