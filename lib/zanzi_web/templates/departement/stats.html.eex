@@ -1,0 +1,7 @@
+ <tr>
+                  <td><%= @stat["item_name"]%></td>
+                  <td><%= @stat["sold_quantity"]%></td>
+                  <td><%= @stat["sold_price"]%></td>
+                  <td><%= @stat["sold_quantity"] * Decimal.to_integer(@stat["sold_price"])%></td>
+
+                </tr>

@@ -408,7 +408,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Repo.all(query, preload: :owner)
 
       :incomplete ->
-        query = Order |> where([o], o.status == "incomplete")
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:left, [o], p in assoc(o, :payments))
+          |> preload([o, p], payments: p)
+
         Repo.all(query, preload: :owner)
 
       _ ->
@@ -616,6 +621,117 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     sub_order
     |> Order.update_changeset(%{merged_status: 2})
     |> Repo.update()
+  end
+
+  def get_unique_dpt_stats() do
+  end
+
+  def get_department_stats(dpt_id) do
+    query =
+      OrderDetail
+      |> where([od], od.departement_id == ^dpt_id)
+      |> join(:left, [od], orders in Order, on: orders.id == od.order_id)
+      |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
+      # |> preload([od, orders, items])
+      # |> group_by([od], od.id)
+      |> select(
+        [od, orders, items],
+        [
+          map(od, [:id, :sold_price, :sold_quantity]),
+          # sum(od.sold_quantity)
+          map(orders, [:code, :total, :inserted_at]),
+          map(items, [:name])
+        ]
+      )
+
+    format_dpt_with_query(query)
+    # |> Enum.map(fn x ->
+    #   case(Enum.fin())
+    # end)
+    # |> Enum.uniq_by(fn {a, _} -> a end)
+  end
+
+  def filter_by_date(date, dpt_id) do
+    # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      OrderDetail
+      |> where(
+        [od],
+        fragment("?::date", od.inserted_at) == ^date and od.departement_id == ^dpt_id
+      )
+      |> join(:left, [od], orders in Order, on: orders.id == od.order_id)
+      |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
+      # |> preload([od, orders, items])
+      # |> group_by([od], od.id)
+      |> select(
+        [od, orders, items],
+        [
+          map(od, [:id, :sold_price, :sold_quantity]),
+          # sum(od.sold_quantity)
+          map(orders, [:code, :total, :inserted_at]),
+          map(items, [:name])
+        ]
+      )
+
+    format_dpt_with_query(query)
+  end
+
+  def format_dpt_with_query(query) do
+    {:ok, dptArray} = Agent.start_link(fn -> [] end)
+
+    Repo.all(query)
+    |> Enum.map(fn [od, o, i] ->
+      {
+        i.name,
+        %{
+          "sold_price" => od.sold_price,
+          "sold_quantity" => od.sold_quantity,
+          "order_code" => o.code,
+          "order_time" => o.inserted_at,
+          "item_name" => i.name
+        }
+      }
+    end)
+    |> Enum.map(fn {_k, v} ->
+      # if exit update otherwise insert
+      # if Enum.member?(Agent.get(itemsArray, fn list -> list end), v) do
+      my_list = Agent.get(dptArray, fn list -> list end)
+      IO.inspect(my_list)
+
+      index =
+        Enum.find_index(my_list, fn x ->
+          IO.puts("my list")
+
+          x["item_name"] == v["item_name"] and x["sold_price"] == v["sold_price"]
+        end)
+
+      IO.puts("index is #{index}")
+
+      case index do
+        nil ->
+          Agent.update(dptArray, fn list -> [v | list] end)
+
+        _ ->
+          val = Enum.at(my_list, index)
+
+          new_map =
+            Map.get_and_update(val, "sold_quantity", fn current_val ->
+              {current_val, current_val + v["sold_quantity"]}
+            end)
+
+          {_, correct_map} = new_map
+          Agent.update(dptArray, fn list -> List.replace_at(list, index, correct_map) end)
+      end
+
+      # else
+      # end
+    end)
+
+    data = Agent.get(dptArray, fn list -> list end)
+    Agent.stop(dptArray)
+    data
   end
 
   def data() do

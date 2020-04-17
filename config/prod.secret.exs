@@ -32,9 +32,9 @@ config :zanzi, ZanziWeb.Endpoint,
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
 config :zanzi, Zanzi.Repo,
-  username: "zanzidev",
-  password: "zanzidev",
-  database: "zanzi_prod",
+  username: "postgres",
+  password: "postgres",
+  database: "prod_zanzi",
   hostname: "localhost",
   # show_sensitive_data_on_connection_error: true,
   pool_size: 15

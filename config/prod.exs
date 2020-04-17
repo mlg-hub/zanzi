@@ -11,13 +11,13 @@ use Mix.Config
 # before starting your production server.
 config :zanzi, ZanziWeb.Endpoint,
   http: [port: 4000],
-  url: [host: "localhost", port: 80],
+  url: [host: "192.168.88.14", port: 4000],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   code_reloader: false,
   root: ".",
   check_origin: false,
-  version: Application.spec(:your_app, :vsn)
+  version: Application.spec(:zanzi, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info

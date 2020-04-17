@@ -22,8 +22,12 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" >
               <h3 class="card-title">Orders that were not cleared totally</h3>
+              <div style="display:flex;justify-content: space-around">
+                <h4>Total expected: <%= get_total(@orders)%> FBU</h4>
+                <h4>Total received: <%= get_total_payments(@orders)%> FBU</h4>
+              </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -32,7 +36,8 @@
                 <tr>
                   <th>Order ref. number</th>
                   <th>Ordered at</th>
-                  <th>Total Amount</th>
+                  <th>Total expected</th>
+                  <th>Total given</th>
                   <th>Action</th>
 
                 </tr>
@@ -44,6 +49,7 @@
                   <td><%= order.inserted_at %>
                   </td>
                   <td><%= order.total%> FBU</td>
+                  <td><%= Enum.at(order.payments,0).order_paid%></td>
                   <td><a ><div class="btn btn-primary">See details</div></a></td>
                 </tr>
                 <%end %>

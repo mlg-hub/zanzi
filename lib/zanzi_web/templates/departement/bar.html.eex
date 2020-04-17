@@ -23,32 +23,36 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header" style="display:flex;justify-content: space-between;">
-              <h3 class="card-title">Orders that have been cleared by the cashier</h3>
-              <h4>Total: 444</h4>
+              <h3 class="card-title">Data for the Main bar</h3>
+              <h4>Total: <%= get_total(@stats)%> FBU</h4>
+              <div class="row">
+                 <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
+                    <div class="form-group">
+                    <%= text_input f, :selected_date, placeholder: "Email", type: :date, class: "form-control" %>
+                    <%= hidden_input f, :dpt_id, value: 1 %>
+                    <%= hidden_input f, :dpt, value: "bar" %>
+                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
+                    </div>
+                <% end %>
+              </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-              <table id="example2" class="table table-bordered table-hover">
+            <table id="example2" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                  <th>Order ref. number</th>
-                  <th>Ordered at</th>
-                  <th>Total Amount</th>
-                  <th>Action</th>
+                  <th>Product name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+
 
                 </tr>
                 </thead>
                 <tbody>
-
-                <tr>
-                  <td>Trident</td>
-                  <td>Internet
-                    Explorer 4.0
-                  </td>
-                  <td>Win 95+</td>
-                  <td>4</td>
-                </tr>
-
+            <%= for stat <- @stats do%>
+                <%= render "stats.html",stat: stat %>
+            <%end %>
 
                 </tbody>
 
