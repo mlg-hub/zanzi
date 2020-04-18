@@ -31,6 +31,15 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def get_order!(id), do: Repo.get!(Order, id)
 
+  def get_items(route) do
+    case route do
+      :bar -> Repo.get_by(Item, %{departement_id: 1})
+      :kitchen -> Repo.get_by(Item, %{departement_id: 2})
+      :coffee -> Repo.get_by(Item, %{departement_id: 3})
+      _ -> []
+    end
+  end
+
   def send_transfer_request(%{order: order, transfer: transfer_to}) do
     order_to_transfer = Repo.get_by!(OrderOwner, %{order_id: order})
     IO.inspect(order_to_transfer)

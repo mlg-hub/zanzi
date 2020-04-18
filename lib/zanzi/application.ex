@@ -10,6 +10,7 @@ defmodule Zanzi.Application do
     children = [
       # Start the Ecto repository
       Zanzi.Repo,
+      Zanzibloc.DepartementItemsCache,
       # Start the endpoint when the application starts
       ZanziWeb.Endpoint,
       # Starts a worker by calling: Zanzi.Worker.start_link(arg)
