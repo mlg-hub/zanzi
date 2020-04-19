@@ -2,7 +2,7 @@ defmodule ZanziWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :zanzi
   use Absinthe.Phoenix.Endpoint
 
-  socket "/api/socket", ZanziWeb.UserSocket,
+  socket "/socket", ZanziWeb.UserSocket,
     websocket: [timeout: :infinity],
     longpoll: false
 

@@ -2,6 +2,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   alias Zanzibloc.Ordering.{OrderingApi, OrderDetail, Order}
   alias Zanzibloc.Account.{User}
   alias Zanzibloc.Menu.Item
+  alias Zanzibloc.Cache.{ToprintBar, ToCoffee, ToKitchen}
   require Logger
 
   def prepare_order(_, %{id: id}, _) do
@@ -102,24 +103,22 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       toKitchen = Agent.get(kitchen, fn list -> list end)
       toBar = Agent.get(bar, fn list -> list end)
       toCoffee = Agent.get(coffee, fn list -> list end)
-      emptyList = []
-      Logger.info("modified kitchen...")
-      toKitchen = [%{route: "kitchen"} | [toKitchen | emptyList]]
 
-      toBar = [%{route: "bar"} | [toBar | emptyList]]
-      toCoffee = [%{route: "coffee"} | [toCoffee | emptyList]]
+      ToCoffee.add_new(toCoffee)
+      ToKitchen.add_new(toKitchen)
+      ToprintBar.add_new(toBar)
 
       # IO.inspect([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]])
 
-      Enum.each([[toKitchen, "kitchen"], [toBar, "bar"], [toCoffee, "coffee"]], fn [data, route] ->
-        cond do
-          length(data) > 0 ->
-            Absinthe.Subscription.publish(ZanziWeb.Endpoint, data, commande: route)
+      # Enum.each([[toKitchen, "kitchen"], [toBar, "bar"], [toCoffee, "coffee"]], fn [data, route] ->
+      #   cond do
+      #     length(data) > 0 ->
+      #       Absinthe.Subscription.publish(ZanziWeb.Endpoint, data, commande: route)
 
-          true ->
-            nil
-        end
-      end)
+      #     true ->
+      #       nil
+      #   end
+      # end)
 
       Agent.stop(kitchen)
       Agent.stop(bar)

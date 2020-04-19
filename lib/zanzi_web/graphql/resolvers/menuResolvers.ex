@@ -70,7 +70,7 @@ defmodule ZanziWeb.Resolvers.MenuResolver do
   end
 
   def get_all_from_department(_, %{id: id}, _) do
-    result = MenuApi.get_all_from_department(id)
+    result = MenuApi.menu_items(id)
     IO.inspect(result)
     {:ok, result}
   end

@@ -23,34 +23,12 @@ defmodule Zanzibloc.Account.AccountApi do
   end
 
   def list_users(args) do
-    # Repo.all(User, preload: [position: :role])
-    with %{role: role_ids} when is_list(role_ids) <- args do
-      # Repo.all(from(u in User, preload: [position: from(c in Role, where: c.id == ^role_id)]))
-      user =
-        User
-        |> join(:left, [u], _ in assoc(u, :position))
-        |> join(:left, [_, position], role in assoc(position, :role))
-        |> where([_, _, role], role.id in ^role_ids)
-        |> preload([_, p, c], position: {p, role: c})
-        |> Repo.all()
+    {:ok, users} = Zanzibloc.Cache.UserCache.get_all_users(args)
+    users
+  end
 
-      user
-    else
-      _ ->
-        with %{role: role_id} when is_bitstring(role_id) <- args do
-          user =
-            User
-            |> join(:left, [u], _ in assoc(u, :position))
-            |> join(:left, [_, position], role in assoc(position, :role))
-            |> where([_, _, role], role.id == ^role_id)
-            |> preload([_, p, c], position: {p, role: c})
-            |> Repo.all()
-
-          user
-        else
-          _ -> Repo.all(from(u in User, preload: [position: :role]))
-        end
-    end
+  def get_all_users() do
+    Repo.all(from(u in User, preload: [position: :role]))
   end
 
   def get_user(id) do

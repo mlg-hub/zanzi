@@ -2,13 +2,17 @@ defmodule Zanzibloc.Menu.MenuApi do
   alias Zanzibloc.Menu.{Item, Departement, Category}
   alias Zanzi.Repo
   import Ecto.Query, warn: false
+  alias Zanzibloc.Cache.{BarCache, KitchenCache, CoffeeCache}
 
   def list_categories do
     Repo.all(Category)
   end
 
-  def get_all_departement do
-    Repo.all(Departement)
+  def get_bar_items do
+    BarCache.get_all_item()
+  end
+
+  def get_pid do
   end
 
   def get_category!(id), do: Repo.get!(Category, id)
@@ -37,6 +41,28 @@ defmodule Zanzibloc.Menu.MenuApi do
   def search(term) do
     pattern = "%#{term}%"
     Enum.flat_map(@search, &search_ecto(&1, pattern))
+  end
+
+  def menu_items(id) do
+    IO.puts("menu items was calleda")
+    IO.inspect(id)
+
+    cond do
+      id == "1" or id == 1 ->
+        {:ok, items} = BarCache.get_all_item()
+        items
+
+      id == "2" or id == 2 ->
+        {:ok, items} = KitchenCache.get_all_item()
+        items
+
+      id == "3" or id == 3 ->
+        {:ok, items} = CoffeeCache.get_all_item()
+        items
+
+      true ->
+        []
+    end
   end
 
   def get_all_from_department(id) do

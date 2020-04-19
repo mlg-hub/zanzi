@@ -1,6 +1,8 @@
 defmodule ZanziWeb.UserSocket do
   use Phoenix.Socket
-  use Absinthe.Phoenix.Socket, schema: ZanziWeb.Schema
+
+  channel "departement:*", ZanziWeb.DepartementChannel
+  channel "commende:*", ZanziWeb.CommandeChannel
 
   ## Channels
   # channel "room:*", ZanziWeb.RoomChannel
@@ -16,7 +18,7 @@ defmodule ZanziWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(params, socket, _connect_info) do
+  def(connect(params, socket, _connect_info)) do
     IO.inspect("")
     IO.inspect(params)
     IO.inspect(socket)
@@ -43,7 +45,14 @@ defmodule ZanziWeb.UserSocket do
 
         {:ok, socket}
       else
-        _ -> {:ok, socket}
+        _ ->
+          cond do
+            route = params.route && params.route ->
+              {:ok, assign(socket, :current_departement, route)}
+
+            true ->
+              {:ok, socket}
+          end
       end
     else
       _ -> {:ok, socket}
@@ -60,5 +69,6 @@ defmodule ZanziWeb.UserSocket do
   #     ZanziWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
+  # def id(socket), do: "user_socket:#{socket.assigns.current_deparetement}"
   def id(_socket), do: nil
 end

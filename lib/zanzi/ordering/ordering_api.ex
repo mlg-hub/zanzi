@@ -33,10 +33,20 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def get_items(route) do
     case route do
-      :bar -> Repo.get_by(Item, %{departement_id: 1})
-      :kitchen -> Repo.get_by(Item, %{departement_id: 2})
-      :coffee -> Repo.get_by(Item, %{departement_id: 3})
-      _ -> []
+      :bar ->
+        query = from i in Item, where: i.departement_id == 1
+        Repo.all(query)
+
+      :kitchen ->
+        query = from i in Item, where: i.departement_id == 2
+        Repo.all(query)
+
+      :coffee ->
+        query = from i in Item, where: i.departement_id == 3
+        Repo.all(query)
+
+      _ ->
+        []
     end
   end
 
