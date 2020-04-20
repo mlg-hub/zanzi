@@ -2,7 +2,7 @@ defmodule ZanziWeb.UserSocket do
   use Phoenix.Socket
 
   channel "departement:*", ZanziWeb.DepartementChannel
-  channel "commende:*", ZanziWeb.CommandeChannel
+  channel "commande:*", ZanziWeb.CommandeChannel
 
   ## Channels
   # channel "room:*", ZanziWeb.RoomChannel
@@ -18,7 +18,7 @@ defmodule ZanziWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def(connect(params, socket, _connect_info)) do
+  def connect(params, socket, _connect_info) do
     IO.inspect("")
     IO.inspect(params)
     IO.inspect(socket)

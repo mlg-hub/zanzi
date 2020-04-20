@@ -45,4 +45,12 @@ defmodule ZanziWeb.DepartementChannel do
     IO.inspect(Presence.list(socket))
     {:noreply, socket}
   end
+
+  intercept ["presence_diff"]
+
+  def handle_out("presence_diff", msg, socket) do
+    IO.puts("handdleeeee outttt")
+    IO.inspect(msg)
+    {:noreply, socket}
+  end
 end

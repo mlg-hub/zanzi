@@ -104,6 +104,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       toBar = Agent.get(bar, fn list -> list end)
       toCoffee = Agent.get(coffee, fn list -> list end)
 
+      IO.inspect(toBar)
       ToCoffee.add_new(toCoffee)
       ToKitchen.add_new(toKitchen)
       ToprintBar.add_new(toBar)
