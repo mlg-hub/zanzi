@@ -23,9 +23,9 @@ defmodule Zanzibloc.Cache.ToCoffee do
     {:reply, toPrint, remain}
   end
 
-  def handle_cast({:add_new_item, items}, _from, state) do
+  def handle_cast({:add_new_item, items}, state) do
     send(self(), :print_to_dpt)
-    {:noreply, state ++ items}
+    {:noreply, state ++ [items]}
   end
 
   # def handle_info(:item_added, state) do

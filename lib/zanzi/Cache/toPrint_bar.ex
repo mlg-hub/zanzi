@@ -18,9 +18,9 @@ defmodule Zanzibloc.Cache.ToprintBar do
     GenServer.call(__MODULE__, :fetch_pending)
   end
 
-  def handle_cast({:add_new_item, items}, _from, state) do
+  def handle_cast({:add_new_item, items}, state) do
     send(self(), :print_to_dpt)
-    {:noreply, state ++ items}
+    {:noreply, state ++ [items]}
   end
 
   def handle_call(:fetch_pending, _from, state) do

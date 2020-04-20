@@ -17,6 +17,10 @@ defmodule Zanzibloc.Menu.MenuApi do
 
   def get_category!(id), do: Repo.get!(Category, id)
 
+  def get_all_departement do
+    Repo.all(Departement)
+  end
+
   def create_category(attrs \\ %{}) do
     %Category{}
     |> Category.changeset(attrs)

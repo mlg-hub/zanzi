@@ -31,7 +31,7 @@ defmodule ZanziWeb.UserSocket do
            {:ok, data} <- ZanziWeb.Auth.TokenAuthentication.verify(tok),
            %{user_id: user_id} <- data do
         current_user = Zanzibloc.Account.AccountApi.lookup(user_id)
-        IO.puts("koto goooooot")
+
         IO.inspect(current_user)
 
         # current_user = current_user(params)
@@ -48,7 +48,7 @@ defmodule ZanziWeb.UserSocket do
         _ ->
           cond do
             route = params.route && params.route ->
-              {:ok, assign(socket, :current_departement, route)}
+              {:ok, assign(socket, :active_dpt, route)}
 
             true ->
               {:ok, socket}

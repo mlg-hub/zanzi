@@ -6,7 +6,7 @@ defmodule Zanzibloc.Ordering.OrderDetail do
     belongs_to(:order, Zanzibloc.Ordering.Order)
     belongs_to(:item, Zanzibloc.Menu.Item)
     belongs_to(:departement, Zanzibloc.Menu.Departement)
-    field(:sold_price, :decimal, read_after_writes: true)
+    field(:sold_price, :integer, read_after_writes: true)
     field(:sold_quantity, :integer, read_after_writes: true)
     field(:split_status, :integer, default: 0, read_after_writes: true)
     # split_status to tell that this item should no longer be calculate/considered

@@ -134,6 +134,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
     with {:ok, order} <- split_changeset do
       Enum.each(attrs.items, fn x ->
+        IO.inspect(x)
+
         changeset =
           %OrderDetail{}
           |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
