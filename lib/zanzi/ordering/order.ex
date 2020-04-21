@@ -54,6 +54,12 @@ defmodule Zanzibloc.Ordering.Order do
     # |> validate_required([:code, :ordered_at, :user, :status])
   end
 
+  def add_item_changeset(%__MODULE__{} = order, attrs \\ %{}) do
+    order
+    |> cast(attrs, [:total])
+    |> validate_required([:total])
+  end
+
   def update_changeset(%__MODULE__{} = order, attrs) do
     order
     |> cast(attrs, [:status, :split_status, :merged_status, :total])

@@ -174,6 +174,11 @@ defmodule ZanziWeb.Schema do
       end)
     end
 
+    field :void_order, :response_status do
+      arg(:order_id, :id)
+      resolve(&OrderingResolvers.void_order/3)
+    end
+
     field :prepare_order, :order_result do
       arg(:id, non_null(:id))
       middleware(Middleware.Authorize, :auth)
@@ -198,6 +203,13 @@ defmodule ZanziWeb.Schema do
       arg(:table, non_null(:integer))
       middleware(Middleware.Authorize, :auth)
       resolve(&OrderingResolvers.place_order/3)
+    end
+
+    field :update_place_order, :response_status do
+      arg(:input, non_null(:place_order_input))
+      arg(:order_id, non_null(:id))
+      middleware(Middleware.Authorize, :auth)
+      resolve(&OrderingResolvers.update_place_order/3)
     end
   end
 

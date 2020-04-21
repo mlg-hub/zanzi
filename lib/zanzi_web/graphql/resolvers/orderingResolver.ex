@@ -13,6 +13,10 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
   end
 
+  def void_order(_, %{order_id: order_id}, _) do
+    {:ok, OrderingApi.void_order(order_id)}
+  end
+
   def get_all_tables(_, _, _) do
     {:ok, OrderingApi.get_all_tables()}
   end
@@ -53,6 +57,55 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
   end
 
+  defp split_to_departement(bon_de_commande) do
+    {:ok, kitchen} = Agent.start_link(fn -> [] end)
+    {:ok, bar} = Agent.start_link(fn -> [] end)
+    {:ok, coffee} = Agent.start_link(fn -> [] end)
+
+    Enum.each(
+      bon_de_commande,
+      fn %OrderDetail{departement_id: dpt} = details ->
+        case dpt do
+          2 ->
+            kitchen_map = transform_order_details(details)
+            Agent.update(kitchen, fn list -> [kitchen_map | list] end)
+
+          1 ->
+            bar_map = transform_order_details(details)
+            Agent.update(bar, fn list -> [bar_map | list] end)
+
+          3 ->
+            coffee_map = transform_order_details(details)
+            Agent.update(coffee, fn list -> [coffee_map | list] end)
+
+          _ ->
+            Logger.error("did not match any departement")
+            # IO.inspect(dpt)
+        end
+      end
+    )
+
+    toKitchen = Agent.get(kitchen, fn list -> list end)
+    toBar = Agent.get(bar, fn list -> list end)
+    toCoffee = Agent.get(coffee, fn list -> list end)
+
+    if Enum.count(toKitchen) > 0 do
+      ToKitchen.add_new(toKitchen)
+    end
+
+    if Enum.count(toCoffee) > 0 do
+      ToCoffee.add_new(toCoffee)
+    end
+
+    if Enum.count(toBar) > 0 do
+      ToprintBar.add_new(toBar)
+    end
+
+    Agent.stop(kitchen)
+    Agent.stop(bar)
+    Agent.stop(coffee)
+  end
+
   def place_order(_, %{input: place_order_input, table: table}, %{context: context}) do
     place_order_input =
       case context[:current_user] do
@@ -65,65 +118,30 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
 
     place_order_input = Map.put(place_order_input, :table_id, table)
 
-    with {:ok, %{order: order, details: saved_bon_commande}} <-
+    with {:ok, %{order: _order, details: saved_bon_commande}} <-
            OrderingApi.create_order(place_order_input) do
-      {:ok, kitchen} = Agent.start_link(fn -> [] end)
-      {:ok, bar} = Agent.start_link(fn -> [] end)
-      {:ok, coffee} = Agent.start_link(fn -> [] end)
-      {:ok, tid} = Task.Supervisor.start_link()
+      split_to_departement(saved_bon_commande)
+      {:ok, %{status: "success"}}
+    else
+      _ ->
+        Logger.error("kulalala")
+        {:error, "Error occured"}
+    end
+  end
 
-      Enum.each(
-        saved_bon_commande,
-        fn %OrderDetail{departement_id: dpt} = details ->
-          case dpt do
-            2 ->
-              kitchen_map = transform_order_details(details)
-              Agent.update(kitchen, fn list -> [kitchen_map | list] end)
+  def update_place_order(_, %{input: place_order_input, order_id: order_id}, %{context: context}) do
+    place_order_input =
+      case context[:current_user] do
+        %User{} = user ->
+          Map.put(place_order_input, :user_id, user.id)
 
-            # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "173")
+        _ ->
+          place_order_input
+      end
 
-            1 ->
-              bar_map = transform_order_details(details)
-              Agent.update(bar, fn list -> [bar_map | list] end)
-
-            # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "174")
-
-            3 ->
-              coffee_map = transform_order_details(details)
-              Agent.update(coffee, fn list -> [coffee_map | list] end)
-
-            # Absinthe.Subscription.publish(ZanziWeb.Endpoint, details, commande: "175")
-            _ ->
-              Logger.error("did not match any departement")
-              # IO.inspect(dpt)
-          end
-        end
-      )
-
-      toKitchen = Agent.get(kitchen, fn list -> list end)
-      toBar = Agent.get(bar, fn list -> list end)
-      toCoffee = Agent.get(coffee, fn list -> list end)
-
-      IO.inspect(toBar)
-      ToCoffee.add_new(toCoffee)
-      ToKitchen.add_new(toKitchen)
-      ToprintBar.add_new(toBar)
-
-      # IO.inspect([[toKitchen, "173"], [toBar, "174"], [toCoffee, "175"]])
-
-      # Enum.each([[toKitchen, "kitchen"], [toBar, "bar"], [toCoffee, "coffee"]], fn [data, route] ->
-      #   cond do
-      #     length(data) > 0 ->
-      #       Absinthe.Subscription.publish(ZanziWeb.Endpoint, data, commande: route)
-
-      #     true ->
-      #       nil
-      #   end
-      # end)
-
-      Agent.stop(kitchen)
-      Agent.stop(bar)
-      Agent.stop(coffee)
+    with {:ok, %{order: _order, details: saved_bon_commande}} <-
+           OrderingApi.update_order(order_id, place_order_input) do
+      split_to_departement(saved_bon_commande)
       {:ok, %{status: "success"}}
     else
       _ ->

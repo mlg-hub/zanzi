@@ -29,6 +29,27 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(Table)
   end
 
+  def void_order(order_id) do
+    order = Repo.get(Order, order_id)
+
+    case order do
+      %Order{} = result_order ->
+        void_my_order(result_order)
+
+      _ ->
+        %{error: "order not found"}
+    end
+  end
+
+  defp void_my_order(order) do
+    changeset = order |> Order.update_changeset(%{status: "voided"})
+
+    case Repo.update(changeset) do
+      {:ok, _} -> %{status: "success"}
+      _ -> %{error: "cant void the order"}
+    end
+  end
+
   def get_order!(id), do: Repo.get!(Order, id)
 
   def get_items(route) do
@@ -217,6 +238,60 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       _ ->
         {:error, save_changeset}
+    end
+  end
+
+  def update_order(order_id, attrs \\ %{}) do
+    attrs = Map.update(attrs, :items, [], &build_items/1)
+    main_order = Repo.get(Order, order_id)
+
+    total =
+      Enum.reduce(
+        Map.get(attrs, :items),
+        0,
+        fn %{sold_quantity: qty, sold_price: p}, acc ->
+          IO.inspect(qty)
+          IO.inspect(p)
+          qty * p + acc
+        end
+      )
+
+    main_order_changeset =
+      main_order |> Order.add_item_changeset(%{total: main_order.total + total})
+
+    with {:ok, main_returned_order} <- Repo.update(main_order_changeset) do
+      saved_bon_commande =
+        Enum.map(attrs.items, fn x ->
+          changeset =
+            %OrderDetail{}
+            |> OrderDetail.changeset(Map.put(x, :order_id, main_order.id))
+
+          case Repo.insert!(changeset) do
+            %OrderDetail{} = order_detail ->
+              query =
+                OrderDetail
+                |> where([detail], detail.id == ^order_detail.id)
+                |> join(:left, [detail], order in assoc(detail, :order))
+                |> join(:left, [detail, order], item in ^Item, on: item.id == detail.item_id)
+                |> join(:left, [detail, order, item], owner in assoc(order, :owner))
+                # |> select([detail, _, _, _], %{detail_info: detail.id})
+                |> preload([detail, order, item, owner],
+                  order: {order, owner: owner},
+                  item: item
+                )
+                |> Repo.one()
+
+              # IO.inspect(query)
+              query
+
+            _ ->
+              %{}
+          end
+        end)
+
+      Logger.info("zzazazazzzzzzzzzzzzzzzzzzzzzzzzzzz")
+      IO.inspect(saved_bon_commande)
+      {:ok, %{order: main_returned_order, details: saved_bon_commande}}
     end
   end
 

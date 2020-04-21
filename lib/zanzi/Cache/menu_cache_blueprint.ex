@@ -22,15 +22,15 @@ defmodule Zanzibloc.Cache.BluePrint do
         GenServer.call(unquote(module), :get_items)
       end
 
-      def handle_info(:load_items, bar_items) do
+      def handle_info(:load_items, items) do
         GenServer.cast(self(), :load_bar_items)
-        {:noreply, bar_items}
+        {:noreply, items}
       end
 
       def handle_cast(:load_bar_items, state) do
         IO.puts("fecting data from Repo...")
-        bar_items = MenuApi.get_all_from_department(1)
-        {:noreply, [bar_items | state]}
+        items = MenuApi.get_all_from_department(unquote(departement_id))
+        {:noreply, [items | state]}
       end
 
       def handle_call(:get_items, _from, state) do
