@@ -35,3 +35,4 @@ npm-debug.log
 .deliver/releases/
 .elixir_ls/
 /.elixir_ls/*
+/Users/macpro/ibi/phx/zanzi/config/*
