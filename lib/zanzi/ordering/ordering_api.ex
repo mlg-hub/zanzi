@@ -314,13 +314,19 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 %Order{} = order ->
                   cond do
                     total_paid < total_amount ->
-                      case update_order(order, %{status: "incomplete"}) do
+                      case update_order_clearance(order, %{status: "incomplete"}) do
                         nil -> {:error, "error occured"}
                         _ -> {:ok, %{payment: "success"}}
                       end
 
                     total_paid == total_amount ->
-                      case update_order(order, %{status: "paid"}) do
+                      case update_order_clearance(order, %{status: "paid"}) do
+                        nil -> {:error, "error occured"}
+                        _ -> {:ok, %{payment: "success"}}
+                      end
+
+                    total_paid > total_amount ->
+                      case update_order_clearance(order, %{status: "paid"}) do
                         nil -> {:error, "error occured"}
                         _ -> {:ok, %{payment: "success"}}
                       end
@@ -375,7 +381,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def transfert_ownership(attrs \\ %{}) do
   end
 
-  def update_order(%Order{} = order, attrs) do
+  def update_order_clearance(%Order{} = order, attrs) do
     order
     |> Order.update_changeset(attrs)
     |> Repo.update()

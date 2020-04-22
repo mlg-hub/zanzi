@@ -13,7 +13,8 @@ defmodule Zanzibloc.DepartementItemsCache do
       Zanzibloc.Cache.CoffeeCache,
       Zanzibloc.Cache.ToCoffee,
       Zanzibloc.Cache.ToprintBar,
-      Zanzibloc.Cache.ToKitchen
+      Zanzibloc.Cache.ToKitchen,
+      Zanzibloc.Cache.VoidSecret
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
