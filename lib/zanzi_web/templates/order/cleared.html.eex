@@ -49,7 +49,7 @@
                 <thead>
                 <tr>
                   <th>Order ref. number</th>
-                  <th>Ordered at</th>
+                  <th>Time</th>
                   <th>Total Amount</th>
                   <th>Action</th>
 
