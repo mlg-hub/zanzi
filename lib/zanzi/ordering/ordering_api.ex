@@ -788,10 +788,13 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       OrderDetail
       |> where(
         [od],
-        fragment("?::date", od.inserted_at) == ^date and od.departement_id == ^dpt_id and
-          od.status != "voided"
+        fragment("?::date", od.inserted_at) == ^date and od.departement_id == ^dpt_id
       )
-      |> join(:left, [od], orders in Order, on: orders.id == od.order_id)
+      |> join(:left, [od], orders in Order,
+        on:
+          orders.id == od.order_id and
+            orders.status != "voided"
+      )
       |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
       # |> preload([od, orders, items])
       # |> group_by([od], od.id)
