@@ -40,7 +40,7 @@
 
           <div class="card">
             <div class="card-header" style="display: flex;justify-content: space-between;">
-              <h3 class="card-title">Cleared Orders by the cashier</h3>
+              <h3 class="card-title">Orders cancel by the management</h3>
               <h4>Total cleared: <%= get_total(@orders)%> FBU</h4>
             </div>
             <!-- /.card-header -->
