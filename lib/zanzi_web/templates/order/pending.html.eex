@@ -12,7 +12,18 @@
           <div class="col-sm-6">
             <h1>Pending Orders</h1>
           </div>
-
+          <div class="col-sm-6">
+             <div class="row">
+                 <%= form_for @conn, Routes.order_path(@conn, :filter_date), [as: :date], fn f -> %>
+                    <div class="form-group">
+                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
+                    <%= hidden_input f, :order_type, value: "created" %>
+                    <%= hidden_input f, :order_route, value: "pending" %>
+                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
+                    </div>
+                <% end %>
+              </div>
+          </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -45,7 +56,7 @@
                   <td><%= order.inserted_at %>
                   </td>
                   <td><%= order.total%> FBU</td>
-                  <td><a ><div class="btn btn-primary">See details</div></a></td>
+                  <td><a href="<%= Routes.order_path(@conn, :detail, order)%>"><div class="btn btn-primary">See details</div></a></td>
                 </tr>
                 <%end %>
 

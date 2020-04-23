@@ -11,8 +11,8 @@ use Mix.Config
 # before starting your production server.
 config :zanzi, ZanziWeb.Endpoint,
   http: [port: 4000],
-  url: [host: "192.168.43.83", port: 4000],
-  cache_static_manifest: "priv/static/cache_manifest.json",
+  url: [host: "192.168.43.83", port: 80],
+  # cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   code_reloader: false,
   root: ".",

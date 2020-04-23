@@ -453,9 +453,25 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
-  def get_order_details(id) do
-    order = Repo.get(Order, id)
-    Repo.preload(order, :order_details)
+  def get_order_details_html(id) do
+    # order = Repo.get(Order, id)
+
+    query =
+      Order
+      |> where([o], o.id == ^id)
+      |> join(:left, [o], details in assoc(o, :order_details))
+      |> join(:left, [o, details], table in Table, on: o.table_id == table.id)
+      |> join(:left, [o, details, table], items in assoc(details, :item))
+      |> join(:left, [o, details, table, items], payments in assoc(o, :payments))
+      |> join(:left, [o, details, table, items], owner in assoc(o, :owner))
+      |> preload([o, details, table, items, payments, owner],
+        order_details: {details, item: items},
+        owner: owner,
+        table: table,
+        payments: payments
+      )
+
+    Repo.one(query)
   end
 
   def get_all_orders_from_waiter(username) do
@@ -502,6 +518,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     case filter do
       :pending ->
         query = Order |> where([o], o.status == "created")
+
+        Repo.all(query, preload: :owner)
+
+      :voided ->
+        query = Order |> where([o], o.status == "voided")
 
         Repo.all(query, preload: :owner)
 
@@ -729,10 +750,16 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_department_stats(dpt_id) do
+    subq =
+      Order
+      |> where([o], o.status != "voided")
+
     query =
       OrderDetail
       |> where([od], od.departement_id == ^dpt_id)
       |> join(:left, [od], orders in Order, on: orders.id == od.order_id)
+      |> where([od, orders], orders.status != "voided")
+      # |> where([od, orders] )
       |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
       # |> preload([od, orders, items])
       # |> group_by([od], od.id)
@@ -778,6 +805,20 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       )
 
     format_dpt_with_query(query)
+  end
+
+  def filter_by_date(:order, date, order_type) do
+    # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      Order
+      |> where(
+        [od],
+        fragment("?::date", od.inserted_at) == ^date and od.status == ^order_type
+      )
+
+    Repo.all(query)
   end
 
   def format_dpt_with_query(query) do
