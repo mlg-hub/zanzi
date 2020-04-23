@@ -11,6 +11,11 @@ defmodule ZanziWeb.OrderController do
     render(conn, "cleared.html", orders: orders)
   end
 
+  def voided(conn, _params) do
+    orders = OrderingApi.get_bill(:voided)
+    render(conn, "voided.html", orders: orders)
+  end
+
   def incomplete(conn, _params) do
     #  first get the real total then find the order payment amount
     # in payment table
@@ -21,5 +26,21 @@ defmodule ZanziWeb.OrderController do
   def pending(conn, _params) do
     orders = OrderingApi.get_bill(:pending)
     render(conn, "pending.html", orders: orders)
+  end
+
+  def detail(conn, %{"id" => id}) do
+    detailed_order = OrderingApi.get_order_details_html(id)
+    render(conn, "detail.html", order: detailed_order)
+  end
+
+  def filter_date(conn, %{
+        "date" => %{
+          "selected_date" => date,
+          "order_type" => order_type,
+          "order_route" => order_route
+        }
+      }) do
+    filtered_result = OrderingApi.filter_by_date(:order, date, order_type)
+    render(conn, "#{order_route}.html", orders: filtered_result)
   end
 end

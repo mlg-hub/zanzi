@@ -1,0 +1,76 @@
+ <div class="wrapper">
+    <!-- Navbar -->
+
+    <!-- /.navbar -->
+
+    <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
+    <div class="content-wrapper">
+        <div style="padding: 1rem">
+            <div class="card">
+                <div style="padding:1.5rem;display:flex;justify-content: space-between;">
+                    <h4>Order code: <%= @order.code %></h4>
+
+                </div>
+            </div>
+            <div class="card" style="margin-top: 2rem;padding: 1rem;">
+                <div style="display:flex;padding: .3rem;">
+                    <h5>Content of the order</h5>
+                </div>
+                <div>
+                    <table class="table reponsive-table" style="margin-top: 2rem;">
+                        <thead>
+                            <th>
+                                Items
+                            </th>
+                            <th>
+                                Quantity
+                            </th>
+                            <th>
+                                Unit price
+                            </th>
+                            <th>
+                                Total
+                            </th>
+                        </thead>
+                        <tbody>
+                            <%= for detail <- @order.order_details do %>
+                            <tr>
+                                <td><%= detail.item.name%></td>
+                                <td><%= detail.sold_quantity%></td>
+                                <td><%= detail.sold_price%> FBU</td>
+                                <td><%= detail.sold_price * detail.sold_quantity %> FBU
+                            </tr>
+                            <% end %>
+                        </tbody>
+                        <tfoot>
+                            <tr style="padding: .5rem; background-color: #ccc;">
+                                <td>
+                                    <b>TOTAL :</b>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <b style="letter-spacing: 1px;font-size: 1.2rem;"><%= @order.total %> FBU</b>
+                                </td>
+                            </tr>
+                        <tfoot>
+                    </table>
+                <div>
+            <div>
+
+            <div class="card" style="margin-top: 2rem;padding: 1rem;">
+                <div style="display:flex;padding: .3rem;">
+                    <h5>More inforamtion</h5>
+                </div>
+                <div style="display:flex; flex-direction:column; ">
+                    <%= for assisted <- @order.owner do %>
+                        <span>Served by:  <b><%= assisted.full_name %></b></span>
+                    <%end %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>

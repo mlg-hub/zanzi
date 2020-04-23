@@ -28,7 +28,7 @@
               <div class="row">
                  <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
                     <div class="form-group">
-                    <%= text_input f, :selected_date, placeholder: "Email", type: :date, class: "form-control" %>
+                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
                     <%= hidden_input f, :dpt_id, value: 1 %>
                     <%= hidden_input f, :dpt, value: "bar" %>
                     <%= submit "Filter", class: "btn btn-primary pull-right" %>

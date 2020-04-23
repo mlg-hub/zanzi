@@ -10,22 +10,20 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Incomplete Order payments</h1>
+            <h1>Voided Orders</h1>
           </div>
           <div class="col-sm-6">
              <div class="row">
-                  <%= form_for @conn, Routes.order_path(@conn, :filter_date), [as: :date], fn f -> %>
+                 <%= form_for @conn, Routes.order_path(@conn, :filter_date), [as: :date], fn f -> %>
                     <div class="form-group">
                     <%= text_input f, :selected_date, type: :date, class: "form-control" %>
-                    <%= hidden_input f, :order_type, value: "incomplete" %>
-                    <%= hidden_input f, :order_route, value: "incomplete" %>
-
+                    <%= hidden_input f, :order_type, value: "voided" %>
+                    <%= hidden_input f, :order_route, value: "voided" %>
                     <%= submit "Filter", class: "btn btn-primary pull-right" %>
                     </div>
                 <% end %>
               </div>
           </div>
-
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -33,14 +31,17 @@
     <!-- Main content -->
     <section class="content">
       <div class="row">
+          <div class="col-">
+          </div>
+      </div>
+      <div class="row">
+
         <div class="col-12">
+
           <div class="card">
-            <div class="card-header" >
-              <h3 class="card-title">Orders that were not cleared totally</h3>
-              <div style="display:flex;justify-content: space-around">
-                <h4>Total expected: <%= get_total(@orders)%> FBU</h4>
-                <h4>Total received: <%= get_total_payments(@orders)%> FBU</h4>
-              </div>
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <h3 class="card-title">Cleared Orders by the cashier</h3>
+              <h4>Total cleared: <%= get_total(@orders)%> FBU</h4>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -49,20 +50,17 @@
                 <tr>
                   <th>Order ref. number</th>
                   <th>Ordered at</th>
-                  <th>Total expected</th>
-                  <th>Total given</th>
+                  <th>Total Amount</th>
                   <th>Action</th>
 
                 </tr>
                 </thead>
                 <tbody>
                 <%= for order <- @orders  do%>
-                <tr>
-                  <td><%= order.code%></td>
+                <td><%= order.code%></td>
                   <td><%= order.inserted_at %>
                   </td>
                   <td><%= order.total%> FBU</td>
-                  <td><%= Enum.at(order.payments,0).order_paid%></td>
                   <td><a href="<%= Routes.order_path(@conn, :detail, order)%>"><div class="btn btn-primary">See details</div></a></td>
                 </tr>
                 <%end %>

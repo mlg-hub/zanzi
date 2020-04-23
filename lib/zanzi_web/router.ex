@@ -22,7 +22,10 @@ defmodule ZanziWeb.Router do
     scope "/orders" do
       get "/cleared", OrderController, :cleared
       get "/pending", OrderController, :pending
+      get "/voided", OrderController, :voided
       get "/incomplete", OrderController, :incomplete
+      get "/detail/:id", OrderController, :detail
+      post "/filter_date", OrderController, :filter_date
     end
 
     scope "/departement" do
