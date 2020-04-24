@@ -157,17 +157,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       Enum.each(attrs.items, fn x ->
         IO.inspect(x)
 
-        changeset =
-          %OrderDetail{}
-          |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
-
-        case Repo.insert!(changeset) do
-          %OrderDetail{} ->
-            %{status: "success"}
-
-          _ ->
-            %{}
-        end
+        %OrderDetail{}
+        |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
+        |> Repo.insert!()
       end)
 
       mutate_order(order_id, attrs.items, total)
@@ -226,7 +218,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     |> Repo.one()
 
                   # IO.inspect(query)
-                  query
+                  %{query: query, update: nil}
 
                 _ ->
                   %{}
@@ -262,30 +254,65 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     with {:ok, main_returned_order} <- Repo.update(main_order_changeset) do
       saved_bon_commande =
         Enum.map(attrs.items, fn x ->
+          exist =
+            Repo.get_by(OrderDetail, %{order_id: main_returned_order.id, item_id: x.item_id})
+
           changeset =
             %OrderDetail{}
             |> OrderDetail.changeset(Map.put(x, :order_id, main_order.id))
 
-          case Repo.insert!(changeset) do
-            %OrderDetail{} = order_detail ->
-              query =
-                OrderDetail
-                |> where([detail], detail.id == ^order_detail.id)
-                |> join(:left, [detail], order in assoc(detail, :order))
-                |> join(:left, [detail, order], item in ^Item, on: item.id == detail.item_id)
-                |> join(:left, [detail, order, item], owner in assoc(order, :owner))
-                # |> select([detail, _, _, _], %{detail_info: detail.id})
-                |> preload([detail, order, item, owner],
-                  order: {order, owner: owner},
-                  item: item
+          case exist do
+            nil ->
+              case Repo.insert!(changeset) do
+                %OrderDetail{} = order_detail ->
+                  query =
+                    OrderDetail
+                    |> where([detail], detail.id == ^order_detail.id)
+                    |> join(:left, [detail], order in assoc(detail, :order))
+                    |> join(:left, [detail, order], item in ^Item, on: item.id == detail.item_id)
+                    |> join(:left, [detail, order, item], owner in assoc(order, :owner))
+                    # |> select([detail, _, _, _], %{detail_info: detail.id})
+                    |> preload([detail, order, item, owner],
+                      order: {order, owner: owner},
+                      item: item
+                    )
+                    |> Repo.one()
+
+                  # IO.inspect(query)
+                  %{query: query, update: nil}
+
+                _ ->
+                  %{}
+              end
+
+            %OrderDetail{} = order_d ->
+              changeset =
+                order_d
+                |> OrderDetail.changeset(
+                  Map.put(x, :sold_quantity, order_d.sold_quantity + x.sold_quantity)
                 )
-                |> Repo.one()
 
-              # IO.inspect(query)
-              query
+              case Repo.update(changeset) do
+                {:ok, order_detail} ->
+                  query =
+                    OrderDetail
+                    |> where([detail], detail.id == ^order_detail.id)
+                    |> join(:left, [detail], order in assoc(detail, :order))
+                    |> join(:left, [detail, order], item in ^Item, on: item.id == detail.item_id)
+                    |> join(:left, [detail, order, item], owner in assoc(order, :owner))
+                    # |> select([detail, _, _, _], %{detail_info: detail.id})
+                    |> preload([detail, order, item, owner],
+                      order: {order, owner: owner},
+                      item: item
+                    )
+                    |> Repo.one()
 
-            _ ->
-              %{}
+                  # IO.inspect(query)
+                  %{query: query, update: x}
+
+                _ ->
+                  %{}
+              end
           end
         end)
 

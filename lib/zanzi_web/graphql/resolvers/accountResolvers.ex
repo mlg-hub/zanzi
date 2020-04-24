@@ -22,7 +22,7 @@ defmodule ZanziWeb.Resolvers.AccountsResolvers do
   end
 
   def load_position_role(parent, _, _) do
-    Absinthe.load_position_role(parent)
+    AccountApi.load_position_role(parent)
   end
 
   def me(_, _, %{context: %{current_user: current_user}}) do

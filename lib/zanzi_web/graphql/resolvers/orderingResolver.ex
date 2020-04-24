@@ -61,26 +61,51 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, kitchen} = Agent.start_link(fn -> [] end)
     {:ok, bar} = Agent.start_link(fn -> [] end)
     {:ok, coffee} = Agent.start_link(fn -> [] end)
+    IO.inspect(bon_de_commande)
 
     Enum.each(
       bon_de_commande,
-      fn %OrderDetail{departement_id: dpt} = details ->
-        case dpt do
-          2 ->
-            kitchen_map = transform_order_details(details)
-            Agent.update(kitchen, fn list -> [kitchen_map | list] end)
+      fn %{query: details, update: update} ->
+        %OrderDetail{departement_id: dpt} = details
 
-          1 ->
-            bar_map = transform_order_details(details)
-            Agent.update(bar, fn list -> [bar_map | list] end)
+        case update do
+          nil ->
+            case dpt do
+              2 ->
+                kitchen_map = transform_order_details(details)
+                Agent.update(kitchen, fn list -> [kitchen_map | list] end)
 
-          3 ->
-            coffee_map = transform_order_details(details)
-            Agent.update(coffee, fn list -> [coffee_map | list] end)
+              1 ->
+                bar_map = transform_order_details(details)
+                Agent.update(bar, fn list -> [bar_map | list] end)
+
+              3 ->
+                coffee_map = transform_order_details(details)
+                Agent.update(coffee, fn list -> [coffee_map | list] end)
+
+              _ ->
+                Logger.error("did not match any departement")
+                # IO.inspect(dpt)
+            end
 
           _ ->
-            Logger.error("did not match any departement")
-            # IO.inspect(dpt)
+            case dpt do
+              2 ->
+                kitchen_map = transform_order_details_update(details, update)
+                Agent.update(kitchen, fn list -> [kitchen_map | list] end)
+
+              1 ->
+                bar_map = transform_order_details_update(details, update)
+                Agent.update(bar, fn list -> [bar_map | list] end)
+
+              3 ->
+                coffee_map = transform_order_details_update(details, update)
+                Agent.update(coffee, fn list -> [coffee_map | list] end)
+
+              _ ->
+                Logger.error("did not match any departement")
+                # IO.inspect(dpt)
+            end
         end
       end
     )
@@ -88,6 +113,9 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     toKitchen = Agent.get(kitchen, fn list -> list end)
     toBar = Agent.get(bar, fn list -> list end)
     toCoffee = Agent.get(coffee, fn list -> list end)
+
+    Logger.info("new structure baby")
+    IO.inspect(toBar)
 
     if Enum.count(toKitchen) > 0 do
       ToKitchen.add_new(toKitchen)
@@ -258,12 +286,31 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     %{
       item_name: name,
       item_price: price,
-      order_time: time_of_order,
+      order_time: NaiveDateTime.to_string(NaiveDateTime.local_now()),
       code: order_code,
       owner_name: Enum.at(owner_array, 0).full_name,
       owner_username: Enum.at(owner_array, 0).username,
       order_id: order_id,
       quantity: qty
+    }
+  end
+
+  def transform_order_details_update(details, update) do
+    %{
+      item: %Item{name: name, price: price},
+      order: %Order{ordered_at: time_of_order, code: order_code, owner: owner_array},
+      order_id: order_id
+    } = details
+
+    %{
+      item_name: name,
+      item_price: price,
+      order_time: NaiveDateTime.to_string(NaiveDateTime.local_now()),
+      code: order_code,
+      owner_name: Enum.at(owner_array, 0).full_name,
+      owner_username: Enum.at(owner_array, 0).username,
+      order_id: order_id,
+      quantity: update.sold_quantity
     }
   end
 
