@@ -37,6 +37,10 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
         GenServer.call(unquote(module), :fetch_cache_print)
       end
 
+      def fetch_cache_count() do
+        GenServer.call(unquote(module), :fetch_cahe_count)
+      end
+
       def get_my_state() do
         GenServer.call(unquote(module), :get_my_state)
       end
@@ -122,7 +126,10 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
       def handle_call(:fetch_pending, _from, state) do
         {toPrint, remain} = Enum.split(state.toPrint, 10)
         new_state = %{state | toPrint: remain}
-        Process.send_after(self(), {:clear_cache, toPrint}, 3000)
+
+        if Enum.count(toPrint) > 0 do
+          Process.send_after(self(), {:clear_cache, toPrint}, 3000)
+        end
 
         cond do
           Enum.count(toPrint) > 0 ->
@@ -136,6 +143,15 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
           true ->
             {:reply, [], new_state}
         end
+      end
+
+      def handle_call(:fetch_cahe_count, _from, state) do
+        good_print =
+          Enum.map(state.cache, fn x ->
+            Enum.drop(x, -1)
+          end)
+
+        {:reply, Enum.count(good_print), state}
       end
 
       def handle_call(:fetch_cache_print, _from, state) do

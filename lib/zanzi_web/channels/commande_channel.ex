@@ -57,4 +57,39 @@ defmodule ZanziWeb.CommandeChannel do
         {:reply, :ok, socket}
     end
   end
+
+  def handle_in("count_pending_cache", %{"dpt" => dpt}, socket) do
+    case dpt do
+      "bar" ->
+        # fetch pending printing from cache bar
+
+        cache = ToprintBar.fetch_cache_count()
+
+        ZanziWeb.Endpoint.broadcast!("commande:bar", "count_cache", %{
+          count: cache
+        })
+
+        {:reply, :ok, socket}
+
+      "kitchen" ->
+        # fetch pending printing from cache bar
+        cache = ToKitchen.fetch_cache_count()
+
+        ZanziWeb.Endpoint.broadcast!("commande:kitchen", "count_cache", %{
+          count: cache
+        })
+
+        {:reply, :ok, socket}
+
+      "coffee" ->
+        # fetch pending printing from cache bar
+        cache = ToCoffee.fetch_cache_count()
+
+        ZanziWeb.Endpoint.broadcast!("commande:coffee", "count_cache", %{
+          count: cache
+        })
+
+        {:reply, :ok, socket}
+    end
+  end
 end

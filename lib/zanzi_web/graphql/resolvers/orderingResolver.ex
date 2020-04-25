@@ -134,6 +134,14 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     Agent.stop(coffee)
   end
 
+  def set_printed(_, %{order_id: id}, _) do
+    with {:ok, _} <- OrderingApi.set_printed(id) do
+      {:ok, %{status: "success"}}
+    else
+      _ -> {:error, %{message: "not set printed_status"}}
+    end
+  end
+
   def place_order(_, %{input: place_order_input, table: table}, %{context: context}) do
     place_order_input =
       case context[:current_user] do

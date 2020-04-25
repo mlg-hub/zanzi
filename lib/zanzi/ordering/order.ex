@@ -10,6 +10,7 @@ defmodule Zanzibloc.Ordering.Order do
     field(:status, :string, read_after_writes: true)
     field(:total, :integer, read_after_writes: true)
     field(:merged_status, :integer)
+    field(:print_status, :integer)
 
     #####
     field(:split_status, :integer, default: 0)
@@ -62,7 +63,7 @@ defmodule Zanzibloc.Ordering.Order do
 
   def update_changeset(%__MODULE__{} = order, attrs) do
     order
-    |> cast(attrs, [:status, :split_status, :merged_status, :total])
+    |> cast(attrs, [:status, :split_status, :merged_status, :total, :print_status])
   end
 
   def update_main_split_changeset(%__MODULE__{} = order, attrs) do

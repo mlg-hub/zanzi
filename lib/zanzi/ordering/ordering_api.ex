@@ -501,6 +501,19 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.one(query)
   end
 
+  def set_printed(order_id) do
+    # order = Repo.get(Order, order_id)
+    case Repo.get(Order, order_id) do
+      %Order{} = order ->
+        order
+        |> Order.update_changeset(%{print_status: 1})
+        |> Repo.update()
+
+      _ ->
+        {:error, "order does not exist"}
+    end
+  end
+
   def get_all_orders_from_waiter(username) do
     user = Repo.get_by(User, %{username: username})
 

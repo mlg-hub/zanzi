@@ -128,6 +128,11 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.merge_bills/3)
     end
 
+    field :set_printed, :response_status do
+      arg(:order_id, :id)
+      resolve(&OrderingResolvers.set_printed/3)
+    end
+
     field :send_transfer_request, :response_status do
       arg(:order_id, non_null(:id))
       arg(:receiver_id, non_null(:string))
