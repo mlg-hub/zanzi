@@ -1,0 +1,35 @@
+
+house coffee,7000,*coffee,restaurant
+single expresso,2800,*coffee,restaurant
+doudle expresso ,5500,*coffee,restaurant
+cafe latte,5000,*coffee,restaurant
+americano coffee,5000,*coffee,restaurant
+mocha coffee,5500,*coffee,restaurant
+cappucinno,4800,*coffee,restaurant
+machiato coffee,3800,*coffee,restaurant
+regular *tea,4000,*coffee,restaurant
+masala / ginger *tea,5000,*coffee,restaurant
+green herbal *tea,4500,*tea,restaurant
+black tea,2500,*tea,restaurant
+dawa infusion,4500,*tea,restaurant
+hot chcocolate,5000,*tea,restaurant
+irish coffee,7500,*bozzy coffee,restaurant
+russian coffee,7500,*bozzy coffee,restaurant
+calypso coffee,7500,*bozzy coffee,restaurant
+strawberry smoothy,7500,*smoothie,restaurant
+mango smoothy,7500,*smoothie,restaurant
+banana smoothy,7500,*smoothie,restaurant
+tripical mix smoothy,7000,*smoothie,restaurant
+green herbal juice,8000,*health juice,restaurant
+zanzi special juice,8000,*health juice,restaurant
+eye sight juice,8000,*health juice,restaurant
+relaxation juice,8000,*health juice,restaurant
+virgin mary juice,8000,*health juice,restaurant
+farmers special juice,8000,*health juice,restaurant
+vitamin C,8000,*health juice,restaurant
+iced cappuccino,5000,*coffee,restaurant
+iced late coffee,5500,*coffee,restaurant
+iced mocha coffee,5500,*coffee,restaurant
+iced tea,4500,*coffee,restaurant
+mint tea,4500,*tea ,restaurant
+
