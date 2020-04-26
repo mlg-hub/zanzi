@@ -90,7 +90,8 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
                                  "order_time" => time,
                                  "owner_name" => owner,
                                  "owner_username" => username,
-                                 "quantity" => qty
+                                 "quantity" => qty,
+                                 "departement" => dpt
                                } ->
                   %{
                     code: code,
@@ -100,7 +101,8 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
                     order_time: time,
                     owner_name: owner,
                     owner_username: username,
-                    quantity: qty
+                    quantity: qty,
+                    departement: dpt
                   }
                 end)
 

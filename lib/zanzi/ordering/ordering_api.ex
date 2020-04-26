@@ -111,6 +111,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def create_empty_split(attrs) do
     attrs = Map.put(attrs, :filled, 0)
+    IO.inspect(attrs)
 
     split_changeset =
       %Order{}

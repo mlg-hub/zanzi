@@ -1,7 +1,7 @@
 defmodule ZanziWeb.DepartementChannel do
   use ZanziWeb, :channel
   alias ZanziWeb.Presence
-  alias Zanzibloc.Cache.{ToKitchen, ToCoffee, ToprintBar}
+  alias Zanzibloc.Cache.{ToKitchen, ToprintRestaurant, ToprintMiniBar, ToprintBar}
 
   def join("departement:zanzi", %{"departement" => dpt_name}, socket) do
     send(self(), :after_join)
@@ -21,9 +21,14 @@ defmodule ZanziWeb.DepartementChannel do
         pending_printing = ToKitchen.fetch_pending_print()
         {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
 
-      "coffee" ->
+      "restaurant" ->
         # fetch pending printing from cache bar
-        pending_printing = ToCoffee.fetch_pending_print()
+        pending_printing = ToprintRestaurant.fetch_pending_print()
+        {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
+
+      "minibar" ->
+        # fetch pending printing from cache bar
+        pending_printing = ToprintMiniBar.fetch_pending_print()
         {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
     end
 

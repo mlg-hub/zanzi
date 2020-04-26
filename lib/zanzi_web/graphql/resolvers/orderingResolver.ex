@@ -125,7 +125,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     toMinibar = Agent.get(minibar, fn list -> list end)
 
     Logger.info("new structure baby")
-    IO.inspect(toBar)
+    IO.inspect(toMinibar)
 
     if Enum.count(toKitchen) > 0 do
       ToKitchen.add_new(toKitchen)
@@ -136,7 +136,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
 
     if Enum.count(toMinibar) > 0 do
-      ToprintMiniBar.add_new(toRestaurant)
+      ToprintMiniBar.add_new(toMinibar)
     end
 
     if Enum.count(toBar) > 0 do
