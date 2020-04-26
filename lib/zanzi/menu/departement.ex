@@ -5,8 +5,10 @@ defmodule Zanzibloc.Menu.Departement do
 
   schema "departements" do
     field(:name, :string, null: false)
+    field :active_status, :integer
     has_many(:categories, Zanzibloc.Menu.Category)
     has_many(:items, Zanzibloc.Menu.Item)
+
     timestamps()
   end
 

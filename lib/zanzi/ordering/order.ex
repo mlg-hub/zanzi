@@ -11,9 +11,10 @@ defmodule Zanzibloc.Ordering.Order do
     field(:total, :integer, read_after_writes: true)
     field(:merged_status, :integer)
     field(:print_status, :integer)
-
+    field :order_type, :string
+    field :payment_method, :integer
     #####
-    field(:split_status, :integer, default: 0)
+    field(:split_status, :integer)
     field(:filled, :integer)
     field(:splitted_from, :id)
     ###

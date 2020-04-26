@@ -2,7 +2,7 @@ defmodule Zanzibloc.Menu.MenuApi do
   alias Zanzibloc.Menu.{Item, Departement, Category}
   alias Zanzi.Repo
   import Ecto.Query, warn: false
-  alias Zanzibloc.Cache.{BarCache, KitchenCache, CoffeeCache}
+  alias Zanzibloc.Cache.{BarCache, KitchenCache, MiniBar, Restaurant}
 
   def list_categories do
     Repo.all(Category)
@@ -18,7 +18,8 @@ defmodule Zanzibloc.Menu.MenuApi do
   def get_category!(id), do: Repo.get!(Category, id)
 
   def get_all_departement do
-    Repo.all(Departement)
+    query = from d in Departement, where: d.active_status == 0
+    Repo.all(query)
   end
 
   def create_category(attrs \\ %{}) do
@@ -60,11 +61,16 @@ defmodule Zanzibloc.Menu.MenuApi do
         {:ok, items} = KitchenCache.get_all_item()
         items
 
-      id == "3" or id == 3 ->
-        {:ok, items} = CoffeeCache.get_all_item()
+      id == "4" or id == 4 ->
+        {:ok, items} = Restaurant.get_all_item()
+        items
+
+      id == "5" or id == 5 ->
+        {:ok, items} = MiniBar.get_all_item()
         items
 
       true ->
+        IO.puts("i was called with id #{id}")
         []
     end
   end

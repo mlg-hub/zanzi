@@ -2,7 +2,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   alias Zanzibloc.Ordering.{OrderingApi, OrderDetail, Order}
   alias Zanzibloc.Account.{User}
   alias Zanzibloc.Menu.Item
-  alias Zanzibloc.Cache.{ToprintBar, ToCoffee, ToKitchen}
+  alias Zanzibloc.Cache.{ToprintBar, ToKitchen, ToprintMiniBar, ToprintRestaurant}
   require Logger
 
   def prepare_order(_, %{id: id}, _) do
@@ -60,7 +60,8 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   defp split_to_departement(bon_de_commande) do
     {:ok, kitchen} = Agent.start_link(fn -> [] end)
     {:ok, bar} = Agent.start_link(fn -> [] end)
-    {:ok, coffee} = Agent.start_link(fn -> [] end)
+    {:ok, restaurant} = Agent.start_link(fn -> [] end)
+    {:ok, minibar} = Agent.start_link(fn -> [] end)
     IO.inspect(bon_de_commande)
 
     Enum.each(
@@ -72,16 +73,20 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
           nil ->
             case dpt do
               2 ->
-                kitchen_map = transform_order_details(details)
+                kitchen_map = transform_order_details(details, "Kitchen")
                 Agent.update(kitchen, fn list -> [kitchen_map | list] end)
 
               1 ->
-                bar_map = transform_order_details(details)
+                bar_map = transform_order_details(details, "Bar")
                 Agent.update(bar, fn list -> [bar_map | list] end)
 
-              3 ->
-                coffee_map = transform_order_details(details)
-                Agent.update(coffee, fn list -> [coffee_map | list] end)
+              4 ->
+                restaurant_map = transform_order_details(details, "Restaurant")
+                Agent.update(restaurant, fn list -> [restaurant_map | list] end)
+
+              5 ->
+                minibar_map = transform_order_details(details, "Mini Bar")
+                Agent.update(minibar, fn list -> [minibar_map | list] end)
 
               _ ->
                 Logger.error("did not match any departement")
@@ -91,16 +96,20 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
           _ ->
             case dpt do
               2 ->
-                kitchen_map = transform_order_details_update(details, update)
+                kitchen_map = transform_order_details_update(details, update, "Kitchen")
                 Agent.update(kitchen, fn list -> [kitchen_map | list] end)
 
               1 ->
-                bar_map = transform_order_details_update(details, update)
+                bar_map = transform_order_details_update(details, update, "Bar")
                 Agent.update(bar, fn list -> [bar_map | list] end)
 
-              3 ->
-                coffee_map = transform_order_details_update(details, update)
-                Agent.update(coffee, fn list -> [coffee_map | list] end)
+              4 ->
+                restaurant_map = transform_order_details_update(details, update, "Restaurant")
+                Agent.update(restaurant, fn list -> [restaurant_map | list] end)
+
+              5 ->
+                minibar_map = transform_order_details_update(details, update, "Mini Bar")
+                Agent.update(minibar, fn list -> [minibar_map | list] end)
 
               _ ->
                 Logger.error("did not match any departement")
@@ -112,7 +121,8 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
 
     toKitchen = Agent.get(kitchen, fn list -> list end)
     toBar = Agent.get(bar, fn list -> list end)
-    toCoffee = Agent.get(coffee, fn list -> list end)
+    toRestaurant = Agent.get(restaurant, fn list -> list end)
+    toMinibar = Agent.get(minibar, fn list -> list end)
 
     Logger.info("new structure baby")
     IO.inspect(toBar)
@@ -121,8 +131,12 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       ToKitchen.add_new(toKitchen)
     end
 
-    if Enum.count(toCoffee) > 0 do
-      ToCoffee.add_new(toCoffee)
+    if Enum.count(toRestaurant) > 0 do
+      ToprintRestaurant.add_new(toRestaurant)
+    end
+
+    if Enum.count(toMinibar) > 0 do
+      ToprintMiniBar.add_new(toRestaurant)
     end
 
     if Enum.count(toBar) > 0 do
@@ -131,7 +145,8 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
 
     Agent.stop(kitchen)
     Agent.stop(bar)
-    Agent.stop(coffee)
+    Agent.stop(restaurant)
+    Agent.stop(minibar)
   end
 
   def set_printed(_, %{order_id: id}, _) do
@@ -283,10 +298,10 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     }
   end
 
-  def transform_order_details(details) do
+  def transform_order_details(details, dpt) do
     %{
       item: %Item{name: name, price: price},
-      order: %Order{ordered_at: time_of_order, code: order_code, owner: owner_array},
+      order: %Order{code: order_code, owner: owner_array},
       sold_quantity: qty,
       order_id: order_id
     } = details
@@ -299,14 +314,15 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       owner_name: Enum.at(owner_array, 0).full_name,
       owner_username: Enum.at(owner_array, 0).username,
       order_id: order_id,
-      quantity: qty
+      quantity: qty,
+      departement: dpt
     }
   end
 
-  def transform_order_details_update(details, update) do
+  def transform_order_details_update(details, update, dpt) do
     %{
       item: %Item{name: name, price: price},
-      order: %Order{ordered_at: time_of_order, code: order_code, owner: owner_array},
+      order: %Order{code: order_code, owner: owner_array},
       order_id: order_id
     } = details
 
@@ -318,7 +334,8 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       owner_name: Enum.at(owner_array, 0).full_name,
       owner_username: Enum.at(owner_array, 0).username,
       order_id: order_id,
-      quantity: update.sold_quantity
+      quantity: update.sold_quantity,
+      departement: dpt
     }
   end
 

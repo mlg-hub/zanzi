@@ -3,10 +3,12 @@ alias Zanzi.Repo
 alias Zanzibloc.Menu.{Category, Departement, Item}
 NimbleCSV.define(CSV, separator: "\,")
 
-"priv/repo/seed_data/zanzi_safe.csv"
+# "priv/repo/seed_data/zanzi_safe.csv"
+
+"priv/repo/seed_data/restaurant.csv"
 |> File.read!()
 |> CSV.parse_string()
-|> Enum.each(fn [item, category, price, departement] ->
+|> Enum.each(fn [item, price, category, departement] ->
   # check for dpt existance
   resp_dept = Departement.check_dpt_existance_or_insert(departement)
   resp_category = Category.check_cat_exitstance_or_insert(category, resp_dept)

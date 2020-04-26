@@ -1,9 +1,12 @@
 alias NimbleCSV.RFC4180, as: CSV
 alias Zanzi.Repo
 alias Zanzibloc.Menu.{Category, Departement, Item}
-NimbleCSV.define(CSV, separator: "\,")
+NimbleCSV.define(CSV, separator: "\;")
 
-"priv/repo/seed_data/zanzi_food.csv"
+# "priv/repo/seed_data/zanzi_food.csv"
+# "priv/repo/seed_data/mini_bar.csv"
+
+"priv/repo/seed_data/extra_resto.csv"
 |> File.read!()
 |> CSV.parse_string()
 |> Enum.each(fn [item, price, category, departement] ->
