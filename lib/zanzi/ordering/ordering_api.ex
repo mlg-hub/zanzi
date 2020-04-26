@@ -133,7 +133,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         end
 
       _ ->
-        {:error, "your changeset is invalid"}
+        %{message: "your changeset is invalid"}
     end
   end
 
