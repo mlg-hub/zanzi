@@ -1,6 +1,6 @@
 defmodule ZanziWeb.CommandeChannel do
   use ZanziWeb, :channel
-  alias Zanzibloc.Cache.{ToKitchen, ToCoffee, ToprintBar}
+  alias Zanzibloc.Cache.{ToKitchen, ToprintMiniBar, ToprintBar, ToprintRestaurant}
 
   # alias Zanzibloc.Cache.{ToKitchen, ToCoffee, ToprintBar}
 
@@ -16,8 +16,9 @@ defmodule ZanziWeb.CommandeChannel do
       "kitchen" ->
         Zanzibloc.Cache.ToKitchen.update_cache_from_manual(payload)
 
-      "coffee" ->
-        Zanzibloc.Cache.ToCoffee.update_cache_from_manual(payload)
+      "resto-bar" ->
+        Zanzibloc.Cache.ToprintRestaurant.update_cache_from_manual(payload)
+        Zanzibloc.Cache.ToprintMiniBar.update_cache_from_manual(payload)
     end
 
     {:reply, :ok, socket}
@@ -46,11 +47,13 @@ defmodule ZanziWeb.CommandeChannel do
 
         {:reply, :ok, socket}
 
-      "coffee" ->
+      "resto-bar" ->
         # fetch pending printing from cache bar
-        cache = ToCoffee.fetch_cache_print()
+        cache_resto = ToprintRestaurant.fetch_cache_print()
+        cache_minibar = ToprintMiniBar.fetch_cache_print()
+        cache = cache_minibar ++ cache_resto
 
-        ZanziWeb.Endpoint.broadcast!("commande:coffee", "fetched_cache", %{
+        ZanziWeb.Endpoint.broadcast!("commande:resto-bar", "fetched_cache", %{
           caches: cache
         })
 
@@ -81,11 +84,21 @@ defmodule ZanziWeb.CommandeChannel do
 
         {:reply, :ok, socket}
 
-      "coffee" ->
+      "restaurant" ->
         # fetch pending printing from cache bar
-        cache = ToCoffee.fetch_cache_count()
+        cache = ToprintRestaurant.fetch_cache_count()
 
-        ZanziWeb.Endpoint.broadcast!("commande:coffee", "count_cache", %{
+        ZanziWeb.Endpoint.broadcast!("commande:restaurant", "count_cache", %{
+          count: cache
+        })
+
+        {:reply, :ok, socket}
+
+      "minibar" ->
+        # fetch pending printing from cache bar
+        cache = ToprintMiniBar.fetch_cache_count()
+
+        ZanziWeb.Endpoint.broadcast!("commande:minibar", "count_cache", %{
           count: cache
         })
 

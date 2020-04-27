@@ -21,14 +21,11 @@ defmodule ZanziWeb.DepartementChannel do
         pending_printing = ToKitchen.fetch_pending_print()
         {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
 
-      "restaurant" ->
+      "resto-bar" ->
         # fetch pending printing from cache bar
-        pending_printing = ToprintRestaurant.fetch_pending_print()
-        {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
-
-      "minibar" ->
-        # fetch pending printing from cache bar
-        pending_printing = ToprintMiniBar.fetch_pending_print()
+        pending_printing_resto = ToprintRestaurant.fetch_pending_print()
+        pending_printing_minibar = ToprintMiniBar.fetch_pending_print()
+        pending_printing = pending_printing_minibar ++ pending_printing_resto
         {:ok, %{active: true, pending: pending_printing}, assign(socket, :active_dpt, dpt_name)}
     end
 

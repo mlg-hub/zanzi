@@ -13,6 +13,7 @@ defmodule Zanzibloc.Ordering.Order do
     field(:print_status, :integer)
     field :order_type, :string
     field :payment_method, :integer
+    field :void_request, :integer
     #####
     field(:split_status, :integer)
     field(:filled, :integer)
