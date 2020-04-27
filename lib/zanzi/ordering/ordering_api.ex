@@ -125,6 +125,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       %Order{}
       |> Order.create_split_changeset(attrs)
 
+    IO.puts("my spliiiiiiiiiiiiiit")
+    IO.inspect(split_changeset)
+
     case split_changeset.valid? do
       true ->
         case Repo.insert!(split_changeset) do
