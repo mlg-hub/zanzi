@@ -66,6 +66,14 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         query = from i in Item, where: i.departement_id == 3
         Repo.all(query)
 
+      :restaurant ->
+        query = from i in Item, where: i.departement_id == 5
+        Repo.all(query)
+
+      :mini_bar ->
+        query = from i in Item, where: i.departement_id == 6
+        Repo.all(query)
+
       _ ->
         []
     end
