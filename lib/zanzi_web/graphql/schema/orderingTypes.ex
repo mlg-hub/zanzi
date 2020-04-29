@@ -41,6 +41,13 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field(:splitted_id, non_null(:id))
   end
 
+  object :sales_stats do
+    field :bar, :integer
+    field :kitchen, :integer
+    field :mini_bar, :integer
+    field :restaurant, :integer
+  end
+
   object :waiter_order do
     field(:order_id, :id)
     field(:order_code, :string)

@@ -37,7 +37,7 @@
                 <li class="nav-item">
                   <a href="<%= Routes.order_path(@conn, :incomplete) %>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Orders not fully paid</p>
+                    <p>Unpaid / compl.</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -74,7 +74,19 @@
                 <li class="nav-item">
                   <a href="<%= Routes.departement_path(@conn, :stats_coffee)%>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Coffee shop</p>
+                    <p>Coffee shop (no longer actif)</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.departement_path(@conn, :stats_restaurant)%>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Restaurant</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.departement_path(@conn, :stats_mini_bar)%>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Mini bar</p>
                   </a>
                 </li>
               </ul>

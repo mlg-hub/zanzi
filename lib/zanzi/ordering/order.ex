@@ -38,7 +38,7 @@ defmodule Zanzibloc.Ordering.Order do
   def create_split_changeset(%__MODULE__{} = order_split, attrs \\ %{}) do
     order_split
     |> cast(attrs, [:table_id, :split_status, :filled, :status])
-    |> validate_required([:table_id, :split_status])
+    |> validate_required([:table_id])
     |> put_change(:code, make_ordercode())
   end
 

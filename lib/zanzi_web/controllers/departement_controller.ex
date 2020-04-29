@@ -17,6 +17,16 @@ defmodule ZanziWeb.DepartementController do
     render(conn, "coffee.html", stats: cof_stats)
   end
 
+  def stats_restaurant(conn, _params) do
+    cof_stats = OrderingApi.get_department_stats(4)
+    render(conn, "restaurant.html", stats: cof_stats)
+  end
+
+  def stats_mini_bar(conn, _params) do
+    cof_stats = OrderingApi.get_department_stats(5)
+    render(conn, "mini_bar.html", stats: cof_stats)
+  end
+
   def filter_date(conn, %{"date" => %{"selected_date" => date, "dpt_id" => dpt_id, "dpt" => dpt}}) do
     filtered_result = OrderingApi.filter_by_date(date, dpt_id)
     render(conn, "#{dpt}.html", stats: filtered_result)

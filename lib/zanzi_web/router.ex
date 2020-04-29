@@ -32,6 +32,8 @@ defmodule ZanziWeb.Router do
       get "/stats_bar", DepartementController, :stats_bar
       get "/stats_coffee", DepartementController, :stats_coffee
       get "/stats_kitchen", DepartementController, :stats_kitchen
+      get "/stats_restaurant", DepartementController, :stats_restaurant
+      get "/stats_mini_bar", DepartementController, :stats_mini_bar
       post "/filter_date", DepartementController, :filter_date
     end
   end

@@ -5,6 +5,11 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   alias Zanzibloc.Cache.{ToprintBar, ToKitchen, ToprintMiniBar, ToprintRestaurant}
   require Logger
 
+  def get_sales_stats(_, %{date: date}, %{context: context}) do
+    user = context[:current_user]
+    {:ok, OrderingApi.get_sales_stats(date, user.id)}
+  end
+
   def prepare_order(_, %{id: id}, _) do
     order = OrderingApi.get_order!(id)
 
@@ -210,22 +215,22 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
      })}
   end
 
-  def cleared_bills(_, _, %{context: context}) do
+  def cleared_bills(_, %{date: date}, %{context: context}) do
     user = context[:current_user]
-    cleared_bills = OrderingApi.get_cleared_bill(user.id)
+    cleared_bills = OrderingApi.get_cleared_bill(date, user.id)
     {:ok, cleared_bills}
   end
 
-  def get_pending_orders(_, %{info: info}, _) do
+  def get_pending_orders(_, %{info: info, date: date}, _) do
     cond do
       info == "pending" ->
-        {:ok, OrderingApi.get_pending_orders()}
+        {:ok, OrderingApi.get_pending_orders(date)}
 
       info == "incomplete" ->
-        {:ok, OrderingApi.get_incomplete_orders()}
+        {:ok, OrderingApi.get_incomplete_orders(date)}
 
       info == "voided" ->
-        {:ok, OrderingApi.get_voided_orders()}
+        {:ok, OrderingApi.get_voided_orders(date)}
 
       true ->
         {:error, "try again"}

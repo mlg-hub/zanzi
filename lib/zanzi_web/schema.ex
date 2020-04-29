@@ -75,7 +75,13 @@ defmodule ZanziWeb.Schema do
 
     field :get_pending_orders, list_of(:order) do
       arg(:info, :string)
+      arg(:date, :string)
       resolve(&OrderingResolvers.get_pending_orders/3)
+    end
+
+    field :get_all_stats, :sales_stats do
+      arg(:date, :string)
+      resolve(&OrderingResolvers.get_sales_stats/3)
     end
 
     field :get_all_split_bill_for_user, list_of(:open_split_bill_list) do
@@ -93,6 +99,7 @@ defmodule ZanziWeb.Schema do
     end
 
     field :get_cleared_bills, list_of(:order_payment) do
+      arg(:date, :string)
       resolve(&OrderingResolvers.cleared_bills/3)
     end
 

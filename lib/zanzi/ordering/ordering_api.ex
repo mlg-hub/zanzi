@@ -552,14 +552,17 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.one(query)
   end
 
-  def get_cleared_bill(user_id) do
+  def get_cleared_bill(date, user_id) do
+    {:ok, date} = Date.from_iso8601(date)
+
     query =
       OrderPayment
       |> where([p], p.user_id == ^user_id)
-      |> join(:inner, [p], o in assoc(p, :order),
-        on: o.status == "paid" or o.status == "incomplete"
+      |> join(:inner, [p], o in assoc(p, :order), on: o.status == "paid")
+      |> join(:inner, [p, o], pd in assoc(o, :payments),
+        on: fragment("?::date", pd.inserted_at) == ^date
       )
-      |> order_by([p, o], desc: p.inserted_at)
+      |> order_by([p, o, pd], desc: pd.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([p, o], order: o)
 
@@ -614,19 +617,106 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
-  def get_pending_orders do
-    query = from u in Order, where: u.status == "created", preload: [:owner, :table]
+  def get_sales_stats(date, user_id) do
+    {:ok, kitchen} = Agent.start_link(fn -> 0 end)
+    {:ok, bar} = Agent.start_link(fn -> 0 end)
+    {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
+    {:ok, restaurant} = Agent.start_link(fn -> 0 end)
+
+    {:ok, date_search} = Date.from_iso8601(date)
+    # and fragment("?::date", p.inserted_at) == ^date
+    query =
+      OrderPayment
+      |> where(
+        [p],
+        p.user_id == ^user_id and p.order_paid > 0 and
+          fragment("?::date", p.inserted_at) == ^date_search
+      )
+      |> join(:inner, [p], order in assoc(p, :order))
+      |> join(:inner, [p, order], order_details in assoc(order, :order_details))
+      |> join(:inner, [p, order, od], dpt in assoc(od, :departement))
+      # |> preload([p, order, order_details, dpt],
+      #   order: {order, order_details: {order_details, departement: dpt}}
+      # )
+      |> select([p, o, od, dpt], [
+        map(od, [:item_id, :sold_price, :sold_quantity]),
+        # map(p, [:order_id, :order_paid, :order_total]),
+        map(dpt, [:name])
+      ])
+
+    all_sales = Repo.all(query)
+
+    # Enum.dedup(all_sales)
+
+    Enum.each(all_sales, fn [%{sold_price: price, sold_quantity: qty}, %{name: dpt}] ->
+      case String.downcase(dpt) do
+        "bar" ->
+          Agent.update(bar, fn acc ->
+            acc + price * qty
+          end)
+
+        "kitchen" ->
+          Agent.update(kitchen, fn acc ->
+            acc + price * qty
+          end)
+
+        "mini bar" ->
+          Agent.update(mini_bar, fn acc ->
+            acc + price * qty
+          end)
+
+        "restaurant" ->
+          Agent.update(restaurant, fn acc ->
+            acc + price * qty
+          end)
+      end
+    end)
+
+    r = %{
+      kitchen: Agent.get(kitchen, fn tot -> tot end),
+      bar: Agent.get(bar, fn tot -> tot end),
+      restaurant: Agent.get(restaurant, fn tot -> tot end),
+      mini_bar: Agent.get(mini_bar, fn tot -> tot end)
+    }
+
+    Agent.stop(kitchen)
+    Agent.stop(bar)
+    Agent.stop(mini_bar)
+    Agent.stop(restaurant)
+    r
+  end
+
+  def get_pending_orders(date) do
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      Order
+      |> where([o], o.status == "created" and fragment("?::date", o.inserted_at) == ^date)
+      |> preload([:owner, :table])
+
     Repo.all(query)
   end
 
   # @spec get_incomplete_orders :: any
-  def get_incomplete_orders do
-    query = from u in Order, where: u.status == "incomplete", preload: [:owner, :table]
+  def get_incomplete_orders(date) do
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      Order
+      |> where([o], o.status == "incomplete" and fragment("?::date", o.updated_at) == ^date)
+      |> preload([:owner, :table])
+
     Repo.all(query)
   end
 
-  def get_voided_orders do
-    query = from u in Order, where: u.status == "voided", preload: [:owner, :table]
+  def get_voided_orders(date) do
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      Order
+      |> where([o], o.status == "voided" and fragment("?::date", o.updated_at) == ^date)
+      |> preload([:owner, :table])
+
     Repo.all(query)
   end
 
@@ -834,6 +924,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def filter_by_date(date, dpt_id) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
+    IO.inspect(date)
     {:ok, date} = Date.from_iso8601(date)
 
     query =
@@ -865,6 +956,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def filter_by_date(:order, date, order_type) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
+    IO.inspect(date)
     {:ok, date} = Date.from_iso8601(date)
 
     query =
@@ -897,12 +989,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       # if exit update otherwise insert
       # if Enum.member?(Agent.get(itemsArray, fn list -> list end), v) do
       my_list = Agent.get(dptArray, fn list -> list end)
-      IO.inspect(my_list)
 
       index =
         Enum.find_index(my_list, fn x ->
-          IO.puts("my list")
-
           x["item_name"] == v["item_name"] and x["sold_price"] == v["sold_price"]
         end)
 
