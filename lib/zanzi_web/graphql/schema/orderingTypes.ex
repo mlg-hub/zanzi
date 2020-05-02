@@ -124,6 +124,17 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field(:quantity, :integer)
   end
 
+  object :simple_order_detail do
+    field :id, :id
+    field :code, :string
+    field :paid, :boolean
+    field :order_paid, :integer
+    field :name, :string
+    field :sold_price, :integer
+    field :sold_quantity, :integer
+    field :total, :integer
+  end
+
   object :merged_detail_with_total do
     field(:gross_total, :integer)
     field(:all_details, list_of(:merged_detail_item))

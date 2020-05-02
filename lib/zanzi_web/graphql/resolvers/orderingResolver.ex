@@ -5,6 +5,11 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   alias Zanzibloc.Cache.{ToprintBar, ToKitchen, ToprintMiniBar, ToprintRestaurant}
   require Logger
 
+  def get_order_details(_, %{order_id: order_id}, _) do
+    details = OrderingApi.get_order_details(order_id)
+    {:ok, details}
+  end
+
   def get_sales_stats(_, %{date: date}, %{context: context}) do
     user = context[:current_user]
     {:ok, OrderingApi.get_sales_stats(date, user.id)}

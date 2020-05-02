@@ -608,13 +608,38 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     case Repo.get(Order, order_id) do
       %Order{} = order ->
         case order.merged_status do
-          0 -> Repo.preload(order, :order_details)
+          0 -> format_order_details(order)
           1 -> display_merged_bill(order.id)
         end
 
       _ ->
         {:error, "order does not exist"}
     end
+  end
+
+  defp format_order_details(%Order{} = order) do
+    query =
+      Order
+      |> where([o], o.id == ^order.id)
+      |> join(:left, [o], details in assoc(o, :order_details), on: details.sold_quantity > 0)
+      |> join(:left, [o, d], item in assoc(d, :item))
+      |> join(:left, [o, d, i], payments in assoc(o, :payments))
+      |> select([o, d, i, p], [
+        map(o, [:id, :code, :total]),
+        map(d, [:sold_quantity, :sold_price]),
+        map(i, [:name]),
+        map(p, [:order_paid])
+      ])
+      |> Repo.all()
+      |> Enum.map(fn [map1, map2, map3, map4] ->
+        t1 = Map.merge(map1, map2)
+        tfinal = Map.merge(t1, map3)
+
+        case map4 do
+          nil -> Map.put(tfinal, :paid, false)
+          _ -> Map.merge(Map.put(tfinal, :paid, true), map4)
+        end
+      end)
   end
 
   def get_sales_stats(date, user_id) do
@@ -632,9 +657,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         p.user_id == ^user_id and p.order_paid > 0 and
           fragment("?::date", p.inserted_at) == ^date_search
       )
-      |> join(:inner, [p], order in assoc(p, :order))
-      |> join(:inner, [p, order], order_details in assoc(order, :order_details))
-      |> join(:inner, [p, order, od], dpt in assoc(od, :departement))
+      |> join(:left, [p], order in assoc(p, :order))
+      |> join(:left, [p, order], order_details in assoc(order, :order_details))
+      |> join(:left, [p, order, od], dpt in assoc(od, :departement))
       # |> preload([p, order, order_details, dpt],
       #   order: {order, order_details: {order_details, departement: dpt}}
       # )
@@ -899,8 +924,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     query =
       OrderDetail
       |> where([od], od.departement_id == ^dpt_id)
-      |> join(:left, [od], orders in Order, on: orders.id == od.order_id)
-      |> where([od, orders], orders.status != "voided")
+      |> join(:left, [od], orders in Order,
+        on: orders.id == od.order_id and orders.status != "voided"
+      )
+      # |> where([od, orders], orders.status != "voided")
       # |> where([od, orders] )
       |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
       # |> preload([od, orders, items])
@@ -973,17 +1000,19 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     {:ok, dptArray} = Agent.start_link(fn -> [] end)
 
     Repo.all(query)
-    |> Enum.map(fn [od, o, i] ->
-      {
-        i.name,
-        %{
-          "sold_price" => od.sold_price,
-          "sold_quantity" => od.sold_quantity,
-          "order_code" => o.code,
-          "order_time" => o.inserted_at,
-          "item_name" => i.name
+    |> Enum.map(fn [od, o, i] = elts ->
+      if o != nil and elts != nil do
+        {
+          i.name,
+          %{
+            "sold_price" => od.sold_price,
+            "sold_quantity" => od.sold_quantity,
+            "order_code" => o.code,
+            "order_time" => o.inserted_at,
+            "item_name" => i.name
+          }
         }
-      }
+      end
     end)
     |> Enum.map(fn {_k, v} ->
       # if exit update otherwise insert
@@ -994,8 +1023,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Enum.find_index(my_list, fn x ->
           x["item_name"] == v["item_name"] and x["sold_price"] == v["sold_price"]
         end)
-
-      IO.puts("index is #{index}")
 
       case index do
         nil ->

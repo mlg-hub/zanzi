@@ -172,8 +172,6 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
       end
 
       def handle_info({:clear_cache, items}, state) do
-        IO.puts("in handle info")
-        IO.inspect(items)
         update_cache(items)
         {:noreply, state}
       end
@@ -186,8 +184,6 @@ defmodule Zanzibloc.Cache.PrintBluePrint do
           Enum.map(toPrint_list, fn x ->
             Enum.drop(x, -1)
           end)
-
-        IO.puts("hey am")
 
         cond do
           isLive ->

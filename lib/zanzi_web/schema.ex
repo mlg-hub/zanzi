@@ -84,6 +84,11 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.get_sales_stats/3)
     end
 
+    field :get_order_simple_details, list_of(:simple_order_detail) do
+      arg(:order_id, :id)
+      resolve(&OrderingResolvers.get_order_details/3)
+    end
+
     field :get_all_split_bill_for_user, list_of(:open_split_bill_list) do
       arg(:username, :string)
       resolve(&OrderingResolvers.get_all_split_bill_for_user/3)
