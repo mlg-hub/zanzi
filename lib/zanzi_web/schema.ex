@@ -103,7 +103,7 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.get_all_orders_from_waiter/3)
     end
 
-    field :get_cleared_bills, list_of(:order_payment) do
+    field :get_cleared_bills, list_of(:order) do
       arg(:date, :string)
       resolve(&OrderingResolvers.cleared_bills/3)
     end

@@ -86,6 +86,7 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field :merged_status, :integer
     field :split_status, :integer
     field :status, :string
+    field :payments, list_of(:order_payment)
 
     field :order_details, list_of(:order_detail) do
       resolve(fn parent, _, _ ->

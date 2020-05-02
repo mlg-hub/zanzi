@@ -556,15 +556,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     {:ok, date} = Date.from_iso8601(date)
 
     query =
-      OrderPayment
-      |> where([p], p.user_id == ^user_id)
-      |> join(:inner, [p], o in assoc(p, :order), on: o.status == "paid")
-      |> join(:inner, [p, o], pd in assoc(o, :payments),
-        on: fragment("?::date", pd.inserted_at) == ^date
-      )
-      |> order_by([p, o, pd], desc: pd.inserted_at)
+      Order
+      |> where([o], o.status == "paid")
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date)
+      |> order_by([o,p], desc: p.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
-      |> preload([p, o], order: o)
+      |> preload([o, p], payments: p)
 
     Repo.all(query)
   end
@@ -923,13 +920,13 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
     query =
       OrderDetail
-      |> where([od], od.departement_id == ^dpt_id)
-      |> join(:left, [od], orders in Order,
+      |> where([od], od.departement_id == ^dpt_id and od.order_paid > 0)
+      |> join(:inner, [od], orders in Order,
         on: orders.id == od.order_id and orders.status != "voided"
       )
       # |> where([od, orders], orders.status != "voided")
       # |> where([od, orders] )
-      |> join(:left, [od, orders], items in Item, on: items.id == od.item_id)
+      |> join(:inner, [od, orders], items in Item, on: items.id == od.item_id)
       # |> preload([od, orders, items])
       # |> group_by([od], od.id)
       |> select(
