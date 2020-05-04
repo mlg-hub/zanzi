@@ -205,6 +205,7 @@ defmodule ZanziWeb.Schema do
     field :pay_order, :response_status do
       arg(:order_id, non_null(:id))
       arg(:order_paid, :integer)
+      arg :order_type, :string
       middleware(Middleware.Authorize, :auth)
       resolve(&OrderingResolvers.pay_order/3)
     end

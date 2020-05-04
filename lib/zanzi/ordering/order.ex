@@ -49,7 +49,7 @@ defmodule Zanzibloc.Ordering.Order do
 
   def changeset(%__MODULE__{} = order, attrs \\ %{}) do
     order
-    |> cast(attrs, [:total, :table_id])
+    |> cast(attrs, [:total, :table_id, :order_type])
     |> put_change(:code, make_ordercode())
 
     # |> cast_embed(:items)

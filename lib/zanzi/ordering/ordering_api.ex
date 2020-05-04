@@ -558,8 +558,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     query =
       Order
       |> where([o], o.status == "paid")
-      |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date)
-      |> order_by([o,p], desc: p.inserted_at)
+      |> join(:inner, [o], p in assoc(o, :payments),
+        on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date
+      )
+      |> order_by([o, p], desc: p.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([o, p], payments: p)
 
@@ -648,19 +650,17 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     {:ok, date_search} = Date.from_iso8601(date)
     # and fragment("?::date", p.inserted_at) == ^date
     query =
-      OrderPayment
-      |> where(
-        [p],
-        p.user_id == ^user_id and p.order_paid > 0 and
-          fragment("?::date", p.inserted_at) == ^date_search
+      Order
+      |> where([o], o.status != "voided")
+      |> join(:inner, [o], order_details in assoc(o, :order_details))
+      |> join(:inner, [o, od], p in assoc(o, :payments),
+        on: fragment("?::date", p.inserted_at) == ^date_search and p.user_id == ^user_id
       )
-      |> join(:left, [p], order in assoc(p, :order))
-      |> join(:left, [p, order], order_details in assoc(order, :order_details))
-      |> join(:left, [p, order, od], dpt in assoc(od, :departement))
+      |> join(:inner, [o, od, p], dpt in assoc(od, :departement))
       # |> preload([p, order, order_details, dpt],
       #   order: {order, order_details: {order_details, departement: dpt}}
       # )
-      |> select([p, o, od, dpt], [
+      |> select([o, od, p, dpt], [
         map(od, [:item_id, :sold_price, :sold_quantity]),
         # map(p, [:order_id, :order_paid, :order_total]),
         map(dpt, [:name])
@@ -720,12 +720,29 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   # @spec get_incomplete_orders :: any
-  def get_incomplete_orders(date) do
+  def get_incomplete_orders(:unpaid, date) do
     {:ok, date} = Date.from_iso8601(date)
 
     query =
       Order
-      |> where([o], o.status == "incomplete" and fragment("?::date", o.updated_at) == ^date)
+      |> where([o], o.status == "incomplete")
+      |> join(:inner, [o], p in assoc(o, :payments),
+        on: fragment("?::date", p.inserted_at) == ^date and p.order_type == "unpaid"
+      )
+      |> preload([:owner, :table])
+
+    Repo.all(query)
+  end
+
+  def get_incomplete_orders(:complementary, date) do
+    {:ok, date} = Date.from_iso8601(date)
+
+    query =
+      Order
+      |> where([o], o.status == "incomplete")
+      |> join(:inner, [o], p in assoc(o, :payments),
+        on: fragment("?::date", o.updated_at) == ^date and p.order_type == "complementary"
+      )
       |> preload([:owner, :table])
 
     Repo.all(query)

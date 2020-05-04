@@ -231,8 +231,11 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
       info == "pending" ->
         {:ok, OrderingApi.get_pending_orders(date)}
 
-      info == "incomplete" ->
-        {:ok, OrderingApi.get_incomplete_orders(date)}
+      info == "unpaid" ->
+        {:ok, OrderingApi.get_incomplete_orders(:unpaid, date)}
+
+      info == "complementary" ->
+        {:ok, OrderingApi.get_incomplete_orders(:complementary, date)}
 
       info == "voided" ->
         {:ok, OrderingApi.get_voided_orders(date)}
