@@ -654,7 +654,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> where([o], o.status != "voided")
       |> join(:inner, [o], order_details in assoc(o, :order_details))
       |> join(:inner, [o, od], p in assoc(o, :payments),
-        on: fragment("?::date", p.inserted_at) == ^date_search and p.user_id == ^user_id
+        on:
+          fragment("?::date", p.inserted_at) == ^date_search and
+            p.user_id == ^user_id and
+            p.order_paid > 0
       )
       |> join(:inner, [o, od, p], dpt in assoc(od, :departement))
       # |> preload([p, order, order_details, dpt],
