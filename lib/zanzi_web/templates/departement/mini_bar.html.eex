@@ -6,13 +6,27 @@
     <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
     <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header" >
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1>Mini bar Statistics</h1>
           </div>
+          <div class="col-sm-6">
+            <div class="row">
+                 <div>
+                  <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
+                    <div class="form-group">
+                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
+                    <%= hidden_input f, :dpt_id, value: 5 %>
+                    <%= hidden_input f, :dpt, value: "mini_bar" %>
 
+                    </div>
+                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
+                <% end %>
+                 </div>
+              </div>
+          </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -20,21 +34,13 @@
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-12">
+        <%= for target <- Map.keys(@stats)  do %>
+          <div class="col-12">
           <div class="card">
-            <div class="card-header" style="display:flex;justify-content: space-between;">
-              <h3 class="card-title">Data for the Mini bar department</h3>
-              <h4>Total: <%= get_total(@stats)%> FBU </h4>
-              <div class="row">
-                 <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
-                    <div class="form-group">
-                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
-                    <%= hidden_input f, :dpt_id, value: 5 %>
-                    <%= hidden_input f, :dpt, value: "mini_bar" %>
-                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
-                    </div>
-                <% end %>
-              </div>
+            <div class="card-header" style="display:flex;justify-content: space-between;background-color:#d4ebff">
+              <h3 class="card-title">Summary View of <b><%= String.upcase(target) %></b> orders</h3>
+              <h4>Total: <%= get_total(@stats[target])%> FBU </h4>
+
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -45,16 +51,13 @@
                   <th>Quantity</th>
                   <th>Price</th>
                   <th>Total</th>
-
-
+                  <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-            <%= for stat <- @stats do%>
-
-                <%= render "stats.html",stat: stat %>
+            <%= for stat <- @stats[target] do%>
+                <%= render "stats.html",stat: stat, target: target %>
             <%end %>
-
                 </tbody>
 
               </table>
@@ -64,6 +67,7 @@
           </div>
           <!-- /.card -->
         </div>
+        <% end %>
         <!-- /.col -->
       </div>
       <!-- /.row -->

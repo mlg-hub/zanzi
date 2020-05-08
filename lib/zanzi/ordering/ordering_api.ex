@@ -1190,6 +1190,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def format_dpt_with_query(query) do
     {:ok, dptArray} = Agent.start_link(fn -> [] end)
+    {:ok, count} = Agent.start_link(fn -> 1 end)
 
     Repo.all(query)
     |> Enum.map(fn [od, o, i] = elts ->
@@ -1201,7 +1202,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             "sold_quantity" => od.sold_quantity,
             "order_code" => o.code,
             "order_time" => o.inserted_at,
-            "item_name" => i.name
+            "item_name" => i.name,
+            "id" => Agent.get_and_update(count, fn state -> {state, state + 1} end)
           }
         }
       end
@@ -1236,7 +1238,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             end)
 
           {_, my_clean_map} = map_with_orders_list
-
           Agent.update(dptArray, fn list -> List.replace_at(list, index, my_clean_map) end)
       end
 
@@ -1246,6 +1247,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
     data = Agent.get(dptArray, fn list -> list end)
     Agent.stop(dptArray)
+    Agent.stop(count)
     data
   end
 

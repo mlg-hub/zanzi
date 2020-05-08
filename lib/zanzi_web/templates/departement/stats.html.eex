@@ -1,7 +1,35 @@
- <tr>
-                  <td><%= @stat["item_name"]%></td>
-                  <td><%= @stat["sold_quantity"]%></td>
-                  <td><%= @stat["sold_price"]%></td>
-                  <td><%= @stat["sold_quantity"] * @stat["sold_price"]%></td>
+<tr>
+  <td><%= @stat["item_name"]%></td>
+  <td><%= @stat["sold_quantity"]%></td>
+  <td><%= @stat["sold_price"]%></td>
+  <td><%= @stat["sold_quantity"] * @stat["sold_price"]%></td>
+  <td><span class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= "#{@target}#{@stat["id"]}"%>">See Details<span></td>
+</tr>
 
-                </tr>
+<div id="myModal<%= "#{@target}#{@stat["id"]}"%>" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <%# <span class="close" data-dismiss="modal">&times;</span> %>
+        <h4 class="modal-title"><%= @stat["item_name"]%></h4>
+      </div>
+      <div class="modal-body">
+        <h5>Bon de commande list: </h5>
+        <%= if is_list(@stat["order_code"]) do %>
+            <%= for order <- @stat["order_code"] do %>
+                <span><%= order%></span><br/>
+            <%end %>
+        <%else %>
+          <%= @stat["order_code"] %>
+        <%end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+

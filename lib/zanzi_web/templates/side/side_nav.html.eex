@@ -71,12 +71,7 @@
                     <p>Bar</p>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="<%= Routes.departement_path(@conn, :stats_coffee)%>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Coffee shop (no longer actif)</p>
-                  </a>
-                </li>
+
                 <li class="nav-item">
                   <a href="<%= Routes.departement_path(@conn, :stats_restaurant)%>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
