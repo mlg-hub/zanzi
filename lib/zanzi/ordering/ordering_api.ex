@@ -620,9 +620,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     query =
       Order
       |> where([o], o.id == ^order.id)
-      |> join(:left, [o], details in assoc(o, :order_details), on: details.sold_quantity > 0)
-      |> join(:left, [o, d], item in assoc(d, :item))
-      |> join(:left, [o, d, i], payments in assoc(o, :payments))
+      |> join(:inner, [o], details in assoc(o, :order_details), on: details.sold_quantity > 0)
+      |> join(:inner, [o, d], item in assoc(d, :item))
+      |> join(:inner, [o, d, i], payments in assoc(o, :payments))
       |> select([o, d, i, p], [
         map(o, [:id, :code, :total]),
         map(d, [:sold_quantity, :sold_price]),
@@ -940,7 +940,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
     query =
       OrderDetail
-      |> where([od], od.departement_id == ^dpt_id and od.order_paid > 0)
+      |> where([od], od.departement_id == ^dpt_id)
       |> join(:inner, [od], orders in Order,
         on: orders.id == od.order_id and orders.status != "voided"
       )
