@@ -1024,7 +1024,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   defp process_query(:date, date, target, sous_target, dpt_id) do
     query =
       Order
-      |> where([o], o.status == ^target and fragment("?::date", o.inserted_at) == ^date)
+      |> where(
+        [o],
+        o.status == ^target and
+          (fragment("?::date", o.inserted_at) == ^date or
+             fragment("?::date", o.updated_at) == ^date)
+      )
       |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == ^sous_target)
       |> join(:inner, [o, p], od in OrderDetail,
         on: od.order_id == o.id and od.departement_id == ^dpt_id
@@ -1046,7 +1051,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   defp process_query(:date, date, target, dpt_id) do
     query =
       Order
-      |> where([o], o.status == ^target and fragment("?::date", o.inserted_at) == ^date)
+      |> where(
+        [o],
+        o.status == ^target and
+          (fragment("?::date", o.inserted_at) == ^date or
+             fragment("?::date", o.updated_at) == ^date)
+      )
       |> join(:inner, [o], od in OrderDetail,
         on: od.order_id == o.id and od.departement_id == ^dpt_id
       )
