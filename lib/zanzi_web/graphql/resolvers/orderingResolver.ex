@@ -10,6 +10,10 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, details}
   end
 
+  def get_all_request_void(_, _, _) do
+    {:ok, OrderingApi.get_all_request_void()}
+  end
+
   def get_sales_stats(_, %{date: date}, %{context: context}) do
     user = context[:current_user]
     {:ok, OrderingApi.get_sales_stats(date, user.id)}
@@ -23,8 +27,12 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
   end
 
-  def void_order(_, %{order_id: order_id}, _) do
-    {:ok, OrderingApi.void_order(order_id)}
+  def void_order(_, %{order_id: order_id, reason: reason}, _) do
+    {:ok, OrderingApi.void_order(order_id, reason)}
+  end
+
+  def send_void_request(_, %{order_id: order_id}, _) do
+    {:ok, OrderingApi.request_void(order_id)}
   end
 
   def get_all_tables(_, _, _) do

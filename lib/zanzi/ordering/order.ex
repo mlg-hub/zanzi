@@ -23,6 +23,7 @@ defmodule Zanzibloc.Ordering.Order do
     has_many(:order_details, Zanzibloc.Ordering.OrderDetail)
     has_many(:payments, Zanzibloc.Ordering.OrderPayment)
     has_many(:mergings, Zanzibloc.Ordering.OrderMerged)
+    has_one :void_reason, Zanzibloc.Ordering.VoidReason
 
     many_to_many(:owner, Zanzibloc.Account.User,
       join_through: OrderOwner,
@@ -65,7 +66,7 @@ defmodule Zanzibloc.Ordering.Order do
 
   def update_changeset(%__MODULE__{} = order, attrs) do
     order
-    |> cast(attrs, [:status, :split_status, :merged_status, :total, :print_status])
+    |> cast(attrs, [:status, :split_status, :merged_status, :total, :print_status, :void_request])
   end
 
   def update_main_split_changeset(%__MODULE__{} = order, attrs) do

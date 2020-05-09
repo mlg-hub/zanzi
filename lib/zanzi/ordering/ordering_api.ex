@@ -15,7 +15,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     TableOrders,
     Table,
     OrderSplit,
-    OrderMerged
+    OrderMerged,
+    VoidReason
   }
 
   alias Zanzibloc.Menu.Item
@@ -29,24 +30,68 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(Table)
   end
 
-  def void_order(order_id) do
+  def get_all_request_void do
+    query =
+      Order
+      |> where([o], o.void_request == 1)
+      |> join(:inner, [o], owner in assoc(o, :owner))
+      |> preload([o, ow], owner: ow)
+
+    Repo.all(query)
+  end
+
+  def void_order(order_id, reason) do
     order = Repo.get(Order, order_id)
 
     case order do
       %Order{} = result_order ->
-        void_my_order(result_order)
+        void_my_order(result_order, reason)
 
       _ ->
         %{error: "order not found"}
     end
   end
 
-  defp void_my_order(order) do
-    changeset = order |> Order.update_changeset(%{status: "voided"})
+  def request_void(order_id) do
+    order = Repo.get(Order, order_id)
+
+    case order do
+      %Order{} = result_order ->
+        send_void_request(result_order)
+
+      _ ->
+        %{error: "order not found"}
+    end
+  end
+
+  defp send_void_request(order) do
+    changeset = order |> Order.update_changeset(%{void_request: 1})
 
     case Repo.update(changeset) do
       {:ok, _} -> %{status: "success"}
-      _ -> %{error: "cant void the order"}
+      _ -> %{error: "cant send request the order"}
+    end
+  end
+
+  defp void_my_order(order, reason) do
+    # TODO: set the voiding reason
+    changeset = order |> Order.update_changeset(%{status: "voided"})
+
+    case Repo.update(changeset) do
+      {:ok, _} ->
+        void_changeset =
+          %VoidReason{} |> VoidReason.changeset(%{order_id: order.id, void_reason: reason})
+
+        with %VoidReason{} <- Repo.insert!(void_changeset) do
+          changeset = order |> Order.update_changeset(%{void_request: 0})
+          Repo.update(changeset)
+          %{status: "success"}
+        else
+          _ -> %{error: "cant void the order"}
+        end
+
+      _ ->
+        %{error: "cant void the order"}
     end
   end
 

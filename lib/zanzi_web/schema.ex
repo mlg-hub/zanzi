@@ -73,6 +73,10 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.display_order_with_merged/3)
     end
 
+    field :get_all_request_void, list_of(:order) do
+      resolve(&OrderingResolvers.get_all_request_void/3)
+    end
+
     field :get_pending_orders, list_of(:order) do
       arg(:info, :string)
       arg(:date, :string)
@@ -193,7 +197,13 @@ defmodule ZanziWeb.Schema do
 
     field :void_order, :response_status do
       arg(:order_id, :id)
+      arg(:reason, :string)
       resolve(&OrderingResolvers.void_order/3)
+    end
+
+    field :send_void_request, :response_status do
+      arg(:order_id, :id)
+      resolve(&OrderingResolvers.send_void_request/3)
     end
 
     field :prepare_order, :order_result do
@@ -205,7 +215,7 @@ defmodule ZanziWeb.Schema do
     field :pay_order, :response_status do
       arg(:order_id, non_null(:id))
       arg(:order_paid, :integer)
-      arg :order_type, :string
+      arg(:order_type, :string)
       middleware(Middleware.Authorize, :auth)
       resolve(&OrderingResolvers.pay_order/3)
     end
