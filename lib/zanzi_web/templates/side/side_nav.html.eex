@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-      <a href="../../index3.html" class="brand-link">
+      <a href="<%= Routes.session_path(@conn, :login)%>" class="brand-link">
         <span class="brand-text font-weight-light">Zanzi Restaurant</span>
       </a>
 
@@ -25,19 +25,31 @@
                 <li class="nav-item">
                   <a href="<%= Routes.order_path(@conn, :cleared) %>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Orders cleared</p>
+                    <p>Paid Bills</p>
                   </a>
                 </li>
                 <li class="nav-item">
                     <a href="<%= Routes.order_path(@conn, :pending) %>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Orders pending</p>
+                    <p>Pending Bills</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="<%= Routes.order_path(@conn, :incomplete) %>" class="nav-link">
+                  <a href="<%= Routes.order_path(@conn, :unpaid) %>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Unpaid / compl.</p>
+                    <p>Unpaid Bills</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.order_path(@conn, :complementary) %>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Complementary Bills</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.order_path(@conn, :remain) %>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Not fully paid Bills</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -49,7 +61,7 @@
               </ul>
             </li>
 
-            <li class="nav-item has-treeview menu-open">
+            <li class="nav-item has-treeview">
               <a href="#" class="nav-link bg-warning">
                 <i class="nav-icon fas fa-copy"></i>
                 <p style="text-color: white !important;">
@@ -84,6 +96,24 @@
                     <p>Mini bar</p>
                   </a>
                 </li>
+              </ul>
+            </li>
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link bg-info">
+                <i class="nav-icon fas fa-list"></i>
+                <p style="text-color: white !important;">
+                 Menu Management
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="<%= Routes.menu_items_path(@conn, :all)%>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>View all</p>
+                  </a>
+                </li>
+
               </ul>
             </li>
           </ul>

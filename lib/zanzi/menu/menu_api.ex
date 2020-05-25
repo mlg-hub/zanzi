@@ -8,6 +8,16 @@ defmodule Zanzibloc.Menu.MenuApi do
     Repo.all(Category)
   end
 
+  def list_all_items() do
+    query =
+      Item
+      |> join(:inner, [i], dpt in assoc(i, :departement))
+      |> order_by([i, dpt], asc: i.name)
+      |> preload([i, dpt], departement: dpt)
+
+    Repo.all(query)
+  end
+
   def get_bar_items do
     BarCache.get_all_item()
   end

@@ -16,11 +16,26 @@ defmodule ZanziWeb.OrderController do
     render(conn, "voided.html", orders: orders)
   end
 
-  def incomplete(conn, _params) do
+  def unpaid(conn, _params) do
     #  first get the real total then find the order payment amount
     # in payment table
-    orders = OrderingApi.get_bill(:incomplete)
-    render(conn, "incomplete.html", orders: orders)
+    orders = OrderingApi.get_bill(:unpaid)
+    render(conn, "unpaid.html", orders: orders)
+  end
+
+  def complementary(conn, _params) do
+    #  first get the real total then find the order payment amount
+    # in payment table
+    orders = OrderingApi.get_bill(:complementary)
+    render(conn, "complementary.html", orders: orders)
+  end
+
+  def remain(conn, _params) do
+    #  first get the real total then find the order payment amount
+    # in payment table
+    orders = OrderingApi.get_bill(:remain)
+    orders = Enum.reject(orders, fn o -> Enum.at(o.payments, 0).order_paid == 0 end)
+    render(conn, "remain.html", orders: orders)
   end
 
   def pending(conn, _params) do

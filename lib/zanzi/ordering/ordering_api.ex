@@ -631,7 +631,25 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         query = Order |> where([o], o.status == "paid")
         Repo.all(query, preload: :owner)
 
-      :incomplete ->
+      :unpaid ->
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "unpaid")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      :complementary ->
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "complementary")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      :remain ->
         query =
           Order
           |> where([o], o.status == "incomplete")
@@ -1232,17 +1250,35 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def filter_by_date(:order, date, order_type) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
-    IO.inspect(date)
+    # IO.inspect(date)
     {:ok, date} = Date.from_iso8601(date)
 
-    query =
-      Order
-      |> where(
-        [od],
-        fragment("?::date", od.inserted_at) == ^date and od.status == ^order_type
-      )
+    cond do
+      Enum.member?(["paid", "created", "voided"], order_type) ->
+        query =
+          Order
+          |> where(
+            [od],
+            fragment("?::date", od.inserted_at) == ^date and od.status == ^order_type
+          )
 
-    Repo.all(query)
+        Repo.all(query)
+
+      true ->
+        query =
+          Order
+          |> where(
+            [od],
+            od.status == "incomplete" and fragment("?::date", od.inserted_at) == ^date
+          )
+          |> join(:inner, [od], p in assoc(od, :payments), on: p.order_type == ^order_type)
+          |> preload([od, p], payments: p)
+
+        result = Repo.all(query)
+        IO.puts(order_type)
+        IO.inspect(result)
+        result
+    end
   end
 
   def format_dpt_with_query(query) do

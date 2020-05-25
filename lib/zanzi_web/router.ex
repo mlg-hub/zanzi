@@ -18,12 +18,19 @@ defmodule ZanziWeb.Router do
     pipe_through :browser
 
     get "/", AdminController, :index
+    get "/login", SessionController, :login
+
+    scope "/menu" do
+      get "/all", MenuItemsController, :all
+    end
 
     scope "/orders" do
       get "/cleared", OrderController, :cleared
       get "/pending", OrderController, :pending
       get "/voided", OrderController, :voided
-      get "/incomplete", OrderController, :incomplete
+      get "/unpaid", OrderController, :unpaid
+      get "/complementary", OrderController, :complementary
+      get "/remain", OrderController, :remain
       get "/detail/:id", OrderController, :detail
       post "/filter_date", OrderController, :filter_date
     end
