@@ -528,7 +528,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       User
       |> where([u], u.id == ^user.id)
       |> join(:left, [u], orders in assoc(u, :orders),
-        on: orders.filled == 0 and not is_nil(orders.table_id)
+        on:
+          orders.filled == 0 and not is_nil(orders.table_id) and
+            fragment("?::date", orders.inserted_at) == ^Date.utc_today()
       )
       |> join(:left, [u, orders], table in Table, on: orders.table_id == table.id)
       |> order_by([u, orders, table], asc: orders.ordered_at)
