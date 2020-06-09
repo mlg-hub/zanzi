@@ -1,7 +1,7 @@
 defmodule Zanzibloc.Menu.Item do
   use Ecto.Schema
   import Ecto.Changeset
-
+  @derive {Jason.Encoder, only: [:name, :price, :departement, :id]}
   schema "items" do
     field(:added_on, :utc_datetime)
     field(:name, :string)
@@ -18,5 +18,12 @@ defmodule Zanzibloc.Menu.Item do
     |> cast(attrs, [:added_on, :name, :price, :category_id, :departement_id])
     # |> foreign_key_constraint([:departement, :category])
     |> validate_required([:name, :price, :category_id])
+  end
+
+  def update_changeset(%__MODULE__{} = item, attrs \\ %{}) do
+    item
+    |> cast(attrs, [:name, :price, :departement_id])
+    # |> foreign_key_constraint([:departement, :category])
+    |> validate_required([:name, :price, :departement_id])
   end
 end

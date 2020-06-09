@@ -48,7 +48,7 @@ defmodule ZanziWeb.DepartementChannel do
     {:noreply, socket}
   end
 
-  intercept ["presence_diff"]
+  intercept(["presence_diff"])
 
   def handle_out("presence_diff", msg, socket) do
     IO.puts("handdleeeee outttt")

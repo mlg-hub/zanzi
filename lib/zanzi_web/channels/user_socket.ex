@@ -1,9 +1,9 @@
 defmodule ZanziWeb.UserSocket do
   use Phoenix.Socket
 
-  channel "departement:*", ZanziWeb.DepartementChannel
-  channel "commande:*", ZanziWeb.CommandeChannel
-
+  channel("departement:*", ZanziWeb.DepartementChannel)
+  channel("commande:*", ZanziWeb.CommandeChannel)
+  channel("admin:zanzi", ZanziWeb.AdminChannel)
   ## Channels
   # channel "room:*", ZanziWeb.RoomChannel
 

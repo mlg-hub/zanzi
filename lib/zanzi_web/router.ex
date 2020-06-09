@@ -18,10 +18,11 @@ defmodule ZanziWeb.Router do
     pipe_through :browser
 
     get "/", AdminController, :index
-    get "/login", SessionController, :login
+    resources "/sessions", SessionController, only: [:new, :create, :delete]
 
     scope "/menu" do
       get "/all", MenuItemsController, :all
+      post "/new_item", MenuItemsController, :new_item
     end
 
     scope "/orders" do

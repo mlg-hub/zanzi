@@ -8,6 +8,11 @@ defmodule Zanzibloc.Menu.MenuApi do
     Repo.all(Category)
   end
 
+  def list_categories_html do
+    query = Category |> select([c], {c.name, c.id})
+    Repo.all(query)
+  end
+
   def list_all_items() do
     query =
       Item
@@ -16,6 +21,10 @@ defmodule Zanzibloc.Menu.MenuApi do
       |> preload([i, dpt], departement: dpt)
 
     Repo.all(query)
+  end
+
+  def create_item_html(changeset) do
+    Repo.insert(changeset)
   end
 
   def get_bar_items do
@@ -28,7 +37,17 @@ defmodule Zanzibloc.Menu.MenuApi do
   def get_category!(id), do: Repo.get!(Category, id)
 
   def get_all_departement do
-    query = from d in Departement, where: d.active_status == 0
+    query = from(d in Departement, where: d.active_status == 0)
+    Repo.all(query)
+  end
+
+  def get_all_departement_html do
+    query = from(d in Departement, where: d.active_status == 0, select: {d.name, d.id})
+    Repo.all(query)
+  end
+
+  def get_all_departement_admin do
+    query = from(d in Departement, where: d.active_status == 0)
     Repo.all(query)
   end
 
@@ -165,9 +184,16 @@ defmodule Zanzibloc.Menu.MenuApi do
   end
 
   def update_item(%Item{} = item, attrs) do
+    require Integer
+    query = Repo.get(Item, attrs.id)
+
+    {:ok, item_changeset} =
+      query
+      |> Item.update_changeset(attrs)
+      |> Repo.update()
+
+    item = Repo.preload(item_changeset, :departement)
     item
-    |> Item.changeset(attrs)
-    |> Repo.update()
   end
 
   def delete_item(%Item{} = item) do

@@ -5,78 +5,23 @@
 
     <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
     <div class="content-wrapper">
+    <%= if get_flash(@conn, :info) do%>
+    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+    <%end %>
+     <%= if (get_flash(@conn, :error)) do%>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+    <%end %>
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>List of Menu items</h1>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
+
 
     <!-- Main content -->
-    <section class="content">
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header" >
-                <div>
-                <button class="btn btn-success">Add New Item</button>
-                </div>
-              <div style="display:flex;justify-content: flex-end">
-
-                <div class="mr-2">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="...search"/>
-                    </div>
-                </div>
-                <div>
-                    <button class="btn btn-primary">Search</button>
-                </div>
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-              <table class="table table-bordered table-hover responsive-table">
-                <thead>
-                <tr>
-                  <th>Item name</th>
-                  <th>Departement</th>
-                  <th>Price</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <%= for item <- @items do %>
-                        <tr>
-                            <td><%= String.upcase(item.name)%></td>
-                            <td><%= String.upcase(item.departement.name)%></td>
-                            <td><%= item.price%></td>
-                            <td style="display:flex; justify-content: space-around">
-                                <span style="cursor: pointer">
-                                    <i style="color: orange" class="fas fa-edit"></i>
-                                </span>
-                                <span style="cursor: pointer">
-                                <i style="color: orangered" class="fas fa-trash"></i>
-                                </span>
-                            </td>
-                        </tr>
-                    <%end %>
-                </tbody>
-
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
+    <section class="content" id="allitems" data-items="<%=Jason.encode!(@list) %>" data-depts="<%=Jason.encode!(@depts) %>" data-cats="<%=Jason.encode!(@cats) %>">
+        <section id="vuearea"></section>
     </section>
+    <div id="test">
+    </div>
     <!-- /.content -->
   </div>
 
 </div>
+

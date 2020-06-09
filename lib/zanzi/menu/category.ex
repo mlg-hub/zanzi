@@ -2,7 +2,7 @@ defmodule Zanzibloc.Menu.Category do
   use Ecto.Schema
   import Ecto.Changeset
   alias Zanzi.Repo
-
+  @derive {Jason.Encoder, only: [:name, :id, :departement_id]}
   schema "categories" do
     field(:name, :string, null: false)
     belongs_to(:departement, Zanzibloc.Menu.Departement)

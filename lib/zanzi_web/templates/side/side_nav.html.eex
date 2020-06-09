@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-      <a href="<%= Routes.session_path(@conn, :login)%>" class="brand-link">
+      <a href="<%= Routes.session_path(@conn, :new)%>" class="brand-link">
         <span class="brand-text font-weight-light">Zanzi Restaurant</span>
       </a>
 

@@ -1,0 +1,13 @@
+<tr id="test<%= @item.id %>">
+    <td><%= String.upcase(@item.name)%></td>
+    <td><%= String.upcase(@item.departement.name)%></td>
+    <td><%= @item.price%></td>
+    <td style="display:flex; justify-content: space-around">
+        <span style="cursor: pointer" @click="clicking" data-toggle="modal" data-target="#modifitem">
+            <i style="color: orange" class="fas fa-edit"></i>
+        </span>
+        <span style="cursor: pointer">
+        <i style="color: orangered" class="fas fa-trash"></i>
+        </span>
+    </td>
+</tr>
