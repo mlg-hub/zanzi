@@ -81,7 +81,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" @click="saveItem()">Save Item</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   </div>
                 </div>
@@ -90,11 +90,8 @@
             <div style="display:flex;justify-content: flex-end">
               <div class="mr-2">
                 <div class="form-group">
-                  <input class="form-control" placeholder="...search" />
+                  <input class="form-control" v-model="filtering_$" placeholder="...search" />
                 </div>
-              </div>
-              <div>
-                <button class="btn btn-primary">Search</button>
               </div>
             </div>
           </div>
@@ -126,6 +123,29 @@ export default {
         return this.cats.filter(cat => cat.departement_id == this.deptSelected);
       }
       return this.cats;
+    },
+    filtering_$: {
+      get: function() {
+        return this.query;
+      },
+      set: function(val) {
+        this.query = val;
+        console.log("heeeeeeeeeeeee", val);
+        this.$emit("filtering", val);
+      }
+    }
+  },
+  methods: {
+    filtering(e) {
+      console.log("filtering google it", e);
+    },
+    saveItem() {
+      this.$emit("newitem", {
+        price: this.itemPrice,
+        name: this.itemName,
+        dpt_id: this.deptSelected,
+        category_id: this.catSelected
+      });
     }
   }
 };

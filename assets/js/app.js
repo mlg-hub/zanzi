@@ -18,12 +18,21 @@ import "phoenix_html"
 //
 // Local files can be imported directly using relative paths, for example:
 import socket from "./socket";
-
+window.adminchannel = socket.channel("admin:zanzi");
+adminchannel
+    .join()
+    .receive("ok", resp => {
+        console.log("The user joined with success", resp);
+    })
+    .receive("error", reason => {
+        console.log("unable to join admin", reason);
+    });
 document.addEventListener("DOMContentLoaded", function () {
     let el = document.querySelector("#vuearea");
     let data = document.querySelector("#allitems");
     window.el = el;
     window.socketlink = socket;
+
     if (el != null) {
         const app = new Vue({
             el: el,

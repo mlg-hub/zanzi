@@ -13,8 +13,8 @@
         <each-item
           :socketio="socketio"
           :item="item"
-          v-for="(item, index) in localItems_$"
-          :key="index"
+          v-for="(item) in localItems_$"
+          :key="item.id"
           :depts="depts"
           @updating="saveChange"
           :itemchanged="itemchanged"
@@ -31,10 +31,19 @@ export default {
   data: function() {
     return {
       itemchanged: undefined,
-      localItems: this.items
+      localItems: []
     };
   },
+  // updated: function() {
+  //   this.$nextTick(function() {
+  //     // Code that will run only after the
+  //     // entire view has been re-rendered
+  //     console.log("updated");
+  //   });
+  // },
   created: function() {
+    this.localItems = this.items;
+    this.items;
     console.log("in lists", this.socketio);
   },
   mounted: function() {
@@ -44,21 +53,12 @@ export default {
   },
   computed: {
     localItems_$() {
+      this.localItems = this.items;
       return this.localItems;
     }
   },
   methods: {
     initSocket(socket) {
-      let adminchannel = socket.channel("admin:zanzi");
-      this.adminchannel = adminchannel;
-      this.adminchannel
-        .join()
-        .receive("ok", resp => {
-          console.log("The user joined with success", resp);
-        })
-        .receive("error", reason => {
-          console.log("unable to join admin", reason);
-        });
       // console.log("hey", socket);
       adminchannel.on("updated_item", resp => {
         this.updateNewItem(resp.updated_item);
@@ -70,7 +70,7 @@ export default {
       this.items[index] = item;
       console.log("new item", item, this.items[index]);
       this.localItems = [];
-      this.localItems = [...this.items];
+      this.localItems = this.items;
       setTimeout(() => {
         const modal = document.querySelector(`#exampleModal${item.id}`);
         modal.classList.remove("show");
@@ -81,7 +81,7 @@ export default {
     },
     saveChange(command) {
       // console.log("easy", command);
-      this.adminchannel.push("update_item", { body: command });
+      adminchannel.push("update_item", { body: command });
     }
   }
 };

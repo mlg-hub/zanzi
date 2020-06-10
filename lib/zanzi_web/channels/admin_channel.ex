@@ -29,12 +29,46 @@ defmodule ZanziWeb.AdminChannel do
     {:noreply, socket}
   end
 
+  def handle_in("new_item", %{"body" => item_info}, socket) do
+    %{"category_id" => cat_id, "dpt_id" => dpt_id, "name" => name, "price" => price} = item_info
+
+    item_changeset =
+      %Item{}
+      |> Item.changeset(%{
+        name: name,
+        price: price,
+        category_id: cat_id,
+        departement_id: dpt_id
+      })
+
+    case MenuApi.create_item_html(item_changeset) do
+      %Item{} = item ->
+        send(self(), {:success_insert, item})
+        {:noreply, socket}
+
+      _ ->
+        send(self(), :fail_update)
+        {:noreply, socket}
+    end
+  end
+
   def handle_info(
         {:success_update, item},
         socket
       ) do
     ZanziWeb.Endpoint.broadcast!("admin:zanzi", "updated_item", %{
       updated_item: item
+    })
+
+    {:noreply, socket}
+  end
+
+  def handle_info(
+        {:success_insert, item},
+        socket
+      ) do
+    ZanziWeb.Endpoint.broadcast!("admin:zanzi", "insert_item", %{
+      inserted_item: "success"
     })
 
     {:noreply, socket}

@@ -17,14 +17,14 @@ defmodule Zanzibloc.Menu.MenuApi do
     query =
       Item
       |> join(:inner, [i], dpt in assoc(i, :departement))
-      |> order_by([i, dpt], asc: i.name)
+      |> order_by([i, dpt], desc: i.inserted_at)
       |> preload([i, dpt], departement: dpt)
 
     Repo.all(query)
   end
 
   def create_item_html(changeset) do
-    Repo.insert(changeset)
+    Repo.insert!(changeset)
   end
 
   def get_bar_items do
