@@ -15,7 +15,7 @@
 
 
     <!-- Main content -->
-    <section class="content" id="allitems"  data-cats="<%=Jason.encode!(@cats) %>">
+    <section class="content" id="allitems" data-depts="<%=Jason.encode!(@depts) %>" data-cats="<%=Jason.encode!(@cats) %>">
         <section id="catarea"></section>
     </section>
     <div id="test">

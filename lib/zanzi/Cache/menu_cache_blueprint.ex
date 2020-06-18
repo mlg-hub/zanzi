@@ -22,6 +22,13 @@ defmodule Zanzibloc.Cache.BluePrint do
         GenServer.call(unquote(module), :get_items)
       end
 
+      def load_items() do
+        IO.puts("XXXXXXXXXXXXXXXXXXXXXX")
+        IO.inspect(unquote(departement_id))
+        IO.puts("XXXXXXXXXXXXXXXXXXXXXX")
+        GenServer.cast(self(), :load_bar_items)
+      end
+
       def handle_info(:load_items, items) do
         GenServer.cast(self(), :load_bar_items)
         {:noreply, items}

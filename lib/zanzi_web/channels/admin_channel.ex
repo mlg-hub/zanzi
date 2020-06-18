@@ -1,6 +1,8 @@
 defmodule ZanziWeb.AdminChannel do
   use ZanziWeb, :channel
+  alias Zanzi.Repo
   alias Zanzibloc.Menu.{MenuApi, Item}
+  alias Zanzibloc.Cache.{BarCache, CoffeeCache, KitchenCache, MiniBar}
 
   def join("admin:zanzi", _params, socket) do
     {:ok, %{active: true, message: "join with success"}, socket}
@@ -44,6 +46,7 @@ defmodule ZanziWeb.AdminChannel do
     case MenuApi.create_item_html(item_changeset) do
       %Item{} = item ->
         send(self(), {:success_insert, item})
+        spawn(fn -> refresh_cash_items(item) end)
         {:noreply, socket}
 
       _ ->
@@ -64,7 +67,7 @@ defmodule ZanziWeb.AdminChannel do
   end
 
   def handle_info(
-        {:success_insert, item},
+        {:success_insert, _item},
         socket
       ) do
     ZanziWeb.Endpoint.broadcast!("admin:zanzi", "insert_item", %{
@@ -77,5 +80,26 @@ defmodule ZanziWeb.AdminChannel do
   def handle_info(:fail_update, socket) do
     IO.puts("in fail handle")
     {:noreply, socket}
+  end
+
+  def refresh_cash_items(item) do
+    item = Repo.preload(item, :departement)
+
+    case String.downcase(item.departement.name) do
+      "bar" ->
+        BarCache.load_items()
+
+      "mini bar" ->
+        MiniBar.load_items()
+
+      "kitchen" ->
+        KitchenCache.load_items()
+
+      "restaurant" ->
+        CoffeeCache.load_items()
+
+      _ ->
+        nil
+    end
   end
 end

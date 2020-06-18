@@ -1,7 +1,12 @@
 <template>
   <div>
-    <header-component @filtering="filter($event)" @newitem="saveNewItem($event)" :cats="cats"></header-component>
-    <list-cat :cats="filterItems_$" :socketio="socket"></list-cat>
+    <header-component
+      @filtering="filter($event)"
+      @newcategory="saveNewCategory($event)"
+      :cats="cats"
+      :depts="depts"
+    ></header-component>
+    <list-cat :cats="filterItems_$" :socketio="socket" :depts="depts"></list-cat>
   </div>
 </template>
 
@@ -11,7 +16,7 @@ import ListCat from "./components/listcat";
 
 export default {
   name: "CatMain",
-  props: ["socket", "cats"],
+  props: ["socket", "cats", "depts"],
   components: { HeaderComponent, ListCat },
   data() {
     return {
@@ -31,8 +36,10 @@ export default {
         return this.cats;
       } else {
         console.log("full");
-        const filter = this.cats.filter(i =>
-          i.name.toLowerCase().match(this.query.toLowerCase())
+        const filter = this.cats.filter(
+          i =>
+            i.name.toLowerCase().match(this.query.toLowerCase()) ||
+            i.departement.name.toLowerCase().match(this.query.toLowerCase())
         );
         console.log(filter);
         return filter;
@@ -49,9 +56,9 @@ export default {
         window.location.reload();
       });
     },
-    saveNewItem(item) {
+    saveNewCategory(item) {
       console.log("hey is item", item);
-      adminchannel.push("new_item", { body: item });
+      adminchannel.push("new_category", { body: item });
     },
     filter(query) {
       this.query = query;

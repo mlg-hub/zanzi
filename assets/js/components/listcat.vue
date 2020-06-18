@@ -9,32 +9,33 @@
         </tr>
       </thead>
       <tbody>
-        <each-item
+        <each-cat
           :socketio="socketio"
           :cat="cat"
           :iscat="true"
           v-for="(cat) in localCats_$"
           :key="cat.id"
           @updating="saveChange"
-          :itemchanged="itemchanged"
-        ></each-item>
+          :catchanged="catchanged"
+          :depts="depts"
+        ></each-cat>
       </tbody>
     </table>
   </div>
 </template>
 <script>
-import EachItem from "./EachItem";
+import EachCat from "./Eachcat";
 export default {
-  props: ["socketio", "cats"],
-  components: { EachItem },
+  props: ["socketio", "cats", "depts"],
+  components: { EachCat },
   data: function() {
     return {
-      itemchanged: undefined,
+      catchanged: undefined,
       localCats: []
     };
   },
   created: function() {
-    this.localItems = this.cats;
+    this.localcats = this.cats;
   },
   mounted: function() {
     this.$nextTick(() => {
@@ -51,19 +52,19 @@ export default {
   methods: {
     initSocket(socket) {
       // console.log("hey", socket);
-      adminchannel.on("updated_item", resp => {
-        this.updateNewItem(resp.updated_item);
+      adminchannel.on("updated_cat", resp => {
+        this.updateNewcat(resp.updated_cat);
       });
     },
-    updateNewItem(item) {
-      const index = this.items.findIndex(i => i.id == item.id);
+    updateNewcat(cat) {
+      const index = this.cats.findIndex(i => i.id == cat.id);
       console.log("this is index", index);
-      this.items[index] = item;
-      console.log("new item", item, this.items[index]);
-      this.localItems = [];
-      this.localItems = this.items;
+      this.cats[index] = cat;
+      console.log("new cat", cat, this.cats[index]);
+      this.localcats = [];
+      this.localcats = this.cats;
       setTimeout(() => {
-        const modal = document.querySelector(`#exampleModal${item.id}`);
+        const modal = document.querySelector(`#exampleModal${cat.id}`);
         modal.classList.remove("show");
         modal.style.display = "none";
         document.querySelector("body").classList.remove("modal-open");
@@ -72,7 +73,7 @@ export default {
     },
     saveChange(command) {
       // console.log("easy", command);
-      adminchannel.push("update_item", { body: command });
+      adminchannel.push("update_cat", { body: command });
     }
   }
 };

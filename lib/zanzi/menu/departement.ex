@@ -2,7 +2,7 @@ defmodule Zanzibloc.Menu.Departement do
   use Ecto.Schema
   import Ecto.Changeset
   alias Zanzi.Repo
-  @derive {Jason.Encoder, only: [:name, :id]}
+  @derive {Jason.Encoder, only: [:name, :id, :active_status]}
   schema "departements" do
     field(:name, :string, null: false)
     field(:active_status, :integer)

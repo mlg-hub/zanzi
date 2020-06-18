@@ -8,21 +8,46 @@ defmodule ZanziWeb.MenuItemsController do
   #   apply(__MODULE__, action_name(conn), [conn, conn.params, conn.assigns.current_user])
   # end
 
-  def all(conn, _params) do
+  def items_all(conn, _params) do
     menu_items = MenuApi.list_all_items()
-    items = Enum.take(menu_items, 100)
+    # items = Enum.take(menu_items, 100)
+    # items = menu_items
     depts = MenuApi.get_all_departement_admin()
     cats = MenuApi.list_categories()
-    render(conn, "all.html", list: items, depts: depts, cats: cats)
+    render(conn, "all.html", list: menu_items, depts: depts, cats: cats)
   end
 
   def cats_all(conn, _params) do
     cats = MenuApi.list_categories()
+    depts = MenuApi.get_all_departement_admin()
     IO.inspect(cats)
-    render(conn, "cats.html", cats: cats)
+    render(conn, "cats.html", cats: cats, depts: depts)
   end
 
   def new_item(conn, %{"item" => item_info}) do
+    %{"category_id" => cat_id, "dpt_id" => dpt_id, "name" => name, "price" => price} = item_info
+
+    item_changeset =
+      %Item{}
+      |> Item.changeset(%{
+        name: name,
+        price: price,
+        category_id: cat_id,
+        departement_id: dpt_id
+      })
+
+    case MenuApi.create_item_html(item_changeset) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:info, "Item created successfully.")
+        |> redirect(to: Routes.menu_items_path(conn, :all))
+
+      {:error, changeset} ->
+        render(conn, "all.html", changeset: changeset)
+    end
+  end
+
+  def new_category(conn, %{"item" => item_info}) do
     %{"category_id" => cat_id, "dpt_id" => dpt_id, "name" => name, "price" => price} = item_info
 
     item_changeset =

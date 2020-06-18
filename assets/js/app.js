@@ -65,16 +65,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (el != null) {
         const app = new Vue({
             el: el,
-            template: "<CatMain :socket='socket' :cats='cats'/>",
+            template: "<CatMain :socket='socket' :cats='cats' :depts='depts'/>",
             components: {
                 CatMain
             },
             created: function () {
-                // console.log(typeof data.dataset.items, JSON.parse(data.dataset.items));
+                console.log(typeof data.dataset.cats, JSON.parse(data.dataset.cats));
             },
             data: function () {
                 return {
                     cats: JSON.parse(data.dataset.cats),
+                    depts: JSON.parse(data.dataset.depts),
                     socket: socketlink,
                 };
             }

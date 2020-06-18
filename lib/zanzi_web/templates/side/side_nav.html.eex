@@ -108,7 +108,7 @@
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <a href="<%= Routes.menu_items_path(@conn, :all)%>" class="nav-link">
+                  <a href="<%= Routes.menu_items_path(@conn, :items_all)%>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Manage Items</p>
                   </a>
@@ -119,12 +119,7 @@
                     <p>Manage Category</p>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="<%= Routes.menu_items_path(@conn, :depts_all)%>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Manage departements</p>
-                  </a>
-                </li>
+
 
               </ul>
             </li>

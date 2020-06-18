@@ -21,7 +21,7 @@ defmodule ZanziWeb.Router do
     resources("/sessions", SessionController, only: [:new, :create, :delete])
 
     scope "/menu" do
-      get("/all", MenuItemsController, :all)
+      get("/items", MenuItemsController, :items_all)
       get("/categories", MenuItemsController, :cats_all)
       get("/depertements", MenuItemsController, :depts_all)
       post("/new_item", MenuItemsController, :new_item)

@@ -36,8 +36,10 @@ export default {
         return this.items;
       } else {
         console.log("full");
-        const filter = this.items.filter(i =>
-          i.name.toLowerCase().match(this.query.toLowerCase())
+        const filter = this.items.filter(
+          i =>
+            i.name.toLowerCase().match(this.query.toLowerCase()) ||
+            i.departement.name.toLowerCase().match(this.query.toLowerCase())
         );
         console.log(filter);
         return filter;

@@ -2,8 +2,14 @@
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
+        <div v-if="isItem" class="col-sm-6">
           <h1>List of Menu items</h1>
+        </div>
+        <div v-if="isCat" class="col-sm-6">
+          <h1>List of Categories</h1>
+        </div>
+        <div v-if="isDepts" class="col-sm-6">
+          <h1>List of Departements</h1>
         </div>
       </div>
     </div>
@@ -12,15 +18,30 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <div>
+            <div v-if="isItem">
               <button
                 class="btn btn-success"
                 data-toggle="modal"
                 data-target="#additem"
               >Add New Item</button>
             </div>
+            <div v-if="isCat">
+              <button
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#addcategory"
+              >Add New Category</button>
+            </div>
+            <div v-if="isDepts">
+              <button
+                class="btn btn-success"
+                data-toggle="modal"
+                data-target="#additem"
+              >Add New Departement</button>
+            </div>
 
             <div
+              v-if="isItem"
               class="modal fade"
               id="additem"
               tabindex="-1"
@@ -87,6 +108,58 @@
                 </div>
               </div>
             </div>
+            <div
+              v-if="isCat"
+              class="modal fade"
+              id="addcategory"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="itemname">Category name</label>
+                      <input id="itemname" v-model="itemName" type="text" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="itemdepts">Category Departement</label>
+                      <select
+                        id="itemdepts"
+                        v-model="deptSelected"
+                        type="text"
+                        class="form-control"
+                      >
+                        <option>--- Choose Departement ---</option>
+                        <option
+                          :key="dept.id"
+                          :value="dept.id"
+                          class="form-control"
+                          v-for="dept in depts"
+                        >{{dept.name.toUpperCase()}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="saveCategory()"
+                    >Save Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div style="display:flex;justify-content: flex-end">
               <div class="mr-2">
                 <div class="form-group">
@@ -111,11 +184,31 @@ export default {
       query: "",
       deptSelected: undefined,
       catSelected: undefined,
+      isCat: false,
+      isDept: false,
+      isItem: false,
       itemName: "",
-      itemPrice: ""
+      itemPrice: "",
+      catName: ""
     };
   },
-  created() {},
+  created() {
+    const urlSegment = window.location.href.split("/");
+    const lastSegment = urlSegment[urlSegment.length - 1];
+    switch (lastSegment) {
+      case "categories":
+        this.isCat = true;
+        break;
+      case "items":
+        this.isItem = true;
+        break;
+      case "departments":
+        this.isDept = true;
+        break;
+      default:
+        return 0;
+    }
+  },
   mounted() {},
   computed: {
     cats_$() {
@@ -145,6 +238,12 @@ export default {
         name: this.itemName,
         dpt_id: this.deptSelected,
         category_id: this.catSelected
+      });
+    },
+    saveCategory() {
+      this.$emit("newCategory", {
+        name: this.catName,
+        dpt_id: this.deptSelected
       });
     }
   }
