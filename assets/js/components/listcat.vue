@@ -11,10 +11,10 @@
       <tbody>
         <each-item
           :socketio="socketio"
-          :item="item"
-          :iscast="true"
-          v-for="(item) in localItems_$"
-          :key="item.id"
+          :cat="cat"
+          :iscat="true"
+          v-for="(cat) in localCats_$"
+          :key="cat.id"
           @updating="saveChange"
           :itemchanged="itemchanged"
         ></each-item>
@@ -30,7 +30,7 @@ export default {
   data: function() {
     return {
       itemchanged: undefined,
-      localItems: []
+      localCats: []
     };
   },
   created: function() {
@@ -43,9 +43,9 @@ export default {
     });
   },
   computed: {
-    localItems_$() {
-      this.localItems = this.cats;
-      return this.localItems;
+    localCats_$() {
+      this.localCats = this.cats;
+      return this.localCats;
     }
   },
   methods: {
