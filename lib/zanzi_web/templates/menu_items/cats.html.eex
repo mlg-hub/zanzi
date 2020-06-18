@@ -1,0 +1,27 @@
+  <div class="wrapper">
+    <!-- Navbar -->
+
+    <!-- /.navbar -->
+
+    <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
+    <div class="content-wrapper">
+    <%= if get_flash(@conn, :info) do%>
+    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+    <%end %>
+     <%= if (get_flash(@conn, :error)) do%>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+    <%end %>
+    <!-- Content Header (Page header) -->
+
+
+    <!-- Main content -->
+    <section class="content" id="allitems"  data-cats="<%=Jason.encode!(@cats) %>">
+        <section id="catarea"></section>
+    </section>
+    <div id="test">
+    </div>
+    <!-- /.content -->
+  </div>
+
+</div>
+

@@ -16,6 +16,12 @@ defmodule ZanziWeb.MenuItemsController do
     render(conn, "all.html", list: items, depts: depts, cats: cats)
   end
 
+  def cats_all(conn, _params) do
+    cats = MenuApi.list_categories()
+    IO.inspect(cats)
+    render(conn, "cats.html", cats: cats)
+  end
+
   def new_item(conn, %{"item" => item_info}) do
     %{"category_id" => cat_id, "dpt_id" => dpt_id, "name" => name, "price" => price} = item_info
 

@@ -110,7 +110,19 @@
                 <li class="nav-item">
                   <a href="<%= Routes.menu_items_path(@conn, :all)%>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>View all</p>
+                    <p>Manage Items</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.menu_items_path(@conn, :cats_all)%>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Manage Category</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<%= Routes.menu_items_path(@conn, :depts_all)%>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Manage departements</p>
                   </a>
                 </li>
 

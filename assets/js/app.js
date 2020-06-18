@@ -1,6 +1,7 @@
 import Vue from 'vue';
 window.Vue = Vue;
 import MainApp from './mainApp.vue';
+import CatMain from './catApp.vue';
 // We need to import the CSS so that webpack will load it.
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
@@ -47,6 +48,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 return {
                     items: JSON.parse(data.dataset.items),
                     depts: JSON.parse(data.dataset.depts),
+                    cats: JSON.parse(data.dataset.cats),
+                    socket: socketlink,
+                };
+            }
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    let el = document.querySelector("#catarea");
+    let data = document.querySelector("#allitems");
+    window.el = el;
+    window.socketlink = socket;
+
+    if (el != null) {
+        const app = new Vue({
+            el: el,
+            template: "<CatMain :socket='socket' :cats='cats'/>",
+            components: {
+                CatMain
+            },
+            created: function () {
+                // console.log(typeof data.dataset.items, JSON.parse(data.dataset.items));
+            },
+            data: function () {
+                return {
                     cats: JSON.parse(data.dataset.cats),
                     socket: socketlink,
                 };

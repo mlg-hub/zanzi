@@ -5,7 +5,12 @@ defmodule Zanzibloc.Menu.MenuApi do
   alias Zanzibloc.Cache.{BarCache, KitchenCache, MiniBar, Restaurant}
 
   def list_categories do
-    Repo.all(Category)
+    query =
+      Category
+      |> join(:inner, [c], d in assoc(c, :departement))
+      |> preload([c, d], departement: d)
+
+    Repo.all(query)
   end
 
   def list_categories_html do
