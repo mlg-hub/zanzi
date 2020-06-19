@@ -100,23 +100,23 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def get_items(route) do
     case route do
       :bar ->
-        query = from i in Item, where: i.departement_id == 1
+        query = from(i in Item, where: i.departement_id == 1)
         Repo.all(query)
 
       :kitchen ->
-        query = from i in Item, where: i.departement_id == 2
+        query = from(i in Item, where: i.departement_id == 2)
         Repo.all(query)
 
       :coffee ->
-        query = from i in Item, where: i.departement_id == 3
+        query = from(i in Item, where: i.departement_id == 3)
         Repo.all(query)
 
       :restaurant ->
-        query = from i in Item, where: i.departement_id == 5
+        query = from(i in Item, where: i.departement_id == 5)
         Repo.all(query)
 
       :mini_bar ->
-        query = from i in Item, where: i.departement_id == 6
+        query = from(i in Item, where: i.departement_id == 6)
         Repo.all(query)
 
       _ ->
@@ -664,7 +664,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_pending_bill() do
-    query = from o in Order, where: o.status == "created"
+    query = from(o in Order, where: o.status == "created")
     Repo.all(query)
   end
 
@@ -707,66 +707,68 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_sales_stats(date, user_id) do
-    {:ok, kitchen} = Agent.start_link(fn -> 0 end)
-    {:ok, bar} = Agent.start_link(fn -> 0 end)
-    {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
-    {:ok, restaurant} = Agent.start_link(fn -> 0 end)
-
     {:ok, date_search} = Date.from_iso8601(date)
     # and fragment("?::date", p.inserted_at) == ^date
     query =
       Order
-      |> where([o], o.status != "voided")
-      |> join(:inner, [o], order_details in assoc(o, :order_details))
-      |> join(:inner, [o, od], p in assoc(o, :payments),
+      |> where([o], o.status == "paid" and fragment("?::date", o.inserted_at) == ^date_search)
+      |> join(:inner, [o], p in assoc(o, :payments),
         on:
-          fragment("?::date", p.inserted_at) == ^date_search and
-            p.user_id == ^user_id and
+          p.user_id == ^user_id and
             p.order_paid > 0
       )
-      |> join(:inner, [o, od, p], dpt in assoc(od, :departement))
+      |> join(:inner, [o, p], order_details in assoc(o, :order_details))
+      |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
       # |> preload([p, order, order_details, dpt],
       #   order: {order, order_details: {order_details, departement: dpt}}
       # )
-      |> select([o, od, p, dpt], [
+      |> select([o, p, od, dpt], [
         map(od, [:item_id, :sold_price, :sold_quantity]),
         # map(p, [:order_id, :order_paid, :order_total]),
         map(dpt, [:name])
       ])
 
     all_sales = Repo.all(query)
+    {:ok, kitchen} = Agent.start_link(fn -> 0 end)
+    {:ok, bar} = Agent.start_link(fn -> 0 end)
+    {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
+    {:ok, restaurant} = Agent.start_link(fn -> 0 end)
+
+    IO.puts("all the salesssssss")
+    IO.inspect(Enum.count(all_sales))
 
     # Enum.dedup(all_sales)
 
     Enum.each(all_sales, fn [%{sold_price: price, sold_quantity: qty}, %{name: dpt}] ->
       case String.downcase(dpt) do
-        "bar" ->
-          Agent.update(bar, fn acc ->
-            acc + price * qty
-          end)
+        "main bar" ->
+          Agent.update(bar, Kernel, :+, [price * qty])
 
         "kitchen" ->
-          Agent.update(kitchen, fn acc ->
-            acc + price * qty
-          end)
+          Agent.update(kitchen, Kernel, :+, [price * qty])
 
         "mini bar" ->
-          Agent.update(mini_bar, fn acc ->
-            acc + price * qty
-          end)
+          Agent.update(mini_bar, Kernel, :+, [price * qty])
 
         "restaurant" ->
-          Agent.update(restaurant, fn acc ->
-            acc + price * qty
-          end)
+          Agent.update(restaurant, Kernel, :+, [price * qty])
+
+        _ ->
+          0
       end
     end)
+
+    kitchenT = Agent.get(kitchen, fn tot -> tot end)
+    barT = Agent.get(bar, fn tot -> tot end)
+    restaurantT = Agent.get(restaurant, fn tot -> tot end)
+    mini_barT = Agent.get(mini_bar, fn tot -> tot end)
 
     r = %{
       kitchen: Agent.get(kitchen, fn tot -> tot end),
       bar: Agent.get(bar, fn tot -> tot end),
       restaurant: Agent.get(restaurant, fn tot -> tot end),
-      mini_bar: Agent.get(mini_bar, fn tot -> tot end)
+      mini_bar: Agent.get(mini_bar, fn tot -> tot end),
+      total: kitchenT + mini_barT + restaurantT + barT
     }
 
     Agent.stop(kitchen)
@@ -1250,34 +1252,46 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def filter_by_date(:order, date, order_type) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
-    # IO.inspect(date)
     {:ok, date} = Date.from_iso8601(date)
+    IO.puts(order_type)
 
-    cond do
-      Enum.member?(["paid", "created", "voided"], order_type) ->
+    case order_type do
+      "incomplete" ->
         query =
           Order
           |> where(
-            [od],
-            fragment("?::date", od.inserted_at) == ^date and od.status == ^order_type
+            [o],
+            fragment("?::date", o.inserted_at) == ^date and o.status == ^order_type and
+              o.total > 0
           )
+          |> join(:inner, [o], p in assoc(o, :payments))
+          |> preload([o, p], payments: p)
 
         Repo.all(query)
 
-      true ->
+      "paid" ->
         query =
           Order
           |> where(
             [od],
-            od.status == "incomplete" and fragment("?::date", od.inserted_at) == ^date
+            od.status == ^order_type and fragment("?::date", od.inserted_at) == ^date
           )
-          |> join(:inner, [od], p in assoc(od, :payments), on: p.order_type == ^order_type)
+          |> join(:inner, [od], p in assoc(od, :payments))
+          |> order_by([od, p], desc: p.inserted_at)
           |> preload([od, p], payments: p)
 
-        result = Repo.all(query)
-        IO.puts(order_type)
-        IO.inspect(result)
-        result
+        Repo.all(query)
+
+      _ ->
+        query =
+          Order
+          |> where(
+            [od],
+            fragment("?::date", od.inserted_at) == ^date and od.status == ^order_type and
+              od.total != 0
+          )
+
+        Repo.all(query)
     end
   end
 
