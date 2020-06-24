@@ -1283,6 +1283,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Repo.all(query)
 
       _ ->
+        IO.inspect()
+
         query =
           Order
           |> where(
