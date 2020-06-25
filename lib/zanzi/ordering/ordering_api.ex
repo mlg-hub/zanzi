@@ -1103,6 +1103,31 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       )
   end
 
+  defp process_query(:shift, shift, target, sous_target, dpt_id) do
+    query =
+      Order
+      |> where(
+        [o],
+        o.status == ^target and o.cashier_shifts_id == ^shift
+      )
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == ^sous_target)
+      |> join(:inner, [o, p], od in OrderDetail,
+        on: od.order_id == o.id and od.departement_id == ^dpt_id
+      )
+      |> join(:inner, [o, p, od], items in Item, on: items.id == od.item_id)
+      # |> preload([od, orders, items])
+      # |> group_by([od], od.id)
+      |> select(
+        [orders, p, od, items],
+        [
+          map(od, [:id, :sold_price, :sold_quantity]),
+          # sum(od.sold_quantity)
+          map(orders, [:code, :total, :inserted_at]),
+          map(items, [:name])
+        ]
+      )
+  end
+
   defp process_query(:date, date, target, sous_target, dpt_id) do
     query =
       Order
@@ -1121,6 +1146,30 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       # |> group_by([od], od.id)
       |> select(
         [orders, p, od, items],
+        [
+          map(od, [:id, :sold_price, :sold_quantity]),
+          # sum(od.sold_quantity)
+          map(orders, [:code, :total, :inserted_at]),
+          map(items, [:name])
+        ]
+      )
+  end
+
+  defp process_query(:shift, shift, target, dpt_id) do
+    query =
+      Order
+      |> where(
+        [o],
+        o.status == ^target and o.cashier_shifts_id == ^shift
+      )
+      |> join(:inner, [o], od in OrderDetail,
+        on: od.order_id == o.id and od.departement_id == ^dpt_id
+      )
+      |> join(:inner, [o, od], items in Item, on: items.id == od.item_id)
+      # |> preload([od, orders, items])
+      # |> group_by([od], od.id)
+      |> select(
+        [orders, od, items],
         [
           map(od, [:id, :sold_price, :sold_quantity]),
           # sum(od.sold_quantity)
@@ -1176,6 +1225,33 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       "complementary" ->
         query = process_query("incomplete", "complementary", dpt_id)
+        format_dpt_with_query(query)
+
+      _ ->
+        []
+    end
+  end
+
+  defp get_department_stats_by_shift(shift, cat, dpt_id) do
+    case cat do
+      "paid" ->
+        query = process_query(:shift, shift, "paid", dpt_id)
+        format_dpt_with_query(query)
+
+      "pending" ->
+        query = process_query(:shift, shift, "created", dpt_id)
+        format_dpt_with_query(query)
+
+      "voided" ->
+        query = process_query(:shift, shift, "voided", dpt_id)
+        format_dpt_with_query(query)
+
+      "unpaid" ->
+        query = process_query(:shift, shift, "incomplete", "unpaid", dpt_id)
+        format_dpt_with_query(query)
+
+      "complementary" ->
+        query = process_query(:shift, shift, "incomplete", "complementary", dpt_id)
         format_dpt_with_query(query)
 
       _ ->
@@ -1257,7 +1333,51 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     }
   end
 
-  def filter_by_shift(%{} = attrs) do
+  def filter_by_shift(shift_id, dpt_id) do
+    {:ok, pending_pid} = Task.Supervisor.start_link()
+    {:ok, paid_pid} = Task.Supervisor.start_link()
+    {:ok, voided_pid} = Task.Supervisor.start_link()
+    {:ok, unpaid_pid} = Task.Supervisor.start_link()
+    {:ok, compl_pid} = Task.Supervisor.start_link()
+
+    pending =
+      Task.Supervisor.async(pending_pid, fn ->
+        get_department_stats_by_shift(shift_id, "pending", dpt_id)
+      end)
+
+    paid =
+      Task.Supervisor.async(paid_pid, fn ->
+        get_department_stats_by_shift(shift_id, "paid", dpt_id)
+      end)
+
+    unpaid =
+      Task.Supervisor.async(unpaid_pid, fn ->
+        get_department_stats_by_shift(shift_id, "unpaid", dpt_id)
+      end)
+
+    compl =
+      Task.Supervisor.async(compl_pid, fn ->
+        get_department_stats_by_shift(shift_id, "complementary", dpt_id)
+      end)
+
+    voided =
+      Task.Supervisor.async(voided_pid, fn ->
+        get_department_stats_by_shift(shift_id, "voided", dpt_id)
+      end)
+
+    pendingT = Task.await(pending)
+    paidT = Task.await(paid)
+    complementaryT = Task.await(compl)
+    unpaidT = Task.await(unpaid)
+    voidedT = Task.await(voided)
+
+    %{
+      "pending" => pendingT,
+      "paid" => paidT,
+      "complementary" => complementaryT,
+      "unpaid" => unpaidT,
+      "voided" => voidedT
+    }
   end
 
   def filter_by_date(date, dpt_id) do
@@ -1311,6 +1431,77 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       "unpaid" => unpaidT,
       "voided" => voidedT
     }
+  end
+
+  def filter_by_shift(:order_shift, shift_id, order_type) do
+    case order_type do
+      "incomplete" ->
+        query =
+          Order
+          |> where(
+            [o],
+            o.cashier_shifts_id == ^shift_id and o.status == ^order_type and
+              o.total > 0
+          )
+          |> join(:inner, [o], p in assoc(o, :payments))
+          |> preload([o, p], payments: p)
+
+        Repo.all(query)
+
+      "paid" ->
+        query =
+          Order
+          |> where(
+            [od],
+            od.status == ^order_type and od.cashier_shifts_id == ^shift_id
+          )
+          |> join(:inner, [od], p in assoc(od, :payments))
+          |> order_by([od, p], desc: p.inserted_at)
+          |> preload([od, p], payments: p)
+
+        Repo.all(query)
+
+      "created" ->
+        query =
+          Order
+          |> where(
+            [od],
+            od.cashier_shifts_id == ^shift_id and od.status == ^order_type and
+              od.total != 0
+          )
+
+        Repo.all(query)
+
+      "unpaid" ->
+        query =
+          Order
+          |> where([o], o.cashier_shifts_id == ^shift_id and o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "unpaid")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      "complementary" ->
+        query =
+          Order
+          |> where([o], o.cashier_shifts_id == ^shift_id and o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "complementary")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      "remain" ->
+        query =
+          Order
+          |> where([o], o.cashier_shifts_id == ^shift_id and o.status == "incomplete")
+          |> join(:left, [o], p in assoc(o, :payments))
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      _ ->
+        []
+    end
   end
 
   def filter_by_date(:order, date, order_type) do

@@ -31,4 +31,11 @@ defmodule ZanziWeb.DepartementController do
     filtered_result = OrderingApi.filter_by_date(date, dpt_id)
     render(conn, "#{dpt}.html", stats: filtered_result)
   end
+
+  def filter_shift(conn, %{
+        "shift" => %{"selected_shift" => shift_id, "dpt_id" => dpt_id, "dpt" => dpt}
+      }) do
+    filtered_result = OrderingApi.filter_by_shift(shift_id, dpt_id)
+    render(conn, "#{dpt}.html", stats: filtered_result)
+  end
 end

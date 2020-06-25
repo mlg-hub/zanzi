@@ -58,4 +58,15 @@ defmodule ZanziWeb.OrderController do
     filtered_result = OrderingApi.filter_by_date(:order, date, order_type)
     render(conn, "#{order_route}.html", orders: filtered_result)
   end
+
+  def filter_shift(conn, %{
+        "date" => %{
+          "selected_shift" => shift,
+          "order_type" => order_type,
+          "order_route" => order_route
+        }
+      }) do
+    filtered_result = OrderingApi.filter_by_shift(:order_shift, shift, order_type)
+    render(conn, "#{order_route}.html", orders: filtered_result)
+  end
 end
