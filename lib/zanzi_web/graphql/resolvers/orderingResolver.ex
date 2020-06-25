@@ -62,7 +62,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
   def close_shift(_, _, _) do
     case OrderingApi.close_shift() do
       {:ok, _} -> {:ok, %{status: "success"}}
-      _ -> {:error, "You can not send request"}
+      _ -> {:error, %{key: "close", message: "cant not close shift"}}
     end
   end
 

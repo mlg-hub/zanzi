@@ -187,17 +187,29 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def close_shift() do
     shift_query = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
+    # getting all pending order for this shift
     if shift_query do
-      shift_changeset =
-        shift_query
-        |> CashierShift.create_closing_chgset(%{
-          shift_status: 0,
-          shift_end: DateTime.utc_now()
-        })
+      orders =
+        Order
+        |> where([o], o.status == "created")
+        |> Repo.all()
 
-      case Repo.update(shift_changeset) do
-        {:ok, _} -> {:ok, %{status: "shift closed with success"}}
-        _ -> {:error, %{error: "can't close the shift"}}
+      cond do
+        Enum.count(orders) == 0 ->
+          shift_changeset =
+            shift_query
+            |> CashierShift.create_closing_chgset(%{
+              shift_status: 0,
+              shift_end: DateTime.utc_now()
+            })
+
+          case Repo.update(shift_changeset) do
+            {:ok, _} -> {:ok, %{status: "shift closed with success"}}
+            _ -> {:error, %{error: "can't close the shift"}}
+          end
+
+        true ->
+          {:error, %{error: "can't close_shift"}}
       end
     end
   end
@@ -1245,9 +1257,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     }
   end
 
+  def filter_by_shift(%{} = attrs) do
+  end
+
   def filter_by_date(date, dpt_id) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
-    IO.inspect(date)
+    # IO.inspect(date)
     {:ok, date} = Date.from_iso8601(date)
 
     #  fragment("?::date", od.inserted_at)
