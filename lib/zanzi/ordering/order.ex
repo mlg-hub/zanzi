@@ -31,6 +31,7 @@ defmodule Zanzibloc.Ordering.Order do
     )
 
     belongs_to(:table, Table)
+    belongs_to(:cashier_shifts, Zanzibloc.Ordering.CashierShifts)
 
     # embeds_many(:items, Zanzibloc.Ordering.Item)
     timestamps()
@@ -50,7 +51,7 @@ defmodule Zanzibloc.Ordering.Order do
 
   def changeset(%__MODULE__{} = order, attrs \\ %{}) do
     order
-    |> cast(attrs, [:total, :table_id, :order_type])
+    |> cast(attrs, [:total, :table_id, :order_type, :cashier_shifts_id])
     |> put_change(:code, make_ordercode())
 
     # |> cast_embed(:items)

@@ -95,11 +95,11 @@ defmodule Zanzibloc.Menu.MenuApi do
         {:ok, items} = KitchenCache.get_all_item()
         items
 
-      id == "4" or id == 4 ->
+      id == "5" or id == 4 ->
         {:ok, items} = Restaurant.get_all_item()
         items
 
-      id == "5" or id == 5 ->
+      id == "6" or id == 5 ->
         {:ok, items} = MiniBar.get_all_item()
         items
 

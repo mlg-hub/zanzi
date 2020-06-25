@@ -46,6 +46,26 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
   end
 
+  def open_shift(_, _, %{context: context}) do
+    case context[:current_user] do
+      %User{} = user ->
+        case OrderingApi.create_new_shift(%{cashier_id: user.id}) do
+          {:ok} -> {:ok, %{status: "success"}}
+          {:error} -> {:error, "Error auth"}
+        end
+
+      _ ->
+        {:error, "Error auth"}
+    end
+  end
+
+  def close_shift(_, _, _) do
+    case OrderingApi.close_shift() do
+      {:ok, _} -> {:ok, %{status: "success"}}
+      _ -> {:error, "You can not send request"}
+    end
+  end
+
   def accept_transfer_request(_, %{order_id: order}, _) do
     case OrderingApi.accept_transfer_request(%{order: order}) do
       {:ok, _} -> {:ok, %{status: "request accepted"}}
@@ -98,11 +118,11 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
                 bar_map = transform_order_details(details, "Bar")
                 Agent.update(bar, fn list -> [bar_map | list] end)
 
-              4 ->
+              5 ->
                 restaurant_map = transform_order_details(details, "Restaurant")
                 Agent.update(restaurant, fn list -> [restaurant_map | list] end)
 
-              5 ->
+              6 ->
                 minibar_map = transform_order_details(details, "Mini Bar")
                 Agent.update(minibar, fn list -> [minibar_map | list] end)
 
@@ -121,11 +141,11 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
                 bar_map = transform_order_details_update(details, update, "Bar")
                 Agent.update(bar, fn list -> [bar_map | list] end)
 
-              4 ->
+              5 ->
                 restaurant_map = transform_order_details_update(details, update, "Restaurant")
                 Agent.update(restaurant, fn list -> [restaurant_map | list] end)
 
-              5 ->
+              6 ->
                 minibar_map = transform_order_details_update(details, update, "Mini Bar")
                 Agent.update(minibar, fn list -> [minibar_map | list] end)
 

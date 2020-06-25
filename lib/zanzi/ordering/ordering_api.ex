@@ -16,7 +16,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Table,
     OrderSplit,
     OrderMerged,
-    VoidReason
+    VoidReason,
+    CashierShift
   }
 
   alias Zanzibloc.Menu.Item
@@ -162,6 +163,45 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
+  def get_all_cashier_shifts do
+    # Repo.preload(CashierShift, :cashier)
+    query =
+      CashierShift
+      |> join(:inner, [c], d in assoc(c, :user), on: c.user_id == d.id)
+      |> preload([c, d], user: d)
+
+    Repo.all(query)
+  end
+
+  def create_new_shift(attrs) do
+    shift_changeset =
+      %CashierShift{}
+      |> CashierShift.create_new_shift(%{user_id: attrs.cashier_id})
+
+    case Repo.insert!(shift_changeset) do
+      %CashierShift{} -> {:ok}
+      _ -> {:error}
+    end
+  end
+
+  def close_shift() do
+    shift_query = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+
+    if shift_query do
+      shift_changeset =
+        shift_query
+        |> CashierShift.create_closing_chgset(%{
+          shift_status: 0,
+          shift_end: DateTime.utc_now()
+        })
+
+      case Repo.update(shift_changeset) do
+        {:ok, _} -> {:ok, %{status: "shift closed with success"}}
+        _ -> {:error, %{error: "can't close the shift"}}
+      end
+    end
+  end
+
   def create_empty_split(attrs) do
     attrs = Map.put(attrs, :filled, 0)
     IO.inspect(attrs)
@@ -169,9 +209,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     split_changeset =
       %Order{}
       |> Order.create_split_changeset(attrs)
-
-    IO.puts("my spliiiiiiiiiiiiiit")
-    IO.inspect(split_changeset)
 
     case split_changeset.valid? do
       true ->
@@ -227,66 +264,77 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def create_order(attrs \\ %{}) do
     #  item = %{id, quantity}
+    # get current shift
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
-    attrs = Map.update(attrs, :items, [], &build_items/1)
+    cond do
+      current_shift != nil ->
+        attrs = Map.update(attrs, :items, [], &build_items/1)
 
-    total =
-      Enum.reduce(
-        Map.get(attrs, :items),
-        0,
-        fn %{sold_quantity: qty, sold_price: p}, acc ->
-          IO.inspect(qty)
-          IO.inspect(p)
-          qty * p + acc
+        total =
+          Enum.reduce(
+            Map.get(attrs, :items),
+            0,
+            fn %{sold_quantity: qty, sold_price: p}, acc ->
+              IO.inspect(qty)
+              IO.inspect(p)
+              qty * p + acc
+            end
+          )
+
+        attrs = Map.put(attrs, :total, total)
+        attrs = Map.put(attrs, :cashier_shifts_id, current_shift.id)
+
+        save_changeset =
+          %Order{}
+          |> Order.changeset(attrs)
+
+        case Repo.insert!(save_changeset) do
+          %Order{} = order ->
+            owner_attrs = %{current_owner: Map.get(attrs, :user_id), order_id: order.id}
+            owner_changeset = %OrderOwner{} |> OrderOwner.changeset(owner_attrs)
+
+            with %OrderOwner{} = boss <- Repo.insert!(owner_changeset) do
+              saved_bon_commande =
+                Enum.map(attrs.items, fn x ->
+                  changeset =
+                    %OrderDetail{}
+                    |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
+
+                  case Repo.insert!(changeset) do
+                    %OrderDetail{} = order_detail ->
+                      query =
+                        OrderDetail
+                        |> where([detail], detail.id == ^order_detail.id)
+                        |> join(:left, [detail], order in assoc(detail, :order))
+                        |> join(:left, [detail, order], item in ^Item,
+                          on: item.id == detail.item_id
+                        )
+                        |> join(:left, [detail, order, item], owner in assoc(order, :owner))
+                        # |> select([detail, _, _, _], %{detail_info: detail.id})
+                        |> preload([detail, order, item, owner],
+                          order: {order, owner: owner},
+                          item: item
+                        )
+                        |> Repo.one()
+
+                      # IO.inspect(query)
+                      %{query: query, update: nil}
+
+                    _ ->
+                      %{}
+                  end
+                end)
+
+              {:ok, %{order: order, details: saved_bon_commande}}
+            end
+
+          _ ->
+            {:error, save_changeset}
         end
-      )
 
-    attrs = Map.put(attrs, :total, total)
-
-    save_changeset =
-      %Order{}
-      |> Order.changeset(attrs)
-
-    case Repo.insert!(save_changeset) do
-      %Order{} = order ->
-        owner_attrs = %{current_owner: Map.get(attrs, :user_id), order_id: order.id}
-        owner_changeset = %OrderOwner{} |> OrderOwner.changeset(owner_attrs)
-
-        with %OrderOwner{} = boss <- Repo.insert!(owner_changeset) do
-          saved_bon_commande =
-            Enum.map(attrs.items, fn x ->
-              changeset =
-                %OrderDetail{}
-                |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
-
-              case Repo.insert!(changeset) do
-                %OrderDetail{} = order_detail ->
-                  query =
-                    OrderDetail
-                    |> where([detail], detail.id == ^order_detail.id)
-                    |> join(:left, [detail], order in assoc(detail, :order))
-                    |> join(:left, [detail, order], item in ^Item, on: item.id == detail.item_id)
-                    |> join(:left, [detail, order, item], owner in assoc(order, :owner))
-                    # |> select([detail, _, _, _], %{detail_info: detail.id})
-                    |> preload([detail, order, item, owner],
-                      order: {order, owner: owner},
-                      item: item
-                    )
-                    |> Repo.one()
-
-                  # IO.inspect(query)
-                  %{query: query, update: nil}
-
-                _ ->
-                  %{}
-              end
-            end)
-
-          {:ok, %{order: order, details: saved_bon_commande}}
-        end
-
-      _ ->
-        {:error, save_changeset}
+      true ->
+        {:error, "something went wrong"}
     end
   end
 
@@ -1282,9 +1330,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
         Repo.all(query)
 
-      _ ->
-        IO.inspect()
-
+      "created" ->
         query =
           Order
           |> where(
@@ -1294,6 +1340,36 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           )
 
         Repo.all(query)
+
+      "unpaid" ->
+        query =
+          Order
+          |> where([o], fragment("?::date", o.inserted_at) == ^date and o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "unpaid")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      "complementary" ->
+        query =
+          Order
+          |> where([o], fragment("?::date", o.inserted_at) == ^date and o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "complementary")
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      "remain" ->
+        query =
+          Order
+          |> where([o], fragment("?::date", o.inserted_at) == ^date and o.status == "incomplete")
+          |> join(:left, [o], p in assoc(o, :payments))
+          |> preload([o, p], payments: p)
+
+        Repo.all(query, preload: :owner)
+
+      _ ->
+        []
     end
   end
 

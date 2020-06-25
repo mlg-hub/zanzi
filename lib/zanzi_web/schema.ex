@@ -138,6 +138,14 @@ defmodule ZanziWeb.Schema do
   end
 
   mutation do
+    field :open_cashier_shift, :response_status do
+      resolve(&OrderingResolvers.open_shift/3)
+    end
+
+    field :close_shift, :response_status do
+      resolve(&OrderingResolvers.close_shift/3)
+    end
+
     field :merge_bills, :response_status do
       arg(:main_order_id, :id)
       arg(:sub_order_ids, list_of(:id))

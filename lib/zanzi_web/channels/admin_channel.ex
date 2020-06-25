@@ -2,7 +2,7 @@ defmodule ZanziWeb.AdminChannel do
   use ZanziWeb, :channel
   alias Zanzi.Repo
   alias Zanzibloc.Menu.{MenuApi, Item}
-  alias Zanzibloc.Cache.{BarCache, CoffeeCache, KitchenCache, MiniBar}
+  alias Zanzibloc.Cache.{BarCache, KitchenCache, MiniBar, Restaurant}
 
   def join("admin:zanzi", _params, socket) do
     {:ok, %{active: true, message: "join with success"}, socket}
@@ -24,8 +24,12 @@ defmodule ZanziWeb.AdminChannel do
     IO.inspect(updated_item)
 
     case updated_item do
-      %Item{} = item -> send(self(), {:success_update, item})
-      _ -> send(self(), :fail_update)
+      %Item{} = item ->
+        spawn(fn -> refresh_cash_items(item) end)
+        send(self(), {:success_update, item})
+
+      _ ->
+        send(self(), :fail_update)
     end
 
     {:noreply, socket}
@@ -45,8 +49,8 @@ defmodule ZanziWeb.AdminChannel do
 
     case MenuApi.create_item_html(item_changeset) do
       %Item{} = item ->
-        send(self(), {:success_insert, item})
         spawn(fn -> refresh_cash_items(item) end)
+        send(self(), {:success_insert, item})
         {:noreply, socket}
 
       _ ->
@@ -96,7 +100,7 @@ defmodule ZanziWeb.AdminChannel do
         KitchenCache.load_items()
 
       "restaurant" ->
-        CoffeeCache.load_items()
+        Restaurant.load_items()
 
       _ ->
         nil

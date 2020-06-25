@@ -18,12 +18,12 @@ defmodule ZanziWeb.DepartementController do
   end
 
   def stats_restaurant(conn, _params) do
-    cof_stats = OrderingApi.get_department_stats(4)
+    cof_stats = OrderingApi.get_department_stats(5)
     render(conn, "restaurant.html", stats: cof_stats)
   end
 
   def stats_mini_bar(conn, _params) do
-    cof_stats = OrderingApi.get_department_stats(5)
+    cof_stats = OrderingApi.get_department_stats(6)
     render(conn, "mini_bar.html", stats: cof_stats)
   end
 

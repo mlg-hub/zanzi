@@ -4,7 +4,7 @@ defmodule Zanzibloc.Account.User do
   alias Zanzibloc.Account.{Position, AccountApi, Role, UsersPositions, PositionRole}
   alias Zanzibloc.Ordering.{OrderOwner}
   alias Zanzi.Repo
-
+  @derive {Jason.Encoder, only: [:full_name]}
   @primary_key {:id, Zanzibloc.Ecto.Ksuid, autogenerate: true}
   schema "users" do
     field(:full_name, :string)
@@ -17,6 +17,8 @@ defmodule Zanzibloc.Account.User do
       join_through: UsersPositions,
       join_keys: [user_id: :id, position_id: :id]
     )
+
+    has_many(:shift, Zanzibloc.Ordering.CashierShift)
 
     many_to_many(:orders, Zanzibloc.Ordering.Order,
       join_through: OrderOwner,
