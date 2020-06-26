@@ -4,10 +4,10 @@ defmodule Zanzi.Repo.Migrations.CreateShiftCashier do
   def change do
     create table(:cashier_shifts) do
       add :user_id, references(:users, type: :string, on_delete: :nothing)
-      add :shift_start, :utc_datetime, null: false, default: fragment("CURRENT_TIMESTAMP")
-      add :shift_end, :utc_datetime, default: fragment("CURRENT_TIMESTAMP")
+      add :shift_start, :utc_datetime, null: false
+      add :shift_end, :utc_datetime
       add :shift_status, :integer, default: 1
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     alter table(:orders) do

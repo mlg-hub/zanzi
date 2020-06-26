@@ -1,6 +1,7 @@
 defmodule ZanziWeb.OrderController do
   use ZanziWeb, :controller
   alias Zanzibloc.Ordering.OrderingApi
+  plug :load_shits
 
   def index(conn, _params) do
     render(conn, "index.html")
@@ -60,13 +61,45 @@ defmodule ZanziWeb.OrderController do
   end
 
   def filter_shift(conn, %{
-        "date" => %{
-          "selected_shift" => shift,
+        "shift" => %{
+          "selected_shift" => shift_id,
           "order_type" => order_type,
           "order_route" => order_route
         }
       }) do
-    filtered_result = OrderingApi.filter_by_shift(:order_shift, shift, order_type)
-    render(conn, "#{order_route}.html", orders: filtered_result)
+    filtered_result = OrderingApi.filter_by_shift(:order_shift, shift_id, order_type)
+
+    shift =
+      OrderingApi.get_one_shift(shift_id)
+      |> format_shift()
+
+    render(conn, "#{order_route}.html", orders: filtered_result, shift: shift)
+  end
+
+  defp load_shits(conn, _params) do
+    shifts = OrderingApi.get_all_cashier_shifts()
+
+    shifts = format_shift(shifts)
+
+    conn
+    |> assign(:shifts, shifts)
+    |> assign(:shift, nil)
+  end
+
+  defp format_shift(shifts) when is_list(shifts) do
+    Enum.map(shifts, fn s ->
+      stringing_from = Enum.at(String.split(DateTime.to_string(s.shift_start), "Z"), 0)
+      stringing_end = Enum.at(String.split(DateTime.to_string(s.shift_end), "Z"), 0)
+      IO.inspect(stringing_from)
+      stringing = "From: #{stringing_from},to: #{stringing_end}"
+
+      {stringing, s.id}
+    end)
+  end
+
+  defp format_shift(s) when is_map(s) do
+    stringing_from = Enum.at(String.split(DateTime.to_string(s.shift_start), "Z"), 0)
+    stringing_end = Enum.at(String.split(DateTime.to_string(s.shift_end), "Z"), 0)
+    "From: #{stringing_from},to: #{stringing_end}"
   end
 end

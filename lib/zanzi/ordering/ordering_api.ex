@@ -5,6 +5,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   import Ecto.Query, warn: false
   alias Zanzi.Repo
+  alias Timex
   require Logger
 
   alias Zanzibloc.Ordering.{
@@ -163,10 +164,15 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
+  def get_one_shift(shift_id) do
+    Repo.one(from c in CashierShift, where: c.id == ^shift_id)
+  end
+
   def get_all_cashier_shifts do
     # Repo.preload(CashierShift, :cashier)
     query =
       CashierShift
+      |> where([c], not is_nil(c.shift_end))
       |> join(:inner, [c], d in assoc(c, :user), on: c.user_id == d.id)
       |> preload([c, d], user: d)
 
@@ -176,7 +182,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def create_new_shift(attrs) do
     shift_changeset =
       %CashierShift{}
-      |> CashierShift.create_new_shift(%{user_id: attrs.cashier_id})
+      |> CashierShift.create_new_shift(%{
+        user_id: attrs.cashier_id,
+        shift_start: Timex.local()
+      })
 
     case Repo.insert!(shift_changeset) do
       %CashierShift{} -> {:ok}
@@ -200,7 +209,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             shift_query
             |> CashierShift.create_closing_chgset(%{
               shift_status: 0,
-              shift_end: DateTime.utc_now()
+              shift_end: Timex.local()
             })
 
           case Repo.update(shift_changeset) do

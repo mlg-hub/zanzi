@@ -2,14 +2,14 @@ defmodule Zanzibloc.Ordering.CashierShift do
   use Ecto.Schema
   # import Ecto.Query
   import Ecto.Changeset
-  @derive {Jason.Encoder, only: [:id, :shift_end, :shift_start]}
+  # @derive {Jason.Encoder, only: [:id, :shift_end, :shift_start]}
   schema "cashier_shifts" do
     field(:shift_start, :utc_datetime)
     field(:shift_end, :utc_datetime)
     field :shift_status, :integer
     has_many(:orders, Zanzibloc.Ordering.CashierShift, on_delete: :nothing)
     belongs_to(:user, Zanzibloc.Account.User, type: :string)
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def create_new_shift(%__MODULE__{} = shift, attrs \\ %{}) do

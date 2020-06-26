@@ -1,7 +1,9 @@
 use Mix.Config
 
 # Configure your database
+
 config :zanzi, Zanzi.Repo,
+  migration_timestamps: [type: :utc_datetime],
   username: "postgres",
   password: "postgres",
   database: "real_zanzi_prod",

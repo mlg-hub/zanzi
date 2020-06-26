@@ -8,26 +8,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header" >
       <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Mini bar Statistics</h1>
-          </div>
-          <div class="col-sm-6">
-            <div class="row">
-                 <div>
-                  <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
-                    <div class="form-group">
-                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
-                    <%= hidden_input f, :dpt_id, value: 6 %>
-                    <%= hidden_input f, :dpt, value: "mini_bar" %>
-
-                    </div>
-                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
-                <% end %>
-                 </div>
-              </div>
-          </div>
-        </div>
+        <%= render "header.html", title: "Mini-Bar Statistics", dpt_id: 6, page: "mini_bar", conn: @conn, shifts: @shifts,shift: @shift %>
       </div><!-- /.container-fluid -->
     </section>
 

@@ -1,0 +1,60 @@
+<div class="row mb-2">
+          <div class="col-sm-6">
+            <h1><%= @title %></h1>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex" style="justify-content: space-evenly">
+                 <div>
+                    <%= form_for @conn, Routes.departement_path(@conn, :filter_date), [as: :date], fn f -> %>
+                        <div class="form-group">
+                        <%= text_input f, :selected_date, type: :date, class: "form-control" %>
+                        <%= hidden_input f, :dpt_id, value: @dpt_id %>
+                        <%= hidden_input f, :dpt, value: @page %>
+                        <%= submit "Filter by date", class: "btn btn-primary pull-right" %>
+                        </div>
+                    <% end %>
+                 </div>
+                 <div>
+                    <button type="button" class="btn btn-info"
+                        data-toggle="modal" data-target="#exampleModal">
+                        Filter by shifts
+                    </button>
+
+
+								</div>
+
+
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+        												<h5 class="modal-title" id="exampleModalLabel">Shifts List</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+      											</div>
+      											<div class="modal-body">
+        	<%= form_for @conn, Routes.departement_path(@conn, :filter_shift), [as: :shift], fn f -> %>
+															<div class="form-group">
+																	<%= select f, :selected_shift, @shifts , class: "form-control"%>
+																	<%= hidden_input f, :dpt_id, value: @dpt_id %>
+																	<%= hidden_input f, :dpt, value: @page %>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<%= submit "Filter", class: "btn btn-success pull-right" %>
+														</div>
+      											<% end %>
+    												</div>
+													</div>
+												</div>
+											</div>
+												<%= if @shift do%>
+										<div style="display: flex;
+justify-content: center;
+background-color: #c3db98;
+font-size: 1.2rem;
+border-radius: 8px;
+padding: .3rem;"> <%= @shift %></div>
+									<% end %>

@@ -6,25 +6,9 @@
     <%= render ZanziWeb.SideView, "side_nav.html", conn: @conn %>
     <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header" >
       <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Voided Orders</h1>
-          </div>
-          <div class="col-sm-6">
-             <div class="row">
-                 <%= form_for @conn, Routes.order_path(@conn, :filter_date), [as: :date], fn f -> %>
-                    <div class="form-group">
-                    <%= text_input f, :selected_date, type: :date, class: "form-control" %>
-                    <%= hidden_input f, :order_type, value: "voided" %>
-                    <%= hidden_input f, :order_route, value: "voided" %>
-                    <%= submit "Filter", class: "btn btn-primary pull-right" %>
-                    </div>
-                <% end %>
-              </div>
-          </div>
-        </div>
+        <%= render "header.html", title: "Voided bills", order_type: "voided", page: "voided", conn: @conn, shifts: @shifts, shift: @shift %>
       </div><!-- /.container-fluid -->
     </section>
 

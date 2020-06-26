@@ -35,7 +35,8 @@ defmodule ZanziWeb.Router do
       get("/complementary", OrderController, :complementary)
       get("/remain", OrderController, :remain)
       get("/detail/:id", OrderController, :detail)
-      post("/filter_date", OrderController, :filter_date)
+      post("/filter_dates", OrderController, :filter_date)
+      post("/filter_shifts", OrderController, :filter_shift)
     end
 
     scope "/departement" do
@@ -45,6 +46,7 @@ defmodule ZanziWeb.Router do
       get("/stats_restaurant", DepartementController, :stats_restaurant)
       get("/stats_mini_bar", DepartementController, :stats_mini_bar)
       post("/filter_date", DepartementController, :filter_date)
+      post("/filter_shift", DepartementController, :filter_shift)
     end
   end
 

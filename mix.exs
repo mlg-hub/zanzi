@@ -52,6 +52,7 @@ defmodule Zanzi.MixProject do
       {:dataloader, "~> 1.0"},
       {:ksuid, "~> 0.1.2"},
       {:comeonin_ecto_password, "~> 3.0.0"},
+      {:timex, "~> 3.6.2"},
       {:pbkdf2_elixir, "~> 1.2", override: true}
     ]
   end
