@@ -14,9 +14,14 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, OrderingApi.get_all_request_void()}
   end
 
-  def get_sales_stats(_, %{date: date}, %{context: context}) do
+  def get_sales_stats(_, _args, %{context: context}) do
     user = context[:current_user]
-    {:ok, OrderingApi.get_sales_stats(date, user.id)}
+    {:ok, OrderingApi.get_sales_stats_current(user.id)}
+  end
+
+  def get_sales_stats(_, %{shift_id: shift_id}, %{context: context}) do
+    user = context[:current_user]
+    {:ok, OrderingApi.get_sales_stats(shift_id, user.id)}
   end
 
   def prepare_order(_, %{id: id}, _) do
@@ -195,7 +200,9 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     end
   end
 
-  def place_order(_, %{input: place_order_input, table: table}, %{context: context}) do
+  def place_order(_, %{input: place_order_input, table: table, order_category: o_cat}, %{
+        context: context
+      }) do
     place_order_input =
       case context[:current_user] do
         %User{} = user ->
@@ -205,7 +212,8 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
           place_order_input
       end
 
-    place_order_input = Map.put(place_order_input, :table_id, table)
+    place_order_input =
+      Map.put(place_order_input, :table_id, table) |> Map.put(:order_category, o_cat)
 
     with {:ok, %{order: _order, details: saved_bon_commande}} <-
            OrderingApi.create_order(place_order_input) do

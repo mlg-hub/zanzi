@@ -33,8 +33,8 @@ defmodule Zanzi.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.9"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix, "~> 1.5"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
@@ -46,13 +46,14 @@ defmodule Zanzi.MixProject do
       {:distillery, "~> 2.0"},
       {:edeliver, ">= 1.6.0"},
       {:nimble_csv, "~> 0.6.0"},
-      {:absinthe, "~> 1.4"},
-      {:absinthe_plug, "~> 1.4"},
-      {:absinthe_phoenix, "~> 1.4"},
+      {:absinthe, "~> 1.5.1"},
+      {:absinthe_plug, "~> 1.5.0"},
+      {:absinthe_phoenix, "~> 2.0.0"},
       {:dataloader, "~> 1.0"},
       {:ksuid, "~> 0.1.2"},
       {:comeonin_ecto_password, "~> 3.0.0"},
       {:timex, "~> 3.6.2"},
+      # {:timex_ecto, "~> 3.0.2", override: true},
       {:pbkdf2_elixir, "~> 1.2", override: true}
     ]
   end

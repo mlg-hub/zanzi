@@ -13,6 +13,8 @@ defmodule Zanzibloc.Ordering.Order do
     field(:print_status, :integer)
     field :order_type, :string
     field :payment_method, :integer
+    field :staff_discount, :integer
+    field :order_category, :integer
     field :void_request, :integer
     #####
     field(:split_status, :integer)
@@ -51,12 +53,15 @@ defmodule Zanzibloc.Ordering.Order do
 
   def changeset(%__MODULE__{} = order, attrs \\ %{}) do
     order
-    |> cast(attrs, [:total, :table_id, :order_type, :cashier_shifts_id])
+    |> cast(attrs, [
+      :total,
+      :table_id,
+      :order_type,
+      :cashier_shifts_id,
+      :staff_discount,
+      :order_category
+    ])
     |> put_change(:code, make_ordercode())
-
-    # |> cast_embed(:items)
-
-    # |> validate_required([:code, :ordered_at, :user, :status])
   end
 
   def add_item_changeset(%__MODULE__{} = order, attrs \\ %{}) do

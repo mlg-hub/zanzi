@@ -84,7 +84,11 @@ defmodule ZanziWeb.Schema do
     end
 
     field :get_all_stats, :sales_stats do
-      arg(:date, :string)
+      arg(:shift_id, :integer)
+      resolve(&OrderingResolvers.get_sales_stats/3)
+    end
+
+    field :get_all_stats_for_current_shift, :sales_stats do
       resolve(&OrderingResolvers.get_sales_stats/3)
     end
 
@@ -237,6 +241,7 @@ defmodule ZanziWeb.Schema do
     field :place_order, :response_status do
       arg(:input, non_null(:place_order_input))
       arg(:table, non_null(:integer))
+      arg(:order_category, non_null(:integer))
       middleware(Middleware.Authorize, :auth)
       resolve(&OrderingResolvers.place_order/3)
     end
@@ -286,7 +291,7 @@ defmodule ZanziWeb.Schema do
       fn input ->
         # Parsing logic here
         with %Absinthe.Blueprint.Input.String{value: value} <- input,
-             {:ok, date} <- Date.to_iso8601(NaiveDateTime.to_date(value)) do
+             date <- Date.to_iso8601(NaiveDateTime.to_date(value)) do
           IO.inspect(date)
           {:ok, date}
         else
@@ -303,6 +308,22 @@ defmodule ZanziWeb.Schema do
     serialize(fn date ->
       # Serialization logic here
       date
+    end)
+  end
+
+  scalar :custom_date_time do
+    parse(fn input ->
+      with %Absinthe.Blueprint.Input.String{value: value} <- input,
+           dateTime <- DateTime.to_iso8601(value) do
+        {:ok, dateTime}
+      else
+        _ -> :error
+      end
+    end)
+
+    serialize(fn dateTime ->
+      # Serialization logic here
+      dateTime
     end)
   end
 

@@ -46,6 +46,13 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field :kitchen, :integer
     field :mini_bar, :integer
     field :restaurant, :integer
+    field :shifts, list_of(:shifts)
+  end
+
+  object :shifts do
+    field :id, :id
+    field :shift_start, :custom_date_time
+    field :shift_end, :custom_date_time
   end
 
   object :waiter_order do

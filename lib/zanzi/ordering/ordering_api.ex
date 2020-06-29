@@ -283,6 +283,18 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
+  defp check_if_staff(attrs) do
+    order_category = Map.get(attrs, :order_category)
+
+    case order_category do
+      1 ->
+        attrs
+
+      2 ->
+        Map.put(attrs, :staff_discount, 40)
+    end
+  end
+
   def create_order(attrs \\ %{}) do
     #  item = %{id, quantity}
     # get current shift
@@ -305,6 +317,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
         attrs = Map.put(attrs, :total, total)
         attrs = Map.put(attrs, :cashier_shifts_id, current_shift.id)
+        attrs = check_if_staff(attrs)
 
         save_changeset =
           %Order{}
@@ -315,7 +328,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             owner_attrs = %{current_owner: Map.get(attrs, :user_id), order_id: order.id}
             owner_changeset = %OrderOwner{} |> OrderOwner.changeset(owner_attrs)
 
-            with %OrderOwner{} = boss <- Repo.insert!(owner_changeset) do
+            with %OrderOwner{} <- Repo.insert!(owner_changeset) do
               saved_bon_commande =
                 Enum.map(attrs.items, fn x ->
                   changeset =
@@ -442,8 +455,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           end
         end)
 
-      Logger.info("zzazazazzzzzzzzzzzzzzzzzzzzzzzzzzz")
-      IO.inspect(saved_bon_commande)
       {:ok, %{order: main_returned_order, details: saved_bon_commande}}
     end
   end
@@ -461,7 +472,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           |> Repo.insert!()
 
         case payments do
-          %OrderPayment{} = payments ->
+          %OrderPayment{} ->
             with %{order_id: order_id} <- attrs do
               case Repo.get(Order, order_id) do
                 %Order{} = order ->
@@ -775,76 +786,173 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       end)
   end
 
-  def get_sales_stats(date, user_id) do
-    {:ok, date_search} = Date.from_iso8601(date)
-    # and fragment("?::date", p.inserted_at) == ^date
-    query =
-      Order
-      |> where([o], o.status == "paid" and fragment("?::date", o.inserted_at) == ^date_search)
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on:
-          p.user_id == ^user_id and
-            p.order_paid > 0
-      )
-      |> join(:inner, [o, p], order_details in assoc(o, :order_details))
-      |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
-      # |> preload([p, order, order_details, dpt],
-      #   order: {order, order_details: {order_details, departement: dpt}}
-      # )
-      |> select([o, p, od, dpt], [
-        map(od, [:item_id, :sold_price, :sold_quantity]),
-        # map(p, [:order_id, :order_paid, :order_total]),
-        map(dpt, [:name])
-      ])
+  @spec get_sales_stats_current(any) ::
+          nil
+          | %{bar: any, kitchen: any, mini_bar: any, restaurant: any, shifts: any, total: number}
+  def get_sales_stats_current(user_id) do
+    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    IO.puts("hey morisho")
+    IO.inspect(shift_selected)
 
-    all_sales = Repo.all(query)
-    {:ok, kitchen} = Agent.start_link(fn -> 0 end)
-    {:ok, bar} = Agent.start_link(fn -> 0 end)
-    {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
-    {:ok, restaurant} = Agent.start_link(fn -> 0 end)
+    if shift_selected != nil do
+      query =
+        Order
+        |> where(
+          [o],
+          o.status == "paid" and
+            o.cashier_shifts_id == ^shift_selected.id
+        )
+        |> join(:inner, [o], p in assoc(o, :payments),
+          on:
+            p.user_id == ^user_id and
+              p.order_paid > 0
+        )
+        |> join(:inner, [o, p], order_details in assoc(o, :order_details))
+        |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
+        # |> preload([p, order, order_details, dpt],
+        #   order: {order, order_details: {order_details, departement: dpt}}
+        # )
+        |> select([o, p, od, dpt], [
+          map(od, [:item_id, :sold_price, :sold_quantity]),
+          # map(p, [:order_id, :order_paid, :order_total]),
+          map(dpt, [:name])
+        ])
 
-    IO.puts("all the salesssssss")
-    IO.inspect(Enum.count(all_sales))
+      all_shifts =
+        Repo.all(
+          from c in CashierShift,
+            where: c.user_id == ^user_id and c.shift_status == 0 and not is_nil(c.shift_end)
+        )
 
-    # Enum.dedup(all_sales)
+      all_sales = Repo.all(query)
+      {:ok, kitchen} = Agent.start_link(fn -> 0 end)
+      {:ok, bar} = Agent.start_link(fn -> 0 end)
+      {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
+      {:ok, restaurant} = Agent.start_link(fn -> 0 end)
 
-    Enum.each(all_sales, fn [%{sold_price: price, sold_quantity: qty}, %{name: dpt}] ->
-      case String.downcase(dpt) do
-        "main bar" ->
-          Agent.update(bar, Kernel, :+, [price * qty])
+      Enum.each(all_sales, fn [%{sold_price: price, sold_quantity: qty}, %{name: dpt}] ->
+        case String.downcase(dpt) do
+          "main bar" ->
+            Agent.update(bar, Kernel, :+, [price * qty])
 
-        "kitchen" ->
-          Agent.update(kitchen, Kernel, :+, [price * qty])
+          "kitchen" ->
+            Agent.update(kitchen, Kernel, :+, [price * qty])
 
-        "mini bar" ->
-          Agent.update(mini_bar, Kernel, :+, [price * qty])
+          "mini bar" ->
+            Agent.update(mini_bar, Kernel, :+, [price * qty])
 
-        "restaurant" ->
-          Agent.update(restaurant, Kernel, :+, [price * qty])
+          "restaurant" ->
+            Agent.update(restaurant, Kernel, :+, [price * qty])
 
-        _ ->
-          0
-      end
-    end)
+          _ ->
+            0
+        end
+      end)
 
-    kitchenT = Agent.get(kitchen, fn tot -> tot end)
-    barT = Agent.get(bar, fn tot -> tot end)
-    restaurantT = Agent.get(restaurant, fn tot -> tot end)
-    mini_barT = Agent.get(mini_bar, fn tot -> tot end)
+      kitchenT = Agent.get(kitchen, fn tot -> tot end)
+      barT = Agent.get(bar, fn tot -> tot end)
+      restaurantT = Agent.get(restaurant, fn tot -> tot end)
+      mini_barT = Agent.get(mini_bar, fn tot -> tot end)
 
-    r = %{
-      kitchen: Agent.get(kitchen, fn tot -> tot end),
-      bar: Agent.get(bar, fn tot -> tot end),
-      restaurant: Agent.get(restaurant, fn tot -> tot end),
-      mini_bar: Agent.get(mini_bar, fn tot -> tot end),
-      total: kitchenT + mini_barT + restaurantT + barT
-    }
+      r = %{
+        kitchen: Agent.get(kitchen, fn tot -> tot end),
+        bar: Agent.get(bar, fn tot -> tot end),
+        restaurant: Agent.get(restaurant, fn tot -> tot end),
+        mini_bar: Agent.get(mini_bar, fn tot -> tot end),
+        total: kitchenT + mini_barT + restaurantT + barT,
+        shifts: all_shifts
+      }
 
-    Agent.stop(kitchen)
-    Agent.stop(bar)
-    Agent.stop(mini_bar)
-    Agent.stop(restaurant)
-    r
+      IO.inspect(r)
+      Agent.stop(kitchen)
+      Agent.stop(bar)
+      Agent.stop(mini_bar)
+      Agent.stop(restaurant)
+      r
+    end
+  end
+
+  def get_sales_stats(shift_id, user_id) do
+    # get the selected shift
+    shift_selected =
+      Repo.one(from c in CashierShift, where: c.id == ^shift_id or c.shift_status == 1)
+
+    if shift_selected do
+      query =
+        Order
+        |> where(
+          [o],
+          (o.status == "paid" or o.status == "incomplete") and
+            o.cashier_shifts_id == ^shift_id
+        )
+        |> join(:inner, [o], p in assoc(o, :payments),
+          on:
+            p.user_id == ^user_id and
+              p.order_paid > 0
+        )
+        |> join(:inner, [o, p], order_details in assoc(o, :order_details))
+        |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
+        # |> preload([p, order, order_details, dpt],
+        #   order: {order, order_details: {order_details, departement: dpt}}
+        # )
+        |> select([o, p, od, dpt], [
+          map(od, [:item_id, :sold_price, :sold_quantity]),
+          # map(p, [:order_id, :order_paid, :order_total]),
+          map(dpt, [:name])
+        ])
+
+      all_shifts =
+        Repo.all(
+          from c in CashierShift,
+            where: c.user_id == ^user_id and c.shift_status == 0 and not is_nil(c.shift_end)
+        )
+
+      all_sales = Repo.all(query)
+      {:ok, kitchen} = Agent.start_link(fn -> 0 end)
+      {:ok, bar} = Agent.start_link(fn -> 0 end)
+      {:ok, mini_bar} = Agent.start_link(fn -> 0 end)
+      {:ok, restaurant} = Agent.start_link(fn -> 0 end)
+
+      Enum.each(all_sales, fn [%{sold_price: price, sold_quantity: qty}, %{name: dpt}] ->
+        case String.downcase(dpt) do
+          "main bar" ->
+            Agent.update(bar, Kernel, :+, [price * qty])
+
+          "kitchen" ->
+            Agent.update(kitchen, Kernel, :+, [price * qty])
+
+          "mini bar" ->
+            Agent.update(mini_bar, Kernel, :+, [price * qty])
+
+          "restaurant" ->
+            Agent.update(restaurant, Kernel, :+, [price * qty])
+
+          _ ->
+            0
+        end
+      end)
+
+      kitchenT = Agent.get(kitchen, fn tot -> tot end)
+      barT = Agent.get(bar, fn tot -> tot end)
+      restaurantT = Agent.get(restaurant, fn tot -> tot end)
+      mini_barT = Agent.get(mini_bar, fn tot -> tot end)
+
+      r = %{
+        kitchen: Agent.get(kitchen, fn tot -> tot end),
+        bar: Agent.get(bar, fn tot -> tot end),
+        restaurant: Agent.get(restaurant, fn tot -> tot end),
+        mini_bar: Agent.get(mini_bar, fn tot -> tot end),
+        total: kitchenT + mini_barT + restaurantT + barT,
+        shifts: all_shifts
+      }
+
+      IO.inspect(r)
+      Agent.stop(kitchen)
+      Agent.stop(bar)
+      Agent.stop(mini_bar)
+      Agent.stop(restaurant)
+      r
+    end
   end
 
   def get_pending_orders(date) do
