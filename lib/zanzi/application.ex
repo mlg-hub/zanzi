@@ -10,14 +10,13 @@ defmodule Zanzi.Application do
     children = [
       # Start the Ecto repository
       Zanzi.Repo,
-
       # Start the endpoint when the application starts
       ZanziWeb.Endpoint,
-      Zanzibloc.DepartementItemsCache,
-      ZanziWeb.Presence,
       # Starts a worker by calling: Zanzi.Worker.start_link(arg)
       # {Zanzi.Worker, arg},
-      {Absinthe.Subscription, [ZanziWeb.Endpoint]}
+      {Absinthe.Subscription, [ZanziWeb.Endpoint]},
+      Zanzibloc.DepartementItemsCache,
+      ZanziWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
