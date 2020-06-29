@@ -14,7 +14,7 @@ defmodule Zanzi.Application do
       ZanziWeb.Endpoint,
       # Starts a worker by calling: Zanzi.Worker.start_link(arg)
       # {Zanzi.Worker, arg},
-      {Absinthe.Subscription, [ZanziWeb.Endpoint]},
+      {Absinthe.Subscription, ZanziWeb.Endpoint},
       Zanzibloc.DepartementItemsCache,
       ZanziWeb.Presence
     ]
