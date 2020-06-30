@@ -42,6 +42,15 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
+  def get_shift_state do
+    shift = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+
+    cond do
+      shift == nil -> %{status: "false"}
+      true -> %{status: "true"}
+    end
+  end
+
   def void_order(order_id, reason) do
     order = Repo.get(Order, order_id)
 
@@ -184,7 +193,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       %CashierShift{}
       |> CashierShift.create_new_shift(%{
         user_id: attrs.cashier_id,
-        shift_start: Timex.local()
+        shift_start: DateTime.utc_now()
       })
 
     case Repo.insert!(shift_changeset) do
@@ -874,22 +883,17 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def get_sales_stats(shift_id, user_id) do
     # get the selected shift
-    shift_selected =
-      Repo.one(from c in CashierShift, where: c.id == ^shift_id or c.shift_status == 1)
+    shift_selected = Repo.one(from c in CashierShift, where: c.id == ^shift_id)
 
-    if shift_selected do
+    if shift_selected != nil do
       query =
         Order
         |> where(
           [o],
-          (o.status == "paid" or o.status == "incomplete") and
-            o.cashier_shifts_id == ^shift_id
+          o.status == "paid" and
+            o.cashier_shifts_id == ^shift_selected.id
         )
-        |> join(:inner, [o], p in assoc(o, :payments),
-          on:
-            p.user_id == ^user_id and
-              p.order_paid > 0
-        )
+        |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id)
         |> join(:inner, [o, p], order_details in assoc(o, :order_details))
         |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
         # |> preload([p, order, order_details, dpt],

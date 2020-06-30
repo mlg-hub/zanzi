@@ -14,14 +14,18 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, OrderingApi.get_all_request_void()}
   end
 
-  def get_sales_stats(_, _args, %{context: context}) do
-    user = context[:current_user]
-    {:ok, OrderingApi.get_sales_stats_current(user.id)}
+  def get_shift_state(_, _, _) do
+    {:ok, OrderingApi.get_shift_state()}
   end
 
   def get_sales_stats(_, %{shift_id: shift_id}, %{context: context}) do
     user = context[:current_user]
     {:ok, OrderingApi.get_sales_stats(shift_id, user.id)}
+  end
+
+  def get_sales_stats(_, _args, %{context: context}) do
+    user = context[:current_user]
+    {:ok, OrderingApi.get_sales_stats_current(user.id)}
   end
 
   def prepare_order(_, %{id: id}, _) do
@@ -425,6 +429,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
            status: status,
            table: table,
            total: order_total,
+           order_category: order_category,
            split_status: split_status,
            merged_status: merged_status,
            order_details: details_array,
@@ -448,6 +453,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
           table_number: table && table.number,
           table_id: table && table.id,
           total_amount: order_total,
+          order_category: order_category,
           split_status: split_status,
           merged_status: merged_status,
           details: orders_details,

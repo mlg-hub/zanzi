@@ -139,6 +139,10 @@ defmodule ZanziWeb.Schema do
       arg(:role, list_of(:string))
       resolve(&AccountsResolvers.list_users/3)
     end
+
+    field :get_shift_state, :response_status do
+      resolve(&OrderingResolvers.get_shift_state/3)
+    end
   end
 
   mutation do
@@ -354,6 +358,11 @@ defmodule ZanziWeb.Schema do
   enum(:sort_order) do
     value(:asc)
     value(:desc)
+  end
+
+  enum :payment_field do
+    value(:interger)
+    value(false)
   end
 
   object :input_error do

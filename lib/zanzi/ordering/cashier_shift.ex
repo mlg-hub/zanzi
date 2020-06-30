@@ -16,14 +16,12 @@ defmodule Zanzibloc.Ordering.CashierShift do
   def create_new_shift(%__MODULE__{} = shift, attrs \\ %{}) do
     shift
     |> cast(attrs, [:user_id, :shift_start])
-    |> put_change(:shift_start, Timex.local())
     |> validate_required([:user_id])
   end
 
   def create_closing_chgset(%__MODULE__{} = shift, attrs) do
     shift
     |> cast(attrs, [:shift_status, :shift_end])
-    |> put_change(:shift_end, Timex.local())
   end
 
   def close_shift(%__MODULE__{} = shift_changeset) do
