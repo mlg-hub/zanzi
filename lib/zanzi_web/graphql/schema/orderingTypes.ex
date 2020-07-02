@@ -46,6 +46,7 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field :kitchen, :integer
     field :mini_bar, :integer
     field :restaurant, :integer
+    field :total, :integer
     field :shifts, list_of(:shifts)
   end
 

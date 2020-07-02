@@ -1197,6 +1197,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         [
           map(od, [:id, :sold_price, :sold_quantity]),
           # sum(od.sold_quantity)
+          map(p, [:order_paid]),
           map(orders, [:code, :total, :inserted_at]),
           map(items, [:name])
         ]
@@ -1342,11 +1343,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       "unpaid" ->
         query = process_query("incomplete", "unpaid", dpt_id)
-        format_dpt_with_query(query)
+        format_dpt_with_query(:staff, query)
 
       "complementary" ->
         query = process_query("incomplete", "complementary", dpt_id)
-        format_dpt_with_query(query)
+        format_dpt_with_query(:staff, query)
 
       _ ->
         []
@@ -1698,6 +1699,70 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       _ ->
         []
     end
+  end
+
+  def format_dpt_with_query(:staff, query) do
+    {:ok, dptArray} = Agent.start_link(fn -> [] end)
+    {:ok, count} = Agent.start_link(fn -> 1 end)
+
+    Repo.all(query)
+    |> Enum.map(fn [od, p, o, i] = elts ->
+      if o != nil and elts != nil do
+        {
+          i.name,
+          %{
+            "sold_price" => od.sold_price,
+            "sold_quantity" => od.sold_quantity,
+            "total_paid" => p.order_paid,
+            "order_code" => o.code,
+            "order_time" => o.inserted_at,
+            "item_name" => i.name,
+            "id" => Agent.get_and_update(count, fn state -> {state, state + 1} end)
+          }
+        }
+      end
+    end)
+    |> Enum.map(fn {_k, v} ->
+      # if exit update otherwise insert
+      # if Enum.member?(Agent.get(itemsArray, fn list -> list end), v) do
+      my_list = Agent.get(dptArray, fn list -> list end)
+
+      index =
+        Enum.find_index(my_list, fn x ->
+          x["item_name"] == v["item_name"] and x["sold_price"] == v["sold_price"]
+        end)
+
+      case index do
+        nil ->
+          Agent.update(dptArray, fn list -> [v | list] end)
+
+        _ ->
+          val = Enum.at(my_list, index)
+
+          new_map =
+            Map.get_and_update(val, "sold_quantity", fn current_val ->
+              {current_val, current_val + v["sold_quantity"]}
+            end)
+
+          {_, correct_map} = new_map
+
+          map_with_orders_list =
+            Map.get_and_update(correct_map, "order_code", fn cv ->
+              {cv, List.flatten([cv] ++ [v["order_code"]])}
+            end)
+
+          {_, my_clean_map} = map_with_orders_list
+          Agent.update(dptArray, fn list -> List.replace_at(list, index, my_clean_map) end)
+      end
+
+      # else
+      # end
+    end)
+
+    data = Agent.get(dptArray, fn list -> list end)
+    Agent.stop(dptArray)
+    Agent.stop(count)
+    data
   end
 
   def format_dpt_with_query(query) do

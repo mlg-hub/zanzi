@@ -3,6 +3,7 @@
   <td><%= @stat["sold_quantity"]%></td>
   <td><%= @stat["sold_price"]%></td>
   <td><%= @stat["sold_quantity"] * @stat["sold_price"]%></td>
+
   <td><span class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= "#{@target}#{@stat["id"]}"%>">See Details<span></td>
 </tr>
 
@@ -32,4 +33,3 @@
 
   </div>
 </div>
-

@@ -32,12 +32,13 @@
                   <th>Quantity</th>
                   <th>Price</th>
                   <th>Total</th>
+
                   <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
             <%= for stat <- @stats[target] do%>
-                <%= render "stats.html",stat: stat, target: target %>
+                 <%= render "stats.html",stat: stat, target: target, is_paid: String.downcase(target) in ["complementary", "unpaid"] %>
             <%end %>
                 </tbody>
 
