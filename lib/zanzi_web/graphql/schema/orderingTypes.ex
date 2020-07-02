@@ -79,6 +79,7 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field(:item_id, :id)
     field(:price, :integer)
     field(:quantity, :integer)
+    field :dpt_id, :integer
   end
 
   object :order_payment do

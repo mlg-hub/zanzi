@@ -436,12 +436,18 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
            payments: payments
          } ->
         orders_details =
-          Enum.map(details_array, fn %{sold_price: price, sold_quantity: qty, item: item} ->
+          Enum.map(details_array, fn %{
+                                       sold_price: price,
+                                       sold_quantity: qty,
+                                       item: item,
+                                       departement_id: dpt_id
+                                     } ->
             %{
               item_name: item && item.name,
               item_id: item && item.id,
               quantity: qty,
-              price: price
+              price: price,
+              dpt_id: dpt_id
             }
           end)
 
