@@ -35,6 +35,7 @@
                   <th>Order ref. number</th>
                   <th>Ordered at</th>
                   <th>Total Amount</th>
+                  <th>Voided reason</th>
                   <th>Action</th>
 
                 </tr>
@@ -45,6 +46,7 @@
                   <td><%= order.inserted_at %>
                   </td>
                   <td><%= order.total%> FBU</td>
+                  <td><%= order.void_reason.void_reason%></td>
                   <td><a href="<%= Routes.order_path(@conn, :detail, order)%>"><div class="btn btn-primary">See details</div></a></td>
                 </tr>
                 <%end %>

@@ -233,30 +233,56 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_empty_split(attrs) do
-    attrs = Map.put(attrs, :filled, 0)
-    IO.inspect(attrs)
+    active_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
-    split_changeset =
-      %Order{}
-      |> Order.create_split_changeset(attrs)
+    cond do
+      active_shift == nil ->
+        {:error, "cant open!"}
 
-    case split_changeset.valid? do
       true ->
-        case Repo.insert!(split_changeset) do
-          %Order{} = order ->
-            owner_attrs = %{current_owner: Map.get(attrs, :user_id), order_id: order.id}
-            owner_changeset = %OrderOwner{} |> OrderOwner.changeset(owner_attrs)
+        query =
+          OrderOwner
+          |> where([o], o.current_owner == ^Map.get(attrs, :user_id))
+          |> join(:inner, [o], ox in assoc(o, :order),
+            on: ox.total == 0 and ox.cashier_shifts_id == ^active_shift.id
+          )
 
-            with %OrderOwner{} <- Repo.insert!(owner_changeset) do
-              %{status: "split success"}
+        re = Repo.all(query)
+        IO.puts("################################################################")
+        IO.inspect(re)
+
+        case Enum.count(re) do
+          0 ->
+            attrs = Map.put(attrs, :filled, 0)
+            attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
+            IO.inspect(attrs)
+
+            split_changeset =
+              %Order{}
+              |> Order.create_split_changeset(attrs)
+
+            case split_changeset.valid? do
+              true ->
+                case Repo.insert!(split_changeset) do
+                  %Order{} = order ->
+                    owner_attrs = %{current_owner: Map.get(attrs, :user_id), order_id: order.id}
+                    owner_changeset = %OrderOwner{} |> OrderOwner.changeset(owner_attrs)
+
+                    with %OrderOwner{} <- Repo.insert!(owner_changeset) do
+                      %{status: "split success"}
+                    end
+
+                  _ ->
+                    {:error, "Could not split"}
+                end
+
+              _ ->
+                %{message: "your changeset is invalid"}
             end
 
           _ ->
             {:error, "Could not split"}
         end
-
-      _ ->
-        %{message: "your changeset is invalid"}
     end
   end
 
@@ -279,8 +305,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
     with {:ok, order} <- split_changeset do
       Enum.each(attrs.items, fn x ->
-        IO.inspect(x)
-
         %OrderDetail{}
         |> OrderDetail.changeset(Map.put(x, :order_id, order.id))
         |> Repo.insert!()
@@ -616,7 +640,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     query =
       User
       |> where([u], u.id == ^user.id)
-      |> join(:left, [u], orders in assoc(u, :orders),
+      |> join(:inner, [u], orders in assoc(u, :orders),
         on:
           orders.filled == 0 and not is_nil(orders.table_id) and
             fragment("?::date", orders.inserted_at) == ^Date.utc_today()
@@ -712,9 +736,14 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Repo.all(query, preload: :owner)
 
       :voided ->
-        query = Order |> where([o], o.status == "voided")
+        query =
+          Order
+          |> where([o], o.status == "voided")
+          |> join(:inner, [o], v in assoc(o, :void_reason))
 
-        Repo.all(query, preload: :owner)
+        r = Repo.all(query)
+        IO.inspect(r)
+        r
 
       :cleared ->
         query = Order |> where([o], o.status == "paid")

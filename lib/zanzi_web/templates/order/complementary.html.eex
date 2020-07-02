@@ -31,8 +31,9 @@
                 <tr>
                   <th>Order ref. number</th>
                   <th>Ordered at</th>
-                  <th>Total expected</th>
-                  <th>Total given</th>
+                  <th>Total expected (no discount)</th>
+                  <th>Total (with 60% discount)</th>
+                  <th>Total paid</th>
                   <th>Action</th>
 
                 </tr>
@@ -44,6 +45,7 @@
                   <td><%= order.inserted_at %>
                   </td>
                   <td><%= order.total%> FBU</td>
+                  <td><%= Decimal.from_float(order.total * 0.6) %> FBU</td>
                   <td><%= Enum.at(order.payments,0).order_paid%></td>
                   <td><a href="<%= Routes.order_path(@conn, :detail, order)%>"><div class="btn btn-primary">See details</div></a></td>
                 </tr>
