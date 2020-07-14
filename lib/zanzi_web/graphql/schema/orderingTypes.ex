@@ -50,6 +50,21 @@ defmodule ZanziWeb.Schema.OrderingTypes do
     field :shifts, list_of(:shifts)
   end
 
+  object :closing_stats do
+    field :result, list_of(:shift_details)
+    field :shift_infos, :shifts_closing
+  end
+
+  object :shift_details do
+    field :category, :string
+    field :stats, :sales_stats
+  end
+
+  object :shifts_closing do
+    field :shift_start, :custom_date_time
+    field :user, :user
+  end
+
   object :shifts do
     field :id, :id
     field :shift_start, :custom_date_time

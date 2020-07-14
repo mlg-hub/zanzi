@@ -12,7 +12,7 @@ config :zanzi,
 
 # Configures the endpoint
 config :zanzi, ZanziWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "192.168.1.8"],
   secret_key_base: "AuPIofgqslTdn/ZRXQ6WAWFh3sMlixriPEyZ+X3CTNcYYYPt5dt8IUs3GF65jdNr",
   render_errors: [view: ZanziWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Zanzi.PubSub, adapter: Phoenix.PubSub.PG2]

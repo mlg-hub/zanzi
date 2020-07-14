@@ -81,6 +81,12 @@ defmodule Zanzibloc.Ordering.Order do
     |> put_change(:total, attrs.total)
   end
 
+  def update_order_current_shift(%__MODULE__{} = order, attrs) do
+    order
+    |> cast(attrs, [:cashier_shifts_id])
+    |> foreign_key_constraint(:cashier_shifts_id)
+  end
+
   defp make_ordercode() do
     today = Date.to_iso8601(Date.utc_today(), :basic)
     day = Date.day_of_week(Date.utc_today()) |> Integer.to_string()

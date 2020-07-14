@@ -150,7 +150,7 @@ defmodule ZanziWeb.Schema do
       resolve(&OrderingResolvers.open_shift/3)
     end
 
-    field :close_shift, :response_status do
+    field :close_shift, :closing_stats do
       resolve(&OrderingResolvers.close_shift/3)
     end
 
