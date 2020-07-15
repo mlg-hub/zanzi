@@ -215,19 +215,20 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     r = get_sales_stats_print(cashier_id)
     shift_query = Repo.one(from s in CashierShift, where: s.shift_status == 1)
     # getting all pending order for this shift
-    # if shift_query do
-    #   shift_changeset =
-    #     shift_query
-    #     |> CashierShift.create_closing_chgset(%{
-    #       shift_status: 0,
-    #       shift_end: Timex.local()
-    #     })
+    if shift_query do
+      shift_changeset =
+        shift_query
+        |> CashierShift.create_closing_chgset(%{
+          shift_status: 0,
+          shift_end: Timex.local()
+        })
 
-    #   case Repo.update(shift_changeset) do
-    #     {:ok, _} -> {:ok, r}
-    #     _ -> {:error, %{error: "can't close the shift"}}
-    #   end
-    # end
+      case Repo.update(shift_changeset) do
+        {:ok, _} -> {:ok, r}
+        _ -> {:error, %{error: "can't close the shift"}}
+      end
+    end
+
     {:ok, r}
   end
 
