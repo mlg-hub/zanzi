@@ -200,8 +200,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       %CashierShift{} = shift ->
         Repo.all(from o in Order, where: o.status == "created")
         |> Enum.each(fn current_order ->
-          Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
+          if current_order.cashier_shifts_id == shift.id - 1 do
+             Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
           |> Repo.update()
+          end
+
         end)
 
         {:ok}
@@ -248,10 +251,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           )
 
         re = Repo.all(query)
-        IO.puts("################################################################")
-        IO.inspect(re)
 
-        case Enum.count(re) do
+        Enum.each(re, fn o -> Repo.delete(o) end)
+
+        # IO.inspect(Enum.count(re))
+
+        case Enum.count([]) do
           0 ->
             attrs = Map.put(attrs, :filled, 0)
             attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
@@ -285,6 +290,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         end
     end
   end
+
 
   def update_split_order(%{order_id: order_id, splitted_order: splitted} = attrs) do
     attrs = Map.update(attrs, :items, [], &build_items/1)
@@ -493,7 +499,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_payment(attrs \\ %{}) do
-    case Repo.get(Order, Map.get(attrs, :order_id)) do
+    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    if shift_selected != nil do
+      case Repo.get(Order, Map.get(attrs, :order_id)) do
       %Order{} = order ->
         attrs = Map.put(attrs, :order_total, order.total)
         total_amount = order.total
@@ -543,6 +551,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       _ ->
         {:error, "payment not made"}
+    end
     end
   end
 
@@ -740,10 +749,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           Order
           |> where([o], o.status == "voided")
           |> join(:inner, [o], v in assoc(o, :void_reason))
+          |>preload([o,v], void_reason: v)
 
         r = Repo.all(query)
-        IO.inspect(r)
-        r
+
 
       :cleared ->
         query = Order |> where([o], o.status == "paid")
@@ -769,9 +778,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       :remain ->
         query =
+
           Order
           |> where([o], o.status == "incomplete")
-          |> join(:left, [o], p in assoc(o, :payments))
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
+
           |> preload([o, p], payments: p)
 
         Repo.all(query, preload: :owner)
@@ -1818,7 +1829,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         query =
           Order
           |> where([o], fragment("?::date", o.inserted_at) == ^date and o.status == "incomplete")
-          |> join(:left, [o], p in assoc(o, :payments))
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
           |> preload([o, p], payments: p)
 
         Repo.all(query, preload: :owner)
