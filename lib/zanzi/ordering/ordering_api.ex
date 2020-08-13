@@ -203,10 +203,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Repo.all(from o in Order, where: o.status == "created")
         |> Enum.each(fn current_order ->
           if current_order.cashier_shifts_id == shift.id - 1 do
-             Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
-          |> Repo.update()
+            Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
+            |> Repo.update()
           end
-
         end)
 
         {:ok}
@@ -294,7 +293,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         end
     end
   end
-
 
   def update_split_order(%{order_id: order_id, splitted_order: splitted} = attrs) do
     attrs = Map.update(attrs, :items, [], &build_items/1)
@@ -504,58 +502,59 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def create_payment(attrs \\ %{}) do
     shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+
     if shift_selected != nil do
       case Repo.get(Order, Map.get(attrs, :order_id)) do
-      %Order{} = order ->
-        attrs = Map.put(attrs, :order_total, order.total)
-        total_amount = order.total
-        total_paid = Map.get(attrs, :order_paid)
+        %Order{} = order ->
+          attrs = Map.put(attrs, :order_total, order.total)
+          total_amount = order.total
+          total_paid = Map.get(attrs, :order_paid)
 
-        payments =
-          %OrderPayment{}
-          |> OrderPayment.changeset(attrs)
-          |> Repo.insert!()
+          payments =
+            %OrderPayment{}
+            |> OrderPayment.changeset(attrs)
+            |> Repo.insert!()
 
-        case payments do
-          %OrderPayment{} ->
-            with %{order_id: order_id} <- attrs do
-              case Repo.get(Order, order_id) do
-                %Order{} = order ->
-                  cond do
-                    total_paid < total_amount ->
-                      case update_order_clearance(order, %{status: "incomplete"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+          case payments do
+            %OrderPayment{} ->
+              with %{order_id: order_id} <- attrs do
+                case Repo.get(Order, order_id) do
+                  %Order{} = order ->
+                    cond do
+                      total_paid < total_amount ->
+                        case update_order_clearance(order, %{status: "incomplete"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                    total_paid == total_amount ->
-                      case update_order_clearance(order, %{status: "paid"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+                      total_paid == total_amount ->
+                        case update_order_clearance(order, %{status: "paid"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                    total_paid > total_amount ->
-                      case update_order_clearance(order, %{status: "paid"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+                      total_paid > total_amount ->
+                        case update_order_clearance(order, %{status: "paid"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                    true ->
-                      {:error, "Error in amount"}
-                  end
+                      true ->
+                        {:error, "Error in amount"}
+                    end
 
-                _ ->
-                  {:error, "error occured"}
+                  _ ->
+                    {:error, "error occured"}
+                end
               end
-            end
 
-          _ ->
-            {:error, "error occured"}
-        end
+            _ ->
+              {:error, "error occured"}
+          end
 
-      _ ->
-        {:error, "payment not made"}
-    end
+        _ ->
+          {:error, "payment not made"}
+      end
     end
   end
 
@@ -725,20 +724,40 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.one(query)
   end
 
-  def get_cleared_bill(date, user_id) do
-    {:ok, date} = Date.from_iso8601(date)
-
+  def get_current_shift_cleared(shift_id, user_id) do
     query =
       Order
-      |> where([o], o.status == "paid")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date
-      )
+      |> where([o], o.status == "paid" and o.cashier_shifts_id == ^shift_id)
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id)
       |> order_by([o, p], desc: p.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([o, p], payments: p)
 
     Repo.all(query)
+  end
+
+  def get_cleared_bill(date, user_id) do
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_cleared(current_shift.id, user_id)
+
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "paid")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date
+          )
+          |> order_by([o, p], desc: p.inserted_at)
+          # |> join(:left, [p, o], d in assoc(o, :order_details))
+          |> preload([o, p], payments: p)
+
+        Repo.all(query)
+    end
   end
 
   def get_bill(filter) do
@@ -753,10 +772,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           Order
           |> where([o], o.status == "voided")
           |> join(:inner, [o], v in assoc(o, :void_reason))
-          |>preload([o,v], void_reason: v)
+          |> preload([o, v], void_reason: v)
 
         r = Repo.all(query)
-
 
       :cleared ->
         query = Order |> where([o], o.status == "paid")
@@ -782,11 +800,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       :remain ->
         query =
-
           Order
           |> where([o], o.status == "incomplete")
           |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
-
           |> preload([o, p], payments: p)
 
         Repo.all(query, preload: :owner)
@@ -1112,33 +1128,65 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
-  # @spec get_incomplete_orders :: any
-  def get_incomplete_orders(:unpaid, date) do
-    {:ok, date} = Date.from_iso8601(date)
+  def get_current_shift_uc(shift_id, type) do
+    IO.inspect(shift_id)
+    IO.inspect(type)
 
     query =
       Order
-      |> where([o], o.status == "incomplete")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: fragment("?::date", p.inserted_at) == ^date and p.order_type == "unpaid"
-      )
+      |> where([o], o.status == "incomplete" and o.cashier_shifts_id == ^shift_id)
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == ^type)
       |> preload([:owner, :table])
 
     Repo.all(query)
   end
 
+  # @spec get_incomplete_orders :: any
+  def get_incomplete_orders(:unpaid, date) do
+    require Logger
+    Logger.info(date)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+    Logger.info(current_shift.id)
+
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_uc(current_shift.id, "unpaid")
+
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: fragment("?::date", p.inserted_at) == ^date and p.order_type == "unpaid"
+          )
+          |> preload([:owner, :table])
+
+        Repo.all(query)
+    end
+  end
+
   def get_incomplete_orders(:complementary, date) do
-    {:ok, date} = Date.from_iso8601(date)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
-    query =
-      Order
-      |> where([o], o.status == "incomplete")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: fragment("?::date", o.updated_at) == ^date and p.order_type == "complementary"
-      )
-      |> preload([:owner, :table])
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_uc(current_shift.id, "complementary")
 
-    Repo.all(query)
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: fragment("?::date", o.updated_at) == ^date and p.order_type == "complementary"
+          )
+          |> preload([:owner, :table])
+
+        Repo.all(query)
+    end
   end
 
   def get_voided_orders(date) do
