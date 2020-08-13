@@ -98,31 +98,7 @@
                 </li>
               </ul>
             </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link bg-info">
-                <i class="nav-icon fas fa-list"></i>
-                <p style="text-color: white !important;">
-                 Menu Management
-                  <i class="fas fa-angle-left right"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="<%= Routes.menu_items_path(@conn, :items_all)%>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Manage Items</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="<%= Routes.menu_items_path(@conn, :cats_all)%>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Manage Category</p>
-                  </a>
-                </li>
 
-
-              </ul>
-            </li>
           </ul>
         </nav>
         <!-- /.sidebar-menu -->

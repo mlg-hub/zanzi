@@ -200,8 +200,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       %CashierShift{} = shift ->
         Repo.all(from o in Order, where: o.status == "created")
         |> Enum.each(fn current_order ->
-          Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
-          |> Repo.update()
+          if current_order.cashier_shifts_id == shift.id - 1 do
+            Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
+            |> Repo.update()
+          end
         end)
 
         {:ok}
@@ -248,10 +250,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           )
 
         re = Repo.all(query)
-        IO.puts("################################################################")
-        IO.inspect(re)
 
-        case Enum.count(re) do
+        Enum.each(re, fn o -> Repo.delete(o) end)
+
+        # IO.inspect(Enum.count(re))
+
+        case Enum.count([]) do
           0 ->
             attrs = Map.put(attrs, :filled, 0)
             attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
@@ -493,56 +497,60 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_payment(attrs \\ %{}) do
-    case Repo.get(Order, Map.get(attrs, :order_id)) do
-      %Order{} = order ->
-        attrs = Map.put(attrs, :order_total, order.total)
-        total_amount = order.total
-        total_paid = Map.get(attrs, :order_paid)
+    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
 
-        payments =
-          %OrderPayment{}
-          |> OrderPayment.changeset(attrs)
-          |> Repo.insert!()
+    if shift_selected != nil do
+      case Repo.get(Order, Map.get(attrs, :order_id)) do
+        %Order{} = order ->
+          attrs = Map.put(attrs, :order_total, order.total)
+          total_amount = order.total
+          total_paid = Map.get(attrs, :order_paid)
 
-        case payments do
-          %OrderPayment{} ->
-            with %{order_id: order_id} <- attrs do
-              case Repo.get(Order, order_id) do
-                %Order{} = order ->
-                  cond do
-                    total_paid < total_amount ->
-                      case update_order_clearance(order, %{status: "incomplete"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+          payments =
+            %OrderPayment{}
+            |> OrderPayment.changeset(attrs)
+            |> Repo.insert!()
 
-                    total_paid == total_amount ->
-                      case update_order_clearance(order, %{status: "paid"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+          case payments do
+            %OrderPayment{} ->
+              with %{order_id: order_id} <- attrs do
+                case Repo.get(Order, order_id) do
+                  %Order{} = order ->
+                    cond do
+                      total_paid < total_amount ->
+                        case update_order_clearance(order, %{status: "incomplete"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                    total_paid > total_amount ->
-                      case update_order_clearance(order, %{status: "paid"}) do
-                        nil -> {:error, "error occured"}
-                        _ -> {:ok, %{payment: "success"}}
-                      end
+                      total_paid == total_amount ->
+                        case update_order_clearance(order, %{status: "paid"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                    true ->
-                      {:error, "Error in amount"}
-                  end
+                      total_paid > total_amount ->
+                        case update_order_clearance(order, %{status: "paid"}) do
+                          nil -> {:error, "error occured"}
+                          _ -> {:ok, %{payment: "success"}}
+                        end
 
-                _ ->
-                  {:error, "error occured"}
+                      true ->
+                        {:error, "Error in amount"}
+                    end
+
+                  _ ->
+                    {:error, "error occured"}
+                end
               end
-            end
 
-          _ ->
-            {:error, "error occured"}
-        end
+            _ ->
+              {:error, "error occured"}
+          end
 
-      _ ->
-        {:error, "payment not made"}
+        _ ->
+          {:error, "payment not made"}
+      end
     end
   end
 
@@ -763,8 +771,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           |> preload([o, v], void_reason: v)
 
         r = Repo.all(query)
-        IO.inspect(r)
-        r
 
       :cleared ->
         query = Order |> where([o], o.status == "paid")
@@ -792,7 +798,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         query =
           Order
           |> where([o], o.status == "incomplete")
-          |> join(:left, [o], p in assoc(o, :payments))
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
           |> preload([o, p], payments: p)
 
         Repo.all(query, preload: :owner)
@@ -1871,7 +1877,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         query =
           Order
           |> where([o], fragment("?::date", o.inserted_at) == ^date and o.status == "incomplete")
-          |> join(:left, [o], p in assoc(o, :payments))
+          |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
           |> preload([o, p], payments: p)
 
         Repo.all(query, preload: :owner)

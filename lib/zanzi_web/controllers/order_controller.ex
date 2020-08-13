@@ -31,11 +31,13 @@ defmodule ZanziWeb.OrderController do
     render(conn, "complementary.html", orders: orders)
   end
 
+  @spec remain(Plug.Conn.t(), any) :: Plug.Conn.t()
   def remain(conn, _params) do
     #  first get the real total then find the order payment amount
     # in payment table
     orders = OrderingApi.get_bill(:remain)
-    orders = Enum.reject(orders, fn o -> Enum.at(o.payments, 0).order_paid == 0 end)
+    # IO.inspect(orders)
+    # orders = Enum.reject(orders, fn o -> Enum.at(o.payments, 0).order_paid == 0 end)
     render(conn, "remain.html", orders: orders)
   end
 

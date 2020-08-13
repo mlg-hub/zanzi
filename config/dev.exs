@@ -5,8 +5,8 @@ use Mix.Config
 config :zanzi, Zanzi.Repo,
   migration_timestamps: [type: :utc_datetime],
   username: "postgres",
-  password: "postgres",
-  database: "real_zanzi_prod",
+  password: "zanzi@admin2020",
+  database: "zanzi_prod",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
