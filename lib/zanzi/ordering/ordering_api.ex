@@ -712,20 +712,40 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.one(query)
   end
 
-  def get_cleared_bill(date, user_id) do
-    {:ok, date} = Date.from_iso8601(date)
-
+  def get_current_shift_cleared(shift_id, user_id) do
     query =
       Order
-      |> where([o], o.status == "paid")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date
-      )
+      |> where([o], o.status == "paid" and o.cashier_shifts_id == ^shift_id)
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id)
       |> order_by([o, p], desc: p.inserted_at)
       # |> join(:left, [p, o], d in assoc(o, :order_details))
       |> preload([o, p], payments: p)
 
     Repo.all(query)
+  end
+
+  def get_cleared_bill(date, user_id) do
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_cleared(current_shift.id, user_id)
+
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "paid")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: p.user_id == ^user_id and fragment("?::date", p.inserted_at) == ^date
+          )
+          |> order_by([o, p], desc: p.inserted_at)
+          # |> join(:left, [p, o], d in assoc(o, :order_details))
+          |> preload([o, p], payments: p)
+
+        Repo.all(query)
+    end
   end
 
   def get_bill(filter) do
@@ -1098,33 +1118,65 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
-  # @spec get_incomplete_orders :: any
-  def get_incomplete_orders(:unpaid, date) do
-    {:ok, date} = Date.from_iso8601(date)
+  def get_current_shift_uc(shift_id, type) do
+    IO.inspect(shift_id)
+    IO.inspect(type)
 
     query =
       Order
-      |> where([o], o.status == "incomplete")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: fragment("?::date", p.inserted_at) == ^date and p.order_type == "unpaid"
-      )
+      |> where([o], o.status == "incomplete" and o.cashier_shifts_id == ^shift_id)
+      |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == ^type)
       |> preload([:owner, :table])
 
     Repo.all(query)
   end
 
+  # @spec get_incomplete_orders :: any
+  def get_incomplete_orders(:unpaid, date) do
+    require Logger
+    Logger.info(date)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+    Logger.info(current_shift.id)
+
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_uc(current_shift.id, "unpaid")
+
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: fragment("?::date", p.inserted_at) == ^date and p.order_type == "unpaid"
+          )
+          |> preload([:owner, :table])
+
+        Repo.all(query)
+    end
+  end
+
   def get_incomplete_orders(:complementary, date) do
-    {:ok, date} = Date.from_iso8601(date)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
-    query =
-      Order
-      |> where([o], o.status == "incomplete")
-      |> join(:inner, [o], p in assoc(o, :payments),
-        on: fragment("?::date", o.updated_at) == ^date and p.order_type == "complementary"
-      )
-      |> preload([:owner, :table])
+    cond do
+      date == "0" && current_shift != nil ->
+        get_current_shift_uc(current_shift.id, "complementary")
 
-    Repo.all(query)
+      true ->
+        {:ok, date} = Date.from_iso8601(date)
+
+        query =
+          Order
+          |> where([o], o.status == "incomplete")
+          |> join(:inner, [o], p in assoc(o, :payments),
+            on: fragment("?::date", o.updated_at) == ^date and p.order_type == "complementary"
+          )
+          |> preload([:owner, :table])
+
+        Repo.all(query)
+    end
   end
 
   def get_voided_orders(date) do
