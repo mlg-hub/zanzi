@@ -740,6 +740,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           Order
           |> where([o], o.status == "voided")
           |> join(:inner, [o], v in assoc(o, :void_reason))
+          |> preload([o, v], void_reason: v)
 
         r = Repo.all(query)
         IO.inspect(r)
