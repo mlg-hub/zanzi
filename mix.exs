@@ -20,7 +20,7 @@ defmodule Zanzi.MixProject do
   def application do
     [
       mod: {Zanzi.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener]
     ]
   end
 
@@ -54,7 +54,8 @@ defmodule Zanzi.MixProject do
       {:comeonin_ecto_password, "~> 3.0.0"},
       {:timex, "~> 3.6.2"},
       # {:timex_ecto, "~> 3.0.2", override: true},
-      {:pbkdf2_elixir, "~> 1.2", override: true}
+      {:pbkdf2_elixir, "~> 1.2", override: true},
+      {:scrivener, "~> 2.0"}
     ]
   end
 
