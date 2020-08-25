@@ -759,13 +759,14 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def get_bill(filter) do
     case filter do
       :pending ->
-        query = Order |> where([o], o.status == "created")
+        query = Order |> limit(100) |> limit(500) |> where([o], o.status == "created")
 
         Repo.all(query, preload: :owner)
 
       :voided ->
         query =
           Order
+          |> limit(100)
           |> where([o], o.status == "voided")
           |> join(:inner, [o], v in assoc(o, :void_reason))
           |> preload([o, v], void_reason: v)
@@ -773,12 +774,14 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         r = Repo.all(query)
 
       :cleared ->
-        query = Order |> where([o], o.status == "paid")
+        query = Order |> limit(100) |> where([o], o.status == "paid")
+        IO.inspect(query)
         Repo.all(query, preload: :owner)
 
       :unpaid ->
         query =
           Order
+          |> limit(100)
           |> where([o], o.status == "incomplete")
           |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "unpaid")
           |> preload([o, p], payments: p)
@@ -788,6 +791,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       :complementary ->
         query =
           Order
+          |> limit(100)
           |> where([o], o.status == "incomplete")
           |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "complementary")
           |> preload([o, p], payments: p)
@@ -797,6 +801,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       :remain ->
         query =
           Order
+          |> limit(100)
           |> where([o], o.status == "incomplete")
           |> join(:inner, [o], p in assoc(o, :payments), on: p.order_type == "sales")
           |> preload([o, p], payments: p)
