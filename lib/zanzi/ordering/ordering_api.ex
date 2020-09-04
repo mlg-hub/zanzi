@@ -1635,11 +1635,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         get_department_stats_by_cat("voided", dpt_id)
       end)
 
-    pendingT = Task.await(pending)
-    paidT = Task.await(paid)
-    complementaryT = Task.await(compl)
-    unpaidT = Task.await(unpaid)
-    voidedT = Task.await(voided)
+    pendingT = Task.await(pending, :infinity)
+    paidT = Task.await(paid, :infinity)
+    complementaryT = Task.await(compl, :infinity)
+    unpaidT = Task.await(unpaid, :infinity)
+    voidedT = Task.await(voided, :infinity)
 
     %{
       "pending" => pendingT,
@@ -1682,11 +1682,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         get_department_stats_by_shift(shift_id, "voided", dpt_id)
       end)
 
-    pendingT = Task.await(pending)
-    paidT = Task.await(paid)
-    complementaryT = Task.await(compl)
-    unpaidT = Task.await(unpaid)
-    voidedT = Task.await(voided)
+    pendingT = Task.await(pending, :infinity)
+    paidT = Task.await(paid, :infinity)
+    complementaryT = Task.await(compl, :infinity)
+    unpaidT = Task.await(unpaid, :infinity)
+    voidedT = Task.await(voided, :infinity)
 
     %{
       "pending" => pendingT,
@@ -1735,11 +1735,11 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         get_department_stats_by_cat(date, "voided", dpt_id)
       end)
 
-    pendingT = Task.await(pending)
-    paidT = Task.await(paid)
-    complementaryT = Task.await(compl)
-    unpaidT = Task.await(unpaid)
-    voidedT = Task.await(voided)
+    pendingT = Task.await(pending, :infinity)
+    paidT = Task.await(paid, :infinity)
+    complementaryT = Task.await(compl, :infinity)
+    unpaidT = Task.await(unpaid, :infinity)
+    voidedT = Task.await(voided, :infinity)
 
     %{
       "pending" => pendingT,
