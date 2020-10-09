@@ -198,20 +198,31 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         shift_start: DateTime.utc_now()
       })
 
-    case Repo.insert!(shift_changeset) do
-      %CashierShift{} = shift ->
-        Repo.all(from o in Order, where: o.status == "created")
-        |> Enum.each(fn current_order ->
-          if current_order.cashier_shifts_id == shift.id - 1 do
-            Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
-            |> Repo.update()
-          end
-        end)
+    bill_time = NaiveDateTime.local_now()
 
-        {:ok}
+    case(PosCalculation.see_bill(bill_time)) do
+      :gt ->
+        case Repo.insert!(shift_changeset) do
+          %CashierShift{} = shift ->
+            Repo.all(from o in Order, where: o.status == "created")
+            |> Enum.each(fn current_order ->
+              if current_order.cashier_shifts_id == shift.id - 1 do
+                Order.update_order_current_shift(current_order, %{cashier_shifts_id: shift.id})
+                |> Repo.update()
+              end
+            end)
+
+            {:ok}
+
+          _ ->
+            {:error}
+        end
+
+      :lt ->
+        nil
 
       _ ->
-        {:error}
+        nil
     end
     end
 

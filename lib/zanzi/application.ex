@@ -16,6 +16,7 @@ defmodule Zanzi.Application do
       # {Zanzi.Worker, arg},
       Zanzibloc.DepartementItemsCache,
       ZanziWeb.Presence,
+      PosCalculation,
       {Absinthe.Subscription, ZanziWeb.Endpoint}
     ]
 

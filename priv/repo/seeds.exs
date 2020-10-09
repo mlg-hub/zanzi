@@ -8,7 +8,7 @@ NimbleCSV.define(CSV, separator: "\;")
 |> CSV.parse_string()
 |> Enum.map(fn [_, full_name, position, role, _] ->
   # nil
-  # number = :rand.uniform(1_000_000)
+  number = :rand.uniform(10000000)
 
   # when updating
   number = :rand.uniform(10000)
