@@ -189,7 +189,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_new_shift(attrs) do
-    shift_changeset =
+    shift = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    if shift == nil do
+       shift_changeset =
       %CashierShift{}
       |> CashierShift.create_new_shift(%{
         user_id: attrs.cashier_id,
@@ -222,6 +224,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       _ ->
         nil
     end
+    end
+
   end
 
   def close_shift(cashier_id) do
