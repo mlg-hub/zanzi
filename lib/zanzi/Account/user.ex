@@ -11,6 +11,7 @@ defmodule Zanzibloc.Account.User do
     field(:username, :string)
     field(:password, Comeonin.Ecto.Password)
     field(:plain_pwd, :string)
+    field(:status, :integer, default: 0)
     has_many(:payments, Zanzibloc.Ordering.OrderPayment)
 
     many_to_many(:position, Zanzibloc.Account.Position,
