@@ -4,7 +4,16 @@
           </div>
           <div class="col-sm-6">
             <div class="d-flex" style="justify-content: space-evenly">
-
+					 <div>
+                    <%= form_for @conn, Routes.order_path(@conn, :filter_date), [as: :date], fn f -> %>
+                        <div class="form-group">
+                        <%= text_input f, :selected_date, type: :date, class: "form-control" %>
+                        <%= hidden_input f, :order_type, value: @order_type %>
+                        <%= hidden_input f, :order_route, value: @page %>
+                        <%= submit "Filter by date", class: "btn btn-primary pull-right" %>
+                        </div>
+                    <% end %>
+                 </div>
                  <div>
                     <button type="button" class="btn btn-danger"
                         data-toggle="modal" data-target="#exampleModal">
