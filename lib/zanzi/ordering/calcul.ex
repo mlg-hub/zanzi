@@ -6,7 +6,7 @@ defmodule PosCalculation do
   end
 
   def init(_opts) do
-    {:ok, bill_date} = NaiveDateTime.new(~D[2020-10-23], ~T[16:00:07.005])
+    {:ok, bill_date} = NaiveDateTime.new(~D[2021-02-05], ~T[16:00:07.005])
     {:ok, bill_date}
   end
 

@@ -8,10 +8,10 @@ NimbleCSV.define(CSV, separator: "\;")
 |> CSV.parse_string()
 |> Enum.map(fn [_, full_name, position, role, _] ->
   # nil
-  # number = :rand.uniform(10000000)
+  # number = :rand.uniform(1000000)
 
   # when updating
-  # number = :rand.uniform(10000000)
+  # number = :rand.uniform(1000000)
   # user = Repo.get_by(User, %{full_name: full_name})
 
   # with %User{full_name: full_name} <- user do
