@@ -14,9 +14,8 @@ defmodule ZanziWeb.Router do
     plug(ZanziWeb.Context)
   end
 
-  scope "/admin", ZanziWeb do
+  scope "/", ZanziWeb do
     pipe_through(:browser)
-
     get("/", AdminController, :index)
     resources("/sessions", SessionController, only: [:new, :create, :delete])
 
@@ -50,16 +49,16 @@ defmodule ZanziWeb.Router do
     end
   end
 
-  scope "/" do
+  scope "/api" do
     pipe_through(:api)
-
-    forward("/api", Absinthe.Plug, schema: ZanziWeb.Schema)
 
     forward("/graphiql", Absinthe.Plug.GraphiQL,
       schema: ZanziWeb.Schema,
       # interface: :playground,
       socket: ZanziWeb.UserSocket
     )
+
+    forward("/", Absinthe.Plug, schema: ZanziWeb.Schema)
   end
 
   # Other scopes may use custom stacks.
