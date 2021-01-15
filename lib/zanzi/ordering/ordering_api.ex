@@ -351,7 +351,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     #  item = %{id, quantity}
     # get current shift
 
-    case(PosCalculation.get_server_status()) do
+    case(PosCalculation.get_server_status(NaiveDateTime.local_now())) do
       :gt ->
         current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
 
