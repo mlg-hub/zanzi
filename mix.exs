@@ -35,6 +35,7 @@ defmodule Zanzi.MixProject do
     [
       {:phoenix, "~> 1.4.9", override: true},
       {:phoenix_pubsub, "~> 1.1"},
+      {:httpoison, "~> 1.7", override: true},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
