@@ -7,8 +7,8 @@ defmodule PosCalculation do
 
   def init(_opts) do
     Process.send_after(self(), {:init_time}, 1000)
-    {:ok, bill_date} = NaiveDateTime.new(~D[2021-02-05], ~T[16:00:07.005])
-    {:ok, bill_date, 60000}
+    # {:ok, bill_date} = NaiveDateTime.new(~D[2021-02-05], ~T[16:00:07.005])
+    {:ok, [], 60000}
   end
 
   def see_bill(current_date) do
@@ -36,7 +36,22 @@ defmodule PosCalculation do
   end
 
   def handle_call({:get_server_status, current_date}, _from, state) do
-    {:reply, NaiveDateTime.compare(state, current_date), state}
+
+    if state == nil do
+      case get_status() do
+        {:error, _} ->
+          {:reply, nil, state}
+
+        {:ok, time} ->
+          server_status = NaiveDateTime.compare(time, current_date)
+          {:reply, server_status, time}
+      end
+
+    else
+      server_status = NaiveDateTime.compare(state, current_date)
+      {:reply, server_status, state}
+    end
+
   end
 
   def handle_call({:see_bill, current_date}, _from, state) do
@@ -50,31 +65,7 @@ defmodule PosCalculation do
     end
   end
 
-  def handle_info({:init_time}, state) do
-    IO.inspect("init time...")
-    {:ok, tb_name} = :dets.open_file(:time_table, [{:file, 'encoded.txt'}])
-
-    case :dets.lookup(tb_name, :time) do
-      {:error, _} ->
-        :dets.close(:time_table)
-        {:noreply, state}
-
-      a when is_list(a) ->
-        if Enum.count(a) > 0 do
-          set_time = Keyword.get(a, :time)
-          :dets.close(:time_table)
-          {:noreply, set_time}
-        else
-          next_time = NaiveDateTime.add(NaiveDateTime.local_now(), 172_800, :second)
-
-          :dets.insert(
-            :time_table,
-            {:time, next_time}
-          )
-
-          :dets.close(:time_table)
-          {:noreply, next_time}
-        end
-    end
+  def handle_info({:init_time}, _state) do
+      {:noreply, nil}
   end
 end

@@ -183,6 +183,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       CashierShift
       |> where([c], not is_nil(c.shift_end))
       |> join(:inner, [c], d in assoc(c, :user), on: c.user_id == d.id)
+      |>order_by([c],[desc: c.inserted_at])
       |> preload([c, d], user: d)
 
     Repo.all(query)
