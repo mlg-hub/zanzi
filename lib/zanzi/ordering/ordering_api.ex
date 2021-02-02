@@ -183,7 +183,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       CashierShift
       |> where([c], not is_nil(c.shift_end))
       |> join(:inner, [c], d in assoc(c, :user), on: c.user_id == d.id)
-      |>order_by([c],[desc: c.inserted_at])
+      |> order_by([c], desc: c.inserted_at)
       |> preload([c, d], user: d)
 
     Repo.all(query)
@@ -231,7 +231,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def close_shift(cashier_id) do
     r = get_sales_stats_print(cashier_id)
-    shift_query = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+
+    shift_query =
+      Repo.one(from s in CashierShift, where: s.shift_status == 1 and s.user_id == ^cashier_id)
+
     # getting all pending order for this shift
     if shift_query do
       shift_changeset =
@@ -887,7 +890,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_sales_stats_current(user_id) do
-    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    shift_selected =
+      Repo.one(from c in CashierShift, where: c.shift_status == 1 and c.user_id == ^user_id)
 
     if shift_selected != nil do
       query =
@@ -969,7 +973,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def get_sales_stats_print(user_id) do
     # get the selected shift
-    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1, preload: :user)
+    shift_selected =
+      Repo.one(
+        from c in CashierShift,
+          where: c.shift_status == 1 and c.user_id == ^user_id,
+          preload: :user
+      )
 
     if shift_selected != nil do
       result =
@@ -1058,7 +1067,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             }
           }
 
-          IO.inspect(r)
           Agent.stop(kitchen)
           Agent.stop(bar)
           Agent.stop(mini_bar)
