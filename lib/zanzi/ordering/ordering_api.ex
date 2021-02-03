@@ -137,10 +137,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def send_transfer_request(%{order: order, transfer: transfer_to}) do
     order_to_transfer = Repo.get_by!(OrderOwner, %{order_id: order})
-    IO.inspect(order_to_transfer)
+
 
     with %OrderOwner{} = order <- order_to_transfer do
-      IO.inspect(order)
+
 
       order
       |> OrderOwner.transfer_request_changeset(%{transfer_to: transfer_to, status: "requested"})
@@ -272,13 +272,13 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
         Enum.each(re, fn o -> Repo.delete(o) end)
 
-        # IO.inspect(Enum.count(re))
+
 
         case Enum.count([]) do
           0 ->
             attrs = Map.put(attrs, :filled, 0)
             attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
-            IO.inspect(attrs)
+
 
             split_changeset =
               %Order{}
@@ -368,8 +368,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 Map.get(attrs, :items),
                 0,
                 fn %{sold_quantity: qty, sold_price: p}, acc ->
-                  IO.inspect(qty)
-                  IO.inspect(p)
+
                   qty * p + acc
                 end
               )
@@ -411,7 +410,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                             )
                             |> Repo.one()
 
-                          # IO.inspect(query)
+
                           %{query: query, update: nil}
 
                         _ ->
@@ -447,8 +446,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Map.get(attrs, :items),
         0,
         fn %{sold_quantity: qty, sold_price: p}, acc ->
-          IO.inspect(qty)
-          IO.inspect(p)
+
           qty * p + acc
         end
       )
@@ -483,7 +481,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     )
                     |> Repo.one()
 
-                  # IO.inspect(query)
+
                   %{query: query, update: nil}
 
                 _ ->
@@ -512,7 +510,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     )
                     |> Repo.one()
 
-                  # IO.inspect(query)
+
                   %{query: query, update: x}
 
                 _ ->
@@ -805,7 +803,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
       :cleared ->
         query = Order |> limit(200) |> where([o], o.status == "paid") |> reverse_order()
-        IO.inspect(query)
+
         Repo.all(query, preload: :owner)
 
       :unpaid ->
@@ -901,19 +899,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           o.status == "paid" and
             o.cashier_shifts_id == ^shift_selected.id
         )
-        |> join(:inner, [o], p in assoc(o, :payments),
-          on:
-            p.user_id == ^user_id and
-              p.order_paid > 0
-        )
-        |> join(:inner, [o, p], order_details in assoc(o, :order_details))
-        |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
-        # |> preload([p, order, order_details, dpt],
-        #   order: {order, order_details: {order_details, departement: dpt}}
-        # )
-        |> select([o, p, od, dpt], [
+        |> join(:inner, [o], od in assoc(o, :order_details))
+        |> join(:inner, [o,od], dpt in assoc(od, :departement))
+        |> select([o,od, dpt], [
           map(od, [:item_id, :sold_price, :sold_quantity]),
-          # map(p, [:order_id, :order_paid, :order_total]),
           map(dpt, [:name])
         ])
 
@@ -962,7 +951,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         shifts: all_shifts
       }
 
-      IO.inspect(r)
+
       Agent.stop(kitchen)
       Agent.stop(bar)
       Agent.stop(mini_bar)
@@ -992,12 +981,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                   o.status == ^element and
                     o.cashier_shifts_id == ^shift_selected.id
                 )
-                |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id)
-                |> join(:inner, [o, p], order_details in assoc(o, :order_details))
-                |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
-                # |> preload([p, order, order_details, dpt],
-                #   order: {order, order_details: {order_details, departement: dpt}}
-                # )
+                |> join(:inner, [o], od in assoc(o, :order_details))
+                |> join(:inner, [o,od], dpt in assoc(od, :departement))
+
                 |> select([o, p, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
                   # map(p, [:order_id, :order_paid, :order_total]),
@@ -1014,14 +1000,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 |> join(:inner, [o], p in assoc(o, :payments),
                   on: p.order_type == ^element and p.user_id == ^user_id
                 )
-                |> join(:inner, [o, p], order_details in assoc(o, :order_details))
-                |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
-                # |> preload([p, order, order_details, dpt],
-                #   order: {order, order_details: {order_details, departement: dpt}}
-                # )
+                |> join(:inner, [o], od in assoc(o, :order_details))
+                |> join(:inner, [o,od], dpt in assoc(od, :departement))
                 |> select([o, p, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
-                  # map(p, [:order_id, :order_paid, :order_total]),
                   map(dpt, [:name])
                 ])
             end
@@ -1090,15 +1072,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           o.status == "paid" and
             o.cashier_shifts_id == ^shift_selected.id
         )
-        |> join(:inner, [o], p in assoc(o, :payments), on: p.user_id == ^user_id)
-        |> join(:inner, [o, p], order_details in assoc(o, :order_details))
-        |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
-        # |> preload([p, order, order_details, dpt],
-        #   order: {order, order_details: {order_details, departement: dpt}}
-        # )
-        |> select([o, p, od, dpt], [
+        |> join(:inner, [o], od in assoc(o, :order_details))
+        |> join(:inner, [o,od], dpt in assoc(od, :departement))
+        |> select([o,od, dpt], [
           map(od, [:item_id, :sold_price, :sold_quantity]),
-          # map(p, [:order_id, :order_paid, :order_total]),
           map(dpt, [:name])
         ])
 
@@ -1147,7 +1124,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         shifts: all_shifts
       }
 
-      IO.inspect(r)
       Agent.stop(kitchen)
       Agent.stop(bar)
       Agent.stop(mini_bar)
@@ -1168,8 +1144,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_current_shift_uc(shift_id, type) do
-    IO.inspect(shift_id)
-    IO.inspect(type)
 
     query =
       Order
@@ -1396,8 +1370,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   defp update_affected_orders(%{main_order: mo, sub_order_id: so}) do
     sub_order = Repo.get(Order, so)
-    IO.inspect(sub_order)
-
     mo
     |> Order.update_changeset(%{merged_status: 1})
     |> Repo.update()
@@ -1733,7 +1705,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   def filter_by_date(date, dpt_id) do
     # {:ok, date} = NaiveDateTime.new(Date.from_iso8601!(date), ~T[00:00:00])
-    # IO.inspect(date)
+
     {:ok, date} = Date.from_iso8601(date)
 
     #  fragment("?::date", od.inserted_at)
