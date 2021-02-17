@@ -42,8 +42,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     Repo.all(query)
   end
 
-  def get_shift_state do
-    shift = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+  def get_shift_state(%{user_id: user_id}) do
+    shift = Repo.one(from c in CashierShift, where: c.shift_status == 1 and c.user_id == ^user_id)
 
     cond do
       shift == nil -> %{status: "false"}
@@ -138,10 +138,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def send_transfer_request(%{order: order, transfer: transfer_to}) do
     order_to_transfer = Repo.get_by!(OrderOwner, %{order_id: order})
 
-
     with %OrderOwner{} = order <- order_to_transfer do
-
-
       order
       |> OrderOwner.transfer_request_changeset(%{transfer_to: transfer_to, status: "requested"})
       |> Repo.update()
@@ -272,13 +269,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
         Enum.each(re, fn o -> Repo.delete(o) end)
 
-
-
         case Enum.count([]) do
           0 ->
             attrs = Map.put(attrs, :filled, 0)
             attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
-
 
             split_changeset =
               %Order{}
@@ -354,13 +348,15 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   def create_order(attrs \\ %{}) do
     #  item = %{id, quantity}
     # get current shift
+    IO.inspect(attrs)
 
     case(PosCalculation.get_server_status(NaiveDateTime.local_now())) do
       :gt ->
-        current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+        current_shift = Repo.all(from s in CashierShift, where: s.shift_status == 1)
+        IO.puts("is greater than")
 
         cond do
-          current_shift != nil ->
+          Enum.count(current_shift) > 0 ->
             attrs = Map.update(attrs, :items, [], &build_items/1)
 
             total =
@@ -368,13 +364,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 Map.get(attrs, :items),
                 0,
                 fn %{sold_quantity: qty, sold_price: p}, acc ->
-
                   qty * p + acc
                 end
               )
 
             attrs = Map.put(attrs, :total, total)
-            attrs = Map.put(attrs, :cashier_shifts_id, current_shift.id)
+
             attrs = check_if_staff(attrs)
 
             save_changeset =
@@ -410,7 +405,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                             )
                             |> Repo.one()
 
-
                           %{query: query, update: nil}
 
                         _ ->
@@ -430,6 +424,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         end
 
       :lt ->
+        require Logger
+        Logger.warn("there is an error here!!!!!")
         nil
 
       _ ->
@@ -446,7 +442,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         Map.get(attrs, :items),
         0,
         fn %{sold_quantity: qty, sold_price: p}, acc ->
-
           qty * p + acc
         end
       )
@@ -481,7 +476,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     )
                     |> Repo.one()
 
-
                   %{query: query, update: nil}
 
                 _ ->
@@ -510,7 +504,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     )
                     |> Repo.one()
 
-
                   %{query: query, update: x}
 
                 _ ->
@@ -524,7 +517,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_payment(attrs \\ %{}) do
-    shift_selected = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    shift_selected =
+      Repo.one(from c in CashierShift, where: c.shift_status == 1 and c.user_id == ^attrs.user_id)
 
     if shift_selected != nil do
       case Repo.get(Order, Map.get(attrs, :order_id)) do
@@ -545,19 +539,28 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                   %Order{} = order ->
                     cond do
                       total_paid < total_amount ->
-                        case update_order_clearance(order, %{status: "incomplete"}) do
+                        case update_order_clearance(order, %{
+                               status: "incomplete",
+                               cashier_shifts_id: shift_selected.id
+                             }) do
                           nil -> {:error, "error occured"}
                           _ -> {:ok, %{payment: "success"}}
                         end
 
                       total_paid == total_amount ->
-                        case update_order_clearance(order, %{status: "paid"}) do
+                        case update_order_clearance(order, %{
+                               status: "paid",
+                               cashier_shifts_id: shift_selected.id
+                             }) do
                           nil -> {:error, "error occured"}
                           _ -> {:ok, %{payment: "success"}}
                         end
 
                       total_paid > total_amount ->
-                        case update_order_clearance(order, %{status: "paid"}) do
+                        case update_order_clearance(order, %{
+                               status: "paid",
+                               cashier_shifts_id: shift_selected.id
+                             }) do
                           nil -> {:error, "error occured"}
                           _ -> {:ok, %{payment: "success"}}
                         end
@@ -614,6 +617,9 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def update_order_clearance(%Order{} = order, attrs) do
+    IO.puts("on updating order ....")
+    IO.inspect(attrs)
+
     order
     |> Order.update_changeset(attrs)
     |> Repo.update()
@@ -900,8 +906,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             o.cashier_shifts_id == ^shift_selected.id
         )
         |> join(:inner, [o], od in assoc(o, :order_details))
-        |> join(:inner, [o,od], dpt in assoc(od, :departement))
-        |> select([o,od, dpt], [
+        |> join(:inner, [o, od], dpt in assoc(od, :departement))
+        |> select([o, od, dpt], [
           map(od, [:item_id, :sold_price, :sold_quantity]),
           map(dpt, [:name])
         ])
@@ -951,7 +957,6 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         shifts: all_shifts
       }
 
-
       Agent.stop(kitchen)
       Agent.stop(bar)
       Agent.stop(mini_bar)
@@ -982,8 +987,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                     o.cashier_shifts_id == ^shift_selected.id
                 )
                 |> join(:inner, [o], od in assoc(o, :order_details))
-                |> join(:inner, [o,od], dpt in assoc(od, :departement))
-
+                |> join(:inner, [o, od], dpt in assoc(od, :departement))
                 |> select([o, p, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
                   # map(p, [:order_id, :order_paid, :order_total]),
@@ -1001,7 +1005,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                   on: p.order_type == ^element and p.user_id == ^user_id
                 )
                 |> join(:inner, [o], od in assoc(o, :order_details))
-                |> join(:inner, [o,od], dpt in assoc(od, :departement))
+                |> join(:inner, [o, od], dpt in assoc(od, :departement))
                 |> select([o, p, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
                   map(dpt, [:name])
@@ -1073,8 +1077,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
             o.cashier_shifts_id == ^shift_selected.id
         )
         |> join(:inner, [o], od in assoc(o, :order_details))
-        |> join(:inner, [o,od], dpt in assoc(od, :departement))
-        |> select([o,od, dpt], [
+        |> join(:inner, [o, od], dpt in assoc(od, :departement))
+        |> select([o, od, dpt], [
           map(od, [:item_id, :sold_price, :sold_quantity]),
           map(dpt, [:name])
         ])
@@ -1140,11 +1144,12 @@ defmodule Zanzibloc.Ordering.OrderingApi do
       |> where([o], o.status == "created" and fragment("?::date", o.inserted_at) == ^date)
       |> preload([:owner, :table])
 
-    Repo.all(query)
+    o = Repo.all(query)
+    IO.puts("orders list #{inspect(o)}")
+    o
   end
 
   def get_current_shift_uc(shift_id, type) do
-
     query =
       Order
       |> where([o], o.status == "incomplete" and o.cashier_shifts_id == ^shift_id)
@@ -1370,6 +1375,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
 
   defp update_affected_orders(%{main_order: mo, sub_order_id: so}) do
     sub_order = Repo.get(Order, so)
+
     mo
     |> Order.update_changeset(%{merged_status: 1})
     |> Repo.update()

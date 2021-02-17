@@ -14,8 +14,9 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, OrderingApi.get_all_request_void()}
   end
 
-  def get_shift_state(_, _, _) do
-    {:ok, OrderingApi.get_shift_state()}
+  def get_shift_state(_, _, %{context: context}) do
+    user = context[:current_user]
+    {:ok, OrderingApi.get_shift_state(%{user_id: user.id})}
   end
 
   def get_sales_stats(_, %{shift_id: shift_id}, %{context: context}) do

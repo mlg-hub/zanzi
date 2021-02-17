@@ -72,7 +72,15 @@ defmodule Zanzibloc.Ordering.Order do
 
   def update_changeset(%__MODULE__{} = order, attrs) do
     order
-    |> cast(attrs, [:status, :split_status, :merged_status, :total, :print_status, :void_request])
+    |> cast(attrs, [
+      :status,
+      :split_status,
+      :merged_status,
+      :total,
+      :print_status,
+      :void_request,
+      :cashier_shifts_id
+    ])
   end
 
   def update_main_split_changeset(%__MODULE__{} = order, attrs) do

@@ -28,7 +28,6 @@ defmodule Zanzibloc.Account.AccountApi do
   end
 
   def get_all_users() do
-
     Repo.all(from(u in User, where: u.status == 0, preload: [position: :role]))
   end
 
