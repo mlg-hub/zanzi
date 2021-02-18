@@ -187,7 +187,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_new_shift(attrs) do
-    shift = Repo.one(from c in CashierShift, where: c.shift_status == 1)
+    shift =
+      Repo.one(
+        from c in CashierShift, where: c.shift_status == 1 and c.user_id == ^attrs.cashier_id
+      )
 
     if shift == nil do
       shift_changeset =
@@ -988,7 +991,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 )
                 |> join(:inner, [o], od in assoc(o, :order_details))
                 |> join(:inner, [o, od], dpt in assoc(od, :departement))
-                |> select([o, p, od, dpt], [
+                |> select([o, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
                   # map(p, [:order_id, :order_paid, :order_total]),
                   map(dpt, [:name])
@@ -1004,8 +1007,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
                 |> join(:inner, [o], p in assoc(o, :payments),
                   on: p.order_type == ^element and p.user_id == ^user_id
                 )
-                |> join(:inner, [o], od in assoc(o, :order_details))
-                |> join(:inner, [o, od], dpt in assoc(od, :departement))
+                |> join(:inner, [o, p], od in assoc(o, :order_details))
+                |> join(:inner, [o, p, od], dpt in assoc(od, :departement))
                 |> select([o, p, od, dpt], [
                   map(od, [:item_id, :sold_price, :sold_quantity]),
                   map(dpt, [:name])

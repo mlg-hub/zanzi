@@ -62,6 +62,7 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
         case OrderingApi.create_new_shift(%{cashier_id: user.id}) do
           {:ok} -> {:ok, %{status: "success"}}
           {:error} -> {:error, "Error auth"}
+          _ -> {:error, "Error shift"}
         end
 
       _ ->
