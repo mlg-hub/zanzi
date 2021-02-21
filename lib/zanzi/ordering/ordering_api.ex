@@ -254,10 +254,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def create_empty_split(attrs) do
-    active_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+    active_shift = Repo.all(from s in CashierShift, where: s.shift_status == 1)
 
     cond do
-      active_shift == nil ->
+      Enum.count(active_shift) == 0 ->
         {:error, "cant open!"}
 
       true ->
@@ -275,7 +275,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         case Enum.count([]) do
           0 ->
             attrs = Map.put(attrs, :filled, 0)
-            attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
+            # attrs = Map.put(attrs, :cashier_shifts_id, active_shift.id)
 
             split_changeset =
               %Order{}
