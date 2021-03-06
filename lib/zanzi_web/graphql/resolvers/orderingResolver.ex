@@ -268,16 +268,17 @@ defmodule ZanziWeb.Resolvers.OrderingResolvers do
     {:ok, cleared_bills}
   end
 
-  def get_pending_orders(_, %{info: info, date: date}, _) do
+  def get_pending_orders(_, %{info: info, date: date},  %{context: context}) do
+    user = context[:current_user]
     cond do
       info == "pending" ->
-        {:ok, OrderingApi.get_pending_orders(date)}
+        {:ok, OrderingApi.get_pending_orders(date,user.id)}
 
       info == "unpaid" ->
-        {:ok, OrderingApi.get_incomplete_orders(:unpaid, date)}
+        {:ok, OrderingApi.get_incomplete_orders(:unpaid, date,user.id)}
 
       info == "complementary" ->
-        {:ok, OrderingApi.get_incomplete_orders(:complementary, date)}
+        {:ok, OrderingApi.get_incomplete_orders(:complementary, date,user.id)}
 
       info == "voided" ->
         {:ok, OrderingApi.get_voided_orders(date)}

@@ -265,7 +265,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
           OrderOwner
           |> where([o], o.current_owner == ^Map.get(attrs, :user_id))
           |> join(:inner, [o], ox in assoc(o, :order),
-            on: ox.total == 0 and ox.cashier_shifts_id == ^active_shift.id
+            on: ox.total == 0
           )
 
         re = Repo.all(query)
@@ -753,7 +753,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
         orders: {orders, order_details: {details, item: items}, table: table, payments: payments}
       )
 
-    Repo.one(query)
+
+    r = Repo.one(query)
+    IO.inspect(r)
+    r
   end
 
   def get_current_shift_cleared(shift_id, user_id) do
@@ -769,7 +772,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   def get_cleared_bill(date, user_id) do
-    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1 and s.user_id == ^user_id)
 
     cond do
       date == "0" && current_shift != nil ->
@@ -1139,7 +1142,7 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
-  def get_pending_orders(date) do
+  def get_pending_orders(date,user_id) do
     {:ok, date} = Date.from_iso8601(date)
 
     query =
@@ -1163,10 +1166,10 @@ defmodule Zanzibloc.Ordering.OrderingApi do
   end
 
   # @spec get_incomplete_orders :: any
-  def get_incomplete_orders(:unpaid, date) do
+  def get_incomplete_orders(:unpaid, date,user_id) do
     require Logger
     Logger.info(date)
-    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1 and s.user_id == ^user_id)
     Logger.info(current_shift.id)
 
     cond do
@@ -1188,8 +1191,8 @@ defmodule Zanzibloc.Ordering.OrderingApi do
     end
   end
 
-  def get_incomplete_orders(:complementary, date) do
-    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1)
+  def get_incomplete_orders(:complementary, date,user_id) do
+    current_shift = Repo.one(from s in CashierShift, where: s.shift_status == 1 and s.user_id == ^user_id)
 
     cond do
       date == "0" && current_shift != nil ->

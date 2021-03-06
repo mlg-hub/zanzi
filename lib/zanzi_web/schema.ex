@@ -361,7 +361,7 @@ defmodule ZanziWeb.Schema do
   end
 
   enum :payment_field do
-    value(:interger)
+    value(:integer)
     value(false)
   end
 
